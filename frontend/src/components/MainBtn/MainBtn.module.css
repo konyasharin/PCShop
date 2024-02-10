@@ -1,0 +1,22 @@
+.mainBtn{
+    padding: 10px 33px;
+    background-color: #0000FF;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #ffffff;
+    text-transform: uppercase;
+    box-shadow: 0 4px 4px rgba(22, 22, 88, .5);
+    cursor: pointer;
+    transition: .2s all;
+}
+
+.mainBtn:hover{
+    background-image: linear-gradient(90deg, #0000FF, #4063DD);
+    box-shadow: none;
+}
+
+.mainBtn:active{
+    background-image: none;
+    background-color: #3838FF;
+}

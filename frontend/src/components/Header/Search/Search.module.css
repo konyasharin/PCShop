@@ -1,0 +1,26 @@
+.search{
+    position: relative;
+}
+
+.searchInput{
+    width: 174px;
+    height: 40px;
+    border: 1px solid #000000;
+    border-radius: 8px;
+    padding: 8px 36px 8px 10px;
+    font-size: 16px;
+    font-weight: 400;
+    background-color: rgba(191, 207, 255, .4);
+}
+
+.searchInput::placeholder{
+    color: #000000;
+}
+
+.searchBtn{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}

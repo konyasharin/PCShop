@@ -1,0 +1,54 @@
+*{
+    font-family: "Open Sans";
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1{
+    font-family: "Play";
+    font-size: 40px;
+    font-weight: 700;
+}
+
+h2{
+    font-family: "Play";
+    font-size: 36px;
+    font-weight: 700;
+}
+
+h3{
+    font-size: 32px;
+    font-weight: 700;
+}
+
+h4{
+    font-size: 30px;
+    font-weight: 400;
+}
+
+h5{
+    font-size: 20px;
+    font-weight: 400;
+}
+
+h6{
+    font-size: 14px;
+    font-weight: 400;
+}
+
+i{
+    font-size: 20px;
+    font-weight: 600;
+    font-style: italic;
+}
+
+p{
+    font-size: 24px;
+    font-weight: 400;
+}
+
+button{
+    font-size: 24px;
+    font-weight: 600;
+}
