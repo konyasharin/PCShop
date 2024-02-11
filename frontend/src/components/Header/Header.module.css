@@ -5,12 +5,28 @@
     text-decoration: none;
 }
 
-.container{
+.links{
+    width: 540px;
     display: flex;
     justify-content: space-between;
+    margin-right: 41px;
+}
+
+.container{
+    display: flex;
     align-items: center;
+    position: relative;
 }
 
 .header{
     margin-top: 18px;
+}
+
+.logo{
+    margin-right: 42px;
+    width: 150px;
+}
+
+.btn{
+    margin-left: auto;
 }

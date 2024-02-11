@@ -1,0 +1,29 @@
+.block{
+    background-color: #809FFF;
+    border-radius: 8px;
+    width: 100%;
+    height: 64px;
+    padding: 5px;
+    display: flex;
+    opacity: 0;
+    transition: .5s all;
+    margin-bottom: 10px;
+}
+
+.block img{
+    width: 65px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 8px;
+}
+
+.block span{
+    font-size: 10px;
+    color: #404040;
+    font-weight: 400;
+}
+
+.blockActive{
+    opacity: 1;
+}

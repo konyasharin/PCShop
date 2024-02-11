@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styles from './Search.module.css';
 import searchImg from '../../../assets/search.svg';
 
-function Search() {
+type SearchProps = {
+  setIsActive: (newIsActive: boolean) => void;
+};
+
+const Search: React.FC<SearchProps> = props => {
   const [searchString, setSearchString] = useState('');
 
   return (
@@ -13,9 +17,14 @@ function Search() {
         placeholder={'Поиск'}
         className={styles.searchInput}
       />
-      <img src={searchImg} alt="search" className={styles.searchBtn} />
+      <img
+        src={searchImg}
+        alt="search"
+        className={styles.searchBtn}
+        onClick={() => props.setIsActive(true)}
+      />
     </div>
   );
-}
+};
 
 export default Search;
