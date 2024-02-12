@@ -1,0 +1,15 @@
+.ellipses{
+    width: 1200px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.ellipse{
+    position: absolute;
+    z-index: -1;
+    width: 995px;
+    height: 302px;
+    border-radius: 50%;
+    background-color: #64FFFF;
+    filter: blur(200px);
+}
