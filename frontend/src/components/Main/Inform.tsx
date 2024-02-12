@@ -2,6 +2,8 @@ import styles from './Inform.module.css';
 import Restangle from '../../assets/Rectangle .png';
 import Container from '../Container/Container.tsx';
 import PC from '../../assets/PC.png';
+import PCBtn from '../PCBtn/PCBtn.tsx';
+
 function Inform() {
   return (
     <body className={styles.body}>
@@ -13,13 +15,14 @@ function Inform() {
           <p className={styles.paragraph}>
             Вместе с нами вы сможете проверить совместимость комплектующих для
             вашего <br /> PC-зверя или выбрать уже готовую сборку, которую уже
-            за вас собрали другие пользователи и проверили временем, <br />{' '}
+            за вас собрали другие пользователи и проверили временем, <br />
             именно поэтому скорее переходи к сборке возможно своего первого
             компьютера мечты
           </p>
-          <q className={styles.quote}>
+          <span className={styles.quote}>
             «Соберите PC своей мечты вместе с нами»
-          </q>
+          </span>
+          <PCBtn>собрать пк</PCBtn>
         </div>
       </Container>
     </body>

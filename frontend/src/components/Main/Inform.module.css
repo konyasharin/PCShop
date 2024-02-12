@@ -17,9 +17,10 @@
 
 .PC {
 }
+
 .mainText {
     margin-left: 20px;
-    
+
 }
 
 .box {
@@ -33,11 +34,15 @@
     font-size: 24px;
     font-family: "Open Sans", sans-serif;
     color: #000000DE;
+    line-height: 24px;
 }
 
 .quote {
-    margin-top: 35px;
+    display: block;
+    margin-top: 15px;
     font-size: 20px;
     color: #000000DE;
     font-family: "Open Sans", sans-serif;
+    font-weight: 600;
+    font-style: italic;
 }
