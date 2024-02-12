@@ -1,17 +1,22 @@
 package com.example.pc.Models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="Processor")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProcessorModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "brand")
     private String brand;
@@ -33,5 +38,12 @@ public class ProcessorModel {
 
     @Column(name="heat_dissipation")
     private Integer heat_dissipation;
+
+    @OneToMany
+    @JoinColumn(name = "image_id")
+    private List<ImageModel> images;
+
+    @Column(name = "preview")
+    private byte[] preview;
 
 }
