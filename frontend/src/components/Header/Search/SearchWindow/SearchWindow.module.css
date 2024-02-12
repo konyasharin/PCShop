@@ -1,0 +1,20 @@
+.searchWindow{
+    transition: .5s all;
+    width: 367px;
+    height: 0;
+    border: none;
+    position: absolute;
+    background-color: #ffffff;
+    border-radius: 8px;
+    right: 0;
+    bottom: -10px;
+    overflow: hidden;
+}
+
+.searchWindowActive{
+    width: 367px;
+    height: 232px;
+    border: 1px solid #000000;
+    bottom: calc(-232px - 10px);
+    padding: 10px;
+}
