@@ -8,7 +8,14 @@ import SearchWindow from './Search/SearchWindow/SearchWindow.tsx';
 import useSearch from '../../hooks/useSearch.ts';
 
 function Header() {
-  const { isActive, setIsActiveHandle, blocks, setBlocks } = useSearch();
+  const {
+    isActive,
+    setIsActiveHandle,
+    blocks,
+    setBlocks,
+    searchWindowRef,
+    searchRef,
+  } = useSearch();
   console.log(isActive, blocks, setBlocks);
   return (
     <header className={styles.header}>
@@ -28,9 +35,13 @@ function Header() {
             Комплектующие
           </NavLink>
         </div>
-        <Search setIsActive={setIsActiveHandle} />
+        <Search setIsActive={setIsActiveHandle} searchRef={searchRef} />
         <MainBtn className={styles.btn}>авторизация</MainBtn>
-        <SearchWindow isActive={isActive} blocks={blocks} />
+        <SearchWindow
+          isActive={isActive}
+          blocks={blocks}
+          searchWindowRef={searchWindowRef}
+        />
       </Container>
     </header>
   );

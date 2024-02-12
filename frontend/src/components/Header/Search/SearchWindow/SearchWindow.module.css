@@ -8,6 +8,7 @@
     border-radius: 8px;
     right: 0;
     bottom: -10px;
+    overflow: hidden;
 }
 
 .searchWindowActive{

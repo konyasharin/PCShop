@@ -4,13 +4,14 @@ import searchImg from '../../../assets/search.svg';
 
 type SearchProps = {
   setIsActive: (newIsActive: boolean) => void;
+  searchRef: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 const Search: React.FC<SearchProps> = props => {
   const [searchString, setSearchString] = useState('');
 
   return (
-    <div className={styles.search}>
+    <div className={styles.search} ref={props.searchRef}>
       <input
         onChange={e => setSearchString(e.target.value)}
         value={searchString}

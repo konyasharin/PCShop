@@ -6,6 +6,7 @@ import { TSearchBlock } from '../../../../hooks/useSearch.ts';
 type SearchWindowProps = {
   isActive: boolean;
   blocks: Array<TSearchBlock>;
+  searchWindowRef: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 const SearchWindow: React.FC<SearchWindowProps> = props => {
@@ -21,28 +22,9 @@ const SearchWindow: React.FC<SearchWindowProps> = props => {
       );
     },
   );
-  /*
-  useEffect(() => {
-    let i = 0;
-    const timeInterval = setInterval(() => {
-      console.log('123');
-      searchWindowBlocks[i] = (
-        <SearchWindowBlock
-          img={props.blocks[i].img}
-          title={props.blocks[i].title}
-          text={props.blocks[i].text}
-          isActive={true}
-        />
-      );
-      i += 1;
-      if (i >= searchWindowBlocks.length) {
-        clearInterval(timeInterval);
-      }
-    }, 500);
-  }, [props.isActive]);
-*/
   return (
     <div
+      ref={props.searchWindowRef}
       className={
         props.isActive
           ? `${styles.searchWindowActive} ${styles.searchWindow}`
