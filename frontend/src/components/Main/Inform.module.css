@@ -1,0 +1,49 @@
+.basis {
+    margin-top: 150px;
+}
+
+.container {
+    position: relative;
+    display: flex;
+}
+
+.Rectangle {
+    position: absolute;
+    margin-top: -9px;
+    margin-left: -20px;
+    color: rgba(108, 108, 255, 0.4);
+}
+
+.PC {
+}
+
+.mainText {
+    margin-left: 20px;
+
+}
+
+.box {
+    font-family: Play, sans-serif;
+    font-size: 40px;
+    color: #000000DE;
+}
+
+.paragraph {
+    margin-top: 30px;
+    font-size: 24px;
+    color: #000000DE;
+    line-height: 24px;
+}
+
+.quote {
+    display: block;
+    margin-top: 15px;
+    font-size: 20px;
+    color: #000000DE;
+    font-weight: 600;
+    font-style: italic;
+}
+
+.button {
+    margin-top: 35px;
+}
