@@ -2,13 +2,11 @@
     position: relative;
     width: 250px;
     height: 60px;
-    margin-top: 35px;
     background-color: #6C6CFF;
-    border: None;
+    border: none;
     border-radius: 4px;
     font-size: 24px;
     color: #FFFFFF;
-    font-family: 'Open Sans', sans-serif;
     text-transform: uppercase;
     box-shadow: 0 4px 4px rgba(22, 22, 88, 0.5);
     cursor: pointer;
@@ -27,8 +25,8 @@
     height: 52px;
     background-image: url('../../assets/group.png');
     background-size: cover;
-    left: calc(101%);
-    transform: translateY(-20%);
+    left: calc(251px);
+    transform: translateY(-10px);
     opacity: 0;
     transition: opacity .2s ease-in-out;
 }
