@@ -36,10 +36,10 @@ public class PowerUnitModel {
     @Column(name="voltage")
     private Integer voltage;
 
-    @OneToMany
-    @JoinColumn(name = "image_id")
+    @OneToMany(mappedBy = "powerUnitModel", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private List<ImageModel> images;
 
     @Column(name = "preview")
+    @Lob
     private byte[] preview;
 }

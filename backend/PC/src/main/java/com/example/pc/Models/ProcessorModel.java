@@ -39,11 +39,11 @@ public class ProcessorModel {
     @Column(name="heat_dissipation")
     private Integer heat_dissipation;
 
-    @OneToMany
-    @JoinColumn(name = "image_id")
+    @OneToMany(mappedBy = "processorModel", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private List<ImageModel> images;
 
     @Column(name = "preview")
+    @Lob
     private byte[] preview;
 
 }

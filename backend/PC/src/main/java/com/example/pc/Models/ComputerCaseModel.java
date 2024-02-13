@@ -42,10 +42,10 @@ public class ComputerCaseModel {
     @Column(name="depth")
     private Integer depth;
 
-    @OneToMany
-    @JoinColumn(name = "image_id")
+    @OneToMany(mappedBy = "computerCaseModel", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private List<ImageModel> images;
 
+    @Lob
     @Column(name = "preview")
     private byte[] preview;
 

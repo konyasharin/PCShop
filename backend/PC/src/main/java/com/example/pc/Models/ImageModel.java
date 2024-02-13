@@ -22,4 +22,28 @@ public class ImageModel {
     @Column(name="image_data")
     private byte[] image_data;
 
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    private ComputerCaseModel computerCaseModel;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    private CoolerModel coolerModel;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    private MotherBoardModel motherBoardModel;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    private PowerUnitModel powerUnitModel;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    private ProcessorModel processorModel;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    private RAMModel ramModel;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    private SSDModel ssdModel;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    private VideoCardModel videoCardModel;
+
 }

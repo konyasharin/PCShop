@@ -36,10 +36,10 @@ public class CoolerModel {
     @Column(name = "power")
     private Integer power;
 
-    @OneToMany
-    @JoinColumn(name = "image_id")
+    @OneToMany(mappedBy = "coolerModel", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private List<ImageModel> images;
 
     @Column(name = "preview")
+    @Lob
     private byte[] preview;
 }

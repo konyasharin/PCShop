@@ -39,10 +39,10 @@ public class MotherBoardModel {
     @Column(name="chipset")
     private String chipset;
 
-    @OneToMany
-    @JoinColumn(name = "image_id")
+    @OneToMany(mappedBy = "motherBoardModel", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private List<ImageModel> images;
 
     @Column(name = "preview")
+    @Lob
     private byte[] preview;
 }
