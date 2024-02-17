@@ -44,7 +44,7 @@ function useSearch() {
         });
         setBlocks(newBlocks);
         clearInterval(timeInterval);
-      }, 450);
+      }, 450); // время через которое мгновенно скрываются блоки в SearchWindow
     } else {
       let i = 0;
       const timeInterval = setInterval(() => {
