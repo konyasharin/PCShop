@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name="Processor")
@@ -39,11 +38,8 @@ public class ProcessorModel {
     @Column(name="heat_dissipation")
     private Integer heat_dissipation;
 
-    @OneToMany(mappedBy = "processorModel", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    private List<ImageModel> images;
-
-    @Column(name = "preview")
+    @Column(name = "image")
     @Lob
-    private byte[] preview;
+    private byte[] image;
 
 }

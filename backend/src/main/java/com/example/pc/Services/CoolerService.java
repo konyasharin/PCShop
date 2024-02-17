@@ -26,7 +26,7 @@ public class CoolerService {
         return coolerRepo.findById(id).orElse(null);
     }
 
-    public CoolerModel saveCooler(CoolerModel coolerModel) {
+    public CoolerModel addCooler(CoolerModel coolerModel) {
         return coolerRepo.save(coolerModel);
     }
 

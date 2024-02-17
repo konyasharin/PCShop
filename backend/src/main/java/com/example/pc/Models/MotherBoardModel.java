@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name="MotherBoard")
@@ -27,6 +26,9 @@ public class MotherBoardModel {
     @Column(name="price")
     private Integer price;
 
+    @Column(name="description")
+    private String description;
+
     @Column(name="country")
     private String country;
 
@@ -39,10 +41,7 @@ public class MotherBoardModel {
     @Column(name="chipset")
     private String chipset;
 
-    @OneToMany(mappedBy = "motherBoardModel", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    private List<ImageModel> images;
-
-    @Column(name = "preview")
+    @Column(name = "image")
     @Lob
-    private byte[] preview;
+    private byte[] image;
 }

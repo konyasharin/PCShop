@@ -26,7 +26,7 @@ public class MotherBoardService {
         return motherBoardRepo.findById(id).orElse(null);
     }
 
-    public MotherBoardModel saveMotherBoard(MotherBoardModel motherBoardModel) {
+    public MotherBoardModel addMotherBoard(MotherBoardModel motherBoardModel) {
         return motherBoardRepo.save(motherBoardModel);
     }
 

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ComputerCaseService {
@@ -25,11 +26,12 @@ public class ComputerCaseService {
         return computerCaseRepo.findById(id).orElse(null);
     }
 
-    public ComputerCaseModel saveComputerCase(ComputerCaseModel computerCaseModel) {
+    public ComputerCaseModel addComputerCase(ComputerCaseModel computerCaseModel) {
         return computerCaseRepo.save(computerCaseModel);
     }
 
     public void deleteComputerCaseById(Long id) {
         computerCaseRepo.deleteById(id);
     }
+
 }

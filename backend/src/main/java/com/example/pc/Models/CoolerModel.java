@@ -27,6 +27,9 @@ public class CoolerModel {
     @Column(name="price")
     private Integer price;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name="country")
     private String country;
 
@@ -36,10 +39,7 @@ public class CoolerModel {
     @Column(name = "power")
     private Integer power;
 
-    @OneToMany(mappedBy = "coolerModel", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    private List<ImageModel> images;
-
-    @Column(name = "preview")
+    @Column(name = "image")
     @Lob
-    private byte[] preview;
+    private byte[] image;
 }

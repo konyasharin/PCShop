@@ -33,10 +33,7 @@ public class SSDModel {
     @Column(name="capacity")
     private Integer capacity;
 
-    @OneToMany(mappedBy = "ssdModel", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    private List<ImageModel> images;
-
-    @Column(name = "preview")
+    @Column(name = "image")
     @Lob
-    private byte[] preview;
+    private byte[] image;
 }

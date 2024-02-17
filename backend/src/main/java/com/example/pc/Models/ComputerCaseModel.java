@@ -24,6 +24,9 @@ public class ComputerCaseModel {
     @Column(name="model")
     private String model;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name="price")
     private Integer price;
 
@@ -42,11 +45,9 @@ public class ComputerCaseModel {
     @Column(name="depth")
     private Integer depth;
 
-    @OneToMany(mappedBy = "computerCaseModel", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    private List<ImageModel> images;
-
     @Lob
-    @Column(name = "preview")
-    private byte[] preview;
+    @Column(name = "image")
+    private byte[] image;
+
 
 }

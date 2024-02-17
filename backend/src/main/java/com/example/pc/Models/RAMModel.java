@@ -39,10 +39,7 @@ public class RAMModel {
     @Column(name="capacity_gb")
     private Integer capacity_gb;
 
-    @OneToMany(mappedBy = "ramModel", fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    private List<ImageModel> images;
-
-    @Column(name = "preview")
+    @Column(name = "image")
     @Lob
-    private byte[] preview;
+    private byte[] image;
 }
