@@ -1,10 +1,10 @@
-import styles from './Inform.module.css';
+import styles from './Main.module.css';
 import Rectangle from '../../assets/Rectangle .png';
 import Container from '../Container/Container.tsx';
 import PC from '../../assets/PC.png';
-import Btn from '../PCBtn/PCBtn.tsx';
+import Btn from '../Btn/Btn.tsx';
 
-function Inform() {
+function Main() {
   return (
     <section className={styles.basis}>
       <Container className={styles.container}>
@@ -30,4 +30,4 @@ function Inform() {
   );
 }
 
-export default Inform;
+export default Main;

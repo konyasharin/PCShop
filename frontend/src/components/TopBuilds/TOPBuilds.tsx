@@ -1,22 +1,20 @@
-import styles from './Builds.module.css';
+import styles from './TOPBuilds.module.css';
 import Container from '../Container/Container.tsx';
 import mainPrize from '../../assets/mainPrize.png';
+import TOPBuildsBlock from './TOPBuildsBlock/TOPBuildsBlock.tsx';
+import PCImg from '../../assets/sysblock.png';
+import goldPrizeImg from '../../assets/gprize.png';
+import silverPrizeImg from '../../assets/sprize.png';
+import bronzePrizeImg from '../../assets/bprize.png';
 
-import Top from './Top.tsx';
-import sysblock from '../../assets/sysblock.png';
-import baccom from '../../assets/baccom.png';
-import gprize from '../../assets/gprize.png';
-import sprize from '../../assets/sprize.png';
-import bprize from '../../assets/bprize.png';
-
-function Builds() {
+function TOPBuilds() {
   return (
     <section className={styles.body}>
       <Container className={styles.container}>
         <h2 className={styles.name}>ТОП сборок</h2>
         <img src={mainPrize} alt={'mainPrize'} className={styles.mainPrize} />
         <div className={styles.blocks}>
-          <Top
+          <TOPBuildsBlock
             className={styles.block}
             description={[
               'RTX 4080 16GB',
@@ -24,12 +22,11 @@ function Builds() {
               '32GB RAM',
               'Водяное охлаждение',
             ]}
-            sysblockSrc={sysblock}
-            prizeSrc={gprize}
+            PCImg={PCImg}
+            prizeImg={goldPrizeImg}
             name={'КОЛИБРИ'}
-            baccomSrc={baccom}
           />
-          <Top
+          <TOPBuildsBlock
             className={styles.block}
             description={[
               'RTX 4080 16GB',
@@ -37,12 +34,11 @@ function Builds() {
               '32GB RAM',
               'Водяное охлаждение',
             ]}
-            sysblockSrc={sysblock}
-            prizeSrc={sprize}
+            PCImg={PCImg}
+            prizeImg={silverPrizeImg}
             name={'КОЛИБРИ'}
-            baccomSrc={baccom}
           />
-          <Top
+          <TOPBuildsBlock
             className={styles.block}
             description={[
               'RTX 4080 16GB',
@@ -50,10 +46,9 @@ function Builds() {
               '32GB RAM',
               'Водяное охлаждение',
             ]}
-            sysblockSrc={sysblock}
-            prizeSrc={bprize}
+            PCImg={PCImg}
+            prizeImg={bronzePrizeImg}
             name={'КОЛИБРИ'}
-            baccomSrc={baccom}
           />
         </div>
       </Container>
@@ -61,4 +56,4 @@ function Builds() {
   );
 }
 
-export default Builds;
+export default TOPBuilds;

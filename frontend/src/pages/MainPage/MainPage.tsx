@@ -1,11 +1,11 @@
-import Inform from '../../components/Main/Inform.tsx';
-import Builds from '../../components/TopBuilds/Builds.tsx';
+import Main from '../../components/Main/Main.tsx';
+import TOPBuilds from '../../components/TopBuilds/TOPBuilds.tsx';
 
 function MainPage() {
   return (
     <>
-      <Inform />
-      <Builds />
+      <Main />
+      <TOPBuilds />
     </>
   );
 }
