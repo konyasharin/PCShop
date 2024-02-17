@@ -25,7 +25,7 @@ function Header() {
           <NavLink to={'/'} className={styles.link}>
             Главная
           </NavLink>
-          <NavLink to={'/'} className={styles.link}>
+          <NavLink to={'/PCBuild'} className={styles.link}>
             Новая сборка
           </NavLink>
           <NavLink to={'/'} className={styles.link}>

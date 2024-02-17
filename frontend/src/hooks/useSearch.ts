@@ -8,7 +8,7 @@ export type TSearchBlock = {
   isActive: boolean;
 };
 
-const blocksData = [
+const blocksData: Array<TSearchBlock> = [
   {
     img: img,
     title: 'Gigabyte RTX 3080',
@@ -33,7 +33,6 @@ function useSearch() {
   const [isActive, setIsActive] = useState(false);
   const [blocks, setBlocks] = useState(blocksData);
   function setIsActiveHandle(newIsActive: boolean) {
-    console.log(newIsActive);
     setIsActive(newIsActive);
     if (!newIsActive) {
       const timeInterval = setInterval(() => {
@@ -45,7 +44,7 @@ function useSearch() {
         });
         setBlocks(newBlocks);
         clearInterval(timeInterval);
-      }, 500);
+      }, 450); // время через которое мгновенно скрываются блоки в SearchWindow
     } else {
       let i = 0;
       const timeInterval = setInterval(() => {
