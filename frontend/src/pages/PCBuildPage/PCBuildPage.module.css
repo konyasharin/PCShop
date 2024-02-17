@@ -6,6 +6,7 @@
 }
 
 .scaleInner{
+    transition: .5s all;
     height: 100%;
     background-color: #F7A400;
     transform: skew(30deg) translateX(-3px);
