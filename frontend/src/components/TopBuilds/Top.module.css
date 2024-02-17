@@ -1,5 +1,7 @@
 .base {
     display: flex;
+    border-radius: 15px 0 0 15px;
+    overflow: hidden;
 }
 
 .bacall {
@@ -26,10 +28,12 @@
 }
 
 .description {
+    display: flex;
     margin-top: 23px;
     font-size: 24px;
     line-height: 24px;
     letter-spacing: 0.44px;
+    flex-direction: column;
 }
 
 .base:hover {
@@ -38,4 +42,23 @@
 
 .base:hover .description, .base:hover .name {
     color: white;
+}
+
+.base:hover .color {
+    opacity: .4;
+}
+
+.color {
+    background-color: #0000FF66;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+}
+
+.wrapper {
+    position: relative;
+    height: 250px;
 }

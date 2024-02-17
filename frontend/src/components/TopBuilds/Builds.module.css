@@ -24,10 +24,6 @@
     flex-direction: column ;
 }
 
-.Top2 {
-    margin-top: 40px;
-}
-
-.Top3 {
-    margin-top: 40px;
+.block {
+    margin-bottom: 40px;
 }
