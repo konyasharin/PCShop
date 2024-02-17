@@ -1,0 +1,33 @@
+.body {
+    margin-top: 68px;
+}
+
+.container {
+    position: relative;
+}
+
+.name {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 36px;
+    line-height: 41px;
+}
+
+.mainPrize {
+    display: block;
+    margin: 16px auto 0;
+}
+
+.blocks {
+    margin-top: 65px;
+    display: flex;
+    flex-direction: column ;
+}
+
+.Top2 {
+    margin-top: 40px;
+}
+
+.Top3 {
+    margin-top: 40px;
+}

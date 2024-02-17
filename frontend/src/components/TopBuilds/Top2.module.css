@@ -1,0 +1,41 @@
+.base {
+    display: flex;
+}
+
+.bacall {
+    background: linear-gradient(90.00deg, rgb(108, 108, 255),rgba(108, 108, 255, 0.7) 23.948%,rgba(108, 108, 255, 0.7) 23.958%,rgba(108, 108, 255, 0.3) 51.042%,rgba(108, 108, 255, 0.15) 73.958%,rgba(108, 108, 255, 0.05) 85.938%,rgba(0, 255, 255, 0) 100%,rgba(0, 255, 255, 0.05) 100%);
+    position: absolute;
+    right: 0;
+    z-index: -1;
+    width: 826px;
+    height: 250px;
+}
+
+.baccom {
+    position: absolute;
+    left: 0;
+}
+
+.mainText {
+    margin-top: 18px;
+    margin-left: 20px;
+}
+
+.par {
+    display: flex;
+}
+
+.description {
+    margin-top: 23px;
+    font-size: 24px;
+    line-height: 24px;
+    letter-spacing: 0.44px;
+}
+
+.base:hover {
+    background:  linear-gradient(90deg, #0000FF 0%, rgba(0, 0, 255, 0) 100%);
+}
+
+.base:hover .description, .base:hover .name {
+    color: white;
+}
