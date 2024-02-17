@@ -1,6 +1,7 @@
 import Header from '../../components/Header/Header.tsx';
 import Inform from '../../components/Main/Inform.tsx';
 import styles from './MainPage.module.css';
+import Like from '../../components/Like/Like.tsx';
 
 function MainPage() {
   return (
@@ -11,6 +12,7 @@ function MainPage() {
       </div>
       <Header />
       <Inform />
+      <Like />
     </>
   );
 }
