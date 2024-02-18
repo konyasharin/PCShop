@@ -24,21 +24,6 @@ public class ComputerCaseAPI {
     @Autowired
     private ComputerCaseService computerCaseService;
 
-    @Autowired
-    private PowerUnitService powerUnitService;
-
-    @Autowired
-    private ProcessorService processorService;
-
-    @Autowired
-    private RAMService ramService;
-
-    @Autowired
-    private SSDService ssdService;
-
-    @Autowired
-    private VideoCardService videoCardService;
-
     @PostMapping("/createComponent/ComputerCase")
     public ResponseEntity<Map<String, Object>> createComputerCase(@RequestParam("brand") String brand,
                                                                   @RequestParam("model") String model,

@@ -27,6 +27,9 @@ public class RAMModel {
     @Column(name="price")
     private Integer price;
 
+    @Column(name="description")
+    private String description;
+
     @Column(name="country")
     private String country;
 
