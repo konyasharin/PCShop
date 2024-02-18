@@ -19,3 +19,16 @@
     bottom: calc(-232px - 10px);
     padding: 10px;
 }
+
+.loading{
+    transition: .5s all;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 1;
+}
+
+.loadingDisable{
+    opacity: 0;
+}

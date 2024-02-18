@@ -1,7 +1,7 @@
 import styles from './SearchWindow.module.css';
 import SearchWindowBlock from '../SearchWindowBlock/SearchWindowBlock.tsx';
 import React, { ReactNode } from 'react';
-import { TSearchBlock } from '../../../../hooks/useSearch.ts';
+import { TSearchBlock } from '../../../../hooks/useWindowSearch.ts';
 
 type SearchWindowProps = {
   isActive: boolean;

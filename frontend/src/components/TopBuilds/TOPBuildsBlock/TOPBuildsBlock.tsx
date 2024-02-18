@@ -18,9 +18,7 @@ function TOPBuildsBlock(props: TopProps) {
       <div className={styles.backgroundLight}></div>
       <div className={styles.backgroundDark}></div>
       <div className={styles.wrapper}>
-        <div className={styles.like}>
-          <Like />
-        </div>
+        <Like className={styles.like} />
         <div className={styles.wrapperUpColor}></div>
         <img src={props.PCImg} alt={'sys block'} className={styles.sysblock} />
       </div>

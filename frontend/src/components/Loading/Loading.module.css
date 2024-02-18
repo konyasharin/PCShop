@@ -1,0 +1,20 @@
+.loading{
+    position: fixed;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, .6);
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+}
+
+.loadingDisable{
+    display: none;
+}
+
+.loading img{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
