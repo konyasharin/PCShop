@@ -40,6 +40,11 @@ public class RAMAPI {
 
         try{
 
+            if (image.isEmpty()) {
+                logger.warn("No image provided");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
             RAMModel ramModel = new RAMModel();
             ramModel.setBrand(brand);
             ramModel.setModel(model);
@@ -51,18 +56,14 @@ public class RAMAPI {
             ramModel.setCapacity_gb(capacity_db);
             ramModel.setImage(image.getBytes());
 
-            Map<String, Object> RamResponse = new HashMap<>();
-            RamResponse.put("brand", brand);
-            RamResponse.put("model", model);
-            RamResponse.put("description", description);
-            RamResponse.put("price", price);
-            RamResponse.put("country", country);
-            RamResponse.put("frequency", frequency);
-            RamResponse.put("timings", timings);
-            RamResponse.put("capacity_db", capacity_db);
-            RamResponse.put("image", image.getBytes());
+            RAMModel savedRAM = ramService.addRAM(ramModel);
 
-            logger.info("Ram created successfully: {}", RamResponse);
+            Map<String, Object> RamResponse = new HashMap<>();
+            RamResponse.put("type", "RAM");
+            RamResponse.put("id", savedRAM.getId());
+            RamResponse.put("ComponentData", savedRAM);
+
+            logger.info("Ram created successfully: {}", savedRAM);
 
             return new ResponseEntity<>(RamResponse, HttpStatus.CREATED);
 

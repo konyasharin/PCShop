@@ -38,6 +38,11 @@ public class PowerUnitAPI {
 
         try{
 
+            if (image.isEmpty()) {
+                logger.warn("No image provided");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
             PowerUnitModel powerUnitModel = new PowerUnitModel();
             powerUnitModel.setBrand(brand);
             powerUnitModel.setModel(model);
@@ -48,17 +53,14 @@ public class PowerUnitAPI {
             powerUnitModel.setVoltage(voltage);
             powerUnitModel.setImage(image.getBytes());
 
-            Map<String, Object> PowerUnitResponse = new HashMap<>();
-            PowerUnitResponse.put("brand", brand);
-            PowerUnitResponse.put("model", model);
-            PowerUnitResponse.put("description", description);
-            PowerUnitResponse.put("price", price);
-            PowerUnitResponse.put("country", country);
-            PowerUnitResponse.put("battery", battery);
-            PowerUnitResponse.put("voltage", voltage);
-            PowerUnitResponse.put("image", image.getBytes());
+            PowerUnitModel savedPowerUnit = powerUnitService.addPowerUnit(powerUnitModel);
 
-            logger.info("PowerUnit created successfully: {}", PowerUnitResponse);
+            Map<String, Object> PowerUnitResponse = new HashMap<>();
+            PowerUnitResponse.put("type", "PowerUnit");
+            PowerUnitResponse.put("id", savedPowerUnit.getId());
+            PowerUnitResponse.put("ComponentData", savedPowerUnit);
+
+            logger.info("PowerUnit created successfully: {}", savedPowerUnit);
 
             return new ResponseEntity<>(PowerUnitResponse, HttpStatus.CREATED);
 

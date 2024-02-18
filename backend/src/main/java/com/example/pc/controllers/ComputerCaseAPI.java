@@ -38,6 +38,11 @@ public class ComputerCaseAPI {
 
         try{
 
+            if (image.isEmpty()) {
+                logger.warn("No image provided");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
             ComputerCaseModel computerCaseModel = new ComputerCaseModel();
             computerCaseModel.setBrand(brand);
             computerCaseModel.setModel(model);
@@ -50,19 +55,14 @@ public class ComputerCaseAPI {
             computerCaseModel.setDepth(depth);
             computerCaseModel.setImage(image.getBytes());
 
-            Map<String, Object> ComputerCaseResponse = new HashMap<>();
-            ComputerCaseResponse.put("brand", brand);
-            ComputerCaseResponse.put("model", model);
-            ComputerCaseResponse.put("description", description);
-            ComputerCaseResponse.put("price", price);
-            ComputerCaseResponse.put("country", country);
-            ComputerCaseResponse.put("material", material);
-            ComputerCaseResponse.put("width", width);
-            ComputerCaseResponse.put("height", height);
-            ComputerCaseResponse.put("depth", depth);
-            ComputerCaseResponse.put("image", image.getBytes());
+            ComputerCaseModel savedComputerCase = computerCaseService.addComputerCase(computerCaseModel);
 
-            logger.info("ComputerCase created successfully: {}", ComputerCaseResponse);
+            Map<String, Object> ComputerCaseResponse = new HashMap<>();
+            ComputerCaseResponse.put("type", "ComputerCase");
+            ComputerCaseResponse.put("id", savedComputerCase.getId());
+            ComputerCaseResponse.put("ComponentData", savedComputerCase);
+
+            logger.info("ComputerCase created successfully: {}", savedComputerCase);
 
             return new ResponseEntity<>(ComputerCaseResponse, HttpStatus.CREATED);
 

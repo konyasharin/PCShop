@@ -37,6 +37,11 @@ public class SSDAPI {
 
         try{
 
+            if (image.isEmpty()) {
+                logger.warn("No image provided");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
             SSDModel ssdModel = new SSDModel();
             ssdModel.setBrand(brand);
             ssdModel.setModel(model);
@@ -46,16 +51,14 @@ public class SSDAPI {
             ssdModel.setCapacity(capacity);
             ssdModel.setImage(image.getBytes());
 
-            Map<String, Object> SsdResponse = new HashMap<>();
-            SsdResponse.put("brand", brand);
-            SsdResponse.put("model", model);
-            SsdResponse.put("description", description);
-            SsdResponse.put("price", price);
-            SsdResponse.put("country", country);
-            SsdResponse.put("capacity", capacity);
-            SsdResponse.put("image", image.getBytes());
+            SSDModel savedSSD = ssdService.addSSD(ssdModel);
 
-            logger.info("Ssd created successfully: {}", SsdResponse);
+            Map<String, Object> SsdResponse = new HashMap<>();
+            SsdResponse.put("type", "SSD");
+            SsdResponse.put("id", savedSSD.getId());
+            SsdResponse.put("ComponentData", savedSSD);
+
+            logger.info("Ssd created successfully: {}", savedSSD);
 
             return new ResponseEntity<>(SsdResponse, HttpStatus.CREATED);
 

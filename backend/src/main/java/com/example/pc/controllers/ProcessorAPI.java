@@ -39,6 +39,11 @@ public class ProcessorAPI {
 
         try {
 
+            if (image.isEmpty()) {
+                logger.warn("No image provided");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
             ProcessorModel processorModel = new ProcessorModel();
             processorModel.setBrand(brand);
             processorModel.setModel(model);
@@ -50,16 +55,12 @@ public class ProcessorAPI {
             processorModel.setHeat_dissipation(heat_dissipation);
             processorModel.setImage(image.getBytes());
 
+            ProcessorModel savedProcessorModel = processorService.addProcessor(processorModel);
+
             Map<String, Object> ProcessorResponse = new HashMap<>();
-            ProcessorResponse.put("brand", brand);
-            ProcessorResponse.put("model", model);
-            ProcessorResponse.put("description", description);
-            ProcessorResponse.put("price", price);
-            ProcessorResponse.put("country", country);
-            ProcessorResponse.put("clock_frequency", clock_frequency);
-            ProcessorResponse.put("turbo_frequency", turbo_frequency);
-            ProcessorResponse.put("heat_dissipation", heat_dissipation);
-            ProcessorResponse.put("image", image.getBytes());
+            ProcessorResponse.put("type", "Processor");
+            ProcessorResponse.put("id", savedProcessorModel.getId());
+            ProcessorResponse.put("ComponentData", savedProcessorModel);
 
             logger.info("Processor created successfully: {}", ProcessorResponse);
 

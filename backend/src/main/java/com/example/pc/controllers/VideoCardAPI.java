@@ -38,6 +38,11 @@ public class VideoCardAPI {
 
         try{
 
+            if (image.isEmpty()) {
+                logger.warn("No image provided");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
             VideoCardModel videoCardModel = new VideoCardModel();
             videoCardModel.setBrand(brand);
             videoCardModel.setModel(model);
@@ -48,19 +53,16 @@ public class VideoCardAPI {
             videoCardModel.setMemory_type(memory_type);
             videoCardModel.setImage(image.getBytes());
 
-            Map<String, Object> MotherBoardResponse = new HashMap<>();
-            MotherBoardResponse.put("brand", brand);
-            MotherBoardResponse.put("model", model);
-            MotherBoardResponse.put("description", description);
-            MotherBoardResponse.put("price", price);
-            MotherBoardResponse.put("country", country);
-            MotherBoardResponse.put("memory_db", memory_db);
-            MotherBoardResponse.put("momory_type", memory_type);
-            MotherBoardResponse.put("image", image.getBytes());
+            VideoCardModel savedVideoCard = videoCardService.addVideoCard(videoCardModel);
 
-            logger.info("MotherBoard created successfully: {}", MotherBoardResponse);
+            Map<String, Object> VideoCardResponse = new HashMap<>();
+            VideoCardResponse.put("type", "VideoCard");
+            VideoCardResponse.put("id", savedVideoCard.getId());
+            VideoCardResponse.put("ComponentData", savedVideoCard);
 
-            return new ResponseEntity<>(MotherBoardResponse, HttpStatus.CREATED);
+            logger.info("VideoCard created successfully: {}", savedVideoCard);
+
+            return new ResponseEntity<>(VideoCardResponse, HttpStatus.CREATED);
 
         }catch(IOException e){
             e.printStackTrace();

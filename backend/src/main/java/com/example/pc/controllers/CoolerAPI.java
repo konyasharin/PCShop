@@ -38,6 +38,11 @@ public class CoolerAPI {
 
         try{
 
+            if (image.isEmpty()) {
+                logger.warn("No image provided");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
             CoolerModel coolerModel = new CoolerModel();
             coolerModel.setBrand(brand);
             coolerModel.setModel(model);
@@ -48,17 +53,14 @@ public class CoolerAPI {
             coolerModel.setPower(power);
             coolerModel.setImage(image.getBytes());
 
-            Map<String, Object> CoolerResponse = new HashMap<>();
-            CoolerResponse.put("brand", brand);
-            CoolerResponse.put("model", model);
-            CoolerResponse.put("description", description);
-            CoolerResponse.put("price", price);
-            CoolerResponse.put("country", country);
-            CoolerResponse.put("speed", speed);
-            CoolerResponse.put("power", power);
-            CoolerResponse.put("image", image.getBytes());
+            CoolerModel savedCooler = coolerService.addCooler(coolerModel);
 
-            logger.info("Cooler created successfully: {}", CoolerResponse);
+            Map<String, Object> CoolerResponse = new HashMap<>();
+            CoolerResponse.put("type", "Cooler");
+            CoolerResponse.put("id", savedCooler.getId());
+            CoolerResponse.put("ComponentData", savedCooler);
+
+            logger.info("Cooler created successfully: {}", savedCooler);
 
             return new ResponseEntity<>(CoolerResponse, HttpStatus.CREATED);
 

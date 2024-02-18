@@ -39,6 +39,11 @@ public class MotherBoardAPI {
 
         try{
 
+            if (image.isEmpty()) {
+                logger.warn("No image provided");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
             MotherBoardModel motherBoardModel = new MotherBoardModel();
             motherBoardModel.setBrand(brand);
             motherBoardModel.setModel(model);
@@ -50,18 +55,15 @@ public class MotherBoardAPI {
             motherBoardModel.setSocket(socket);
             motherBoardModel.setImage(image.getBytes());
 
-            Map<String, Object> MotherBoardResponse = new HashMap<>();
-            MotherBoardResponse.put("brand", brand);
-            MotherBoardResponse.put("model", model);
-            MotherBoardResponse.put("description", description);
-            MotherBoardResponse.put("price", price);
-            MotherBoardResponse.put("country", country);
-            MotherBoardResponse.put("frequency", frequency);
-            MotherBoardResponse.put("chipset", chipset);
-            MotherBoardResponse.put("socket", socket);
-            MotherBoardResponse.put("image", image.getBytes());
+            MotherBoardModel savedMotherBoard = motherBoardService.addMotherBoard(motherBoardModel);
 
-            logger.info("MotherBoard created successfully: {}", MotherBoardResponse);
+            Map<String, Object> MotherBoardResponse = new HashMap<>();
+            MotherBoardResponse.put("type", "MotherBoard");
+            MotherBoardResponse.put("id", savedMotherBoard.getId());
+            MotherBoardResponse.put("ComponentData", savedMotherBoard);
+
+
+            logger.info("MotherBoard created successfully: {}", savedMotherBoard);
 
             return new ResponseEntity<>(MotherBoardResponse, HttpStatus.CREATED);
 
@@ -72,8 +74,5 @@ public class MotherBoardAPI {
 
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
     }
-
 }
