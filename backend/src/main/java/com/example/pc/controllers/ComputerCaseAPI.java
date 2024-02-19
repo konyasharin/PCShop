@@ -2,21 +2,19 @@ package com.example.pc.controllers;
 
 import com.example.pc.Models.ComputerCaseModel;
 import com.example.pc.Services.*;
+import com.example.pc.dto.ComputerCaseDto;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api")
+@AllArgsConstructor
 public class ComputerCaseAPI {
 
     private static final Logger logger = LoggerFactory.getLogger(ComputerCaseAPI.class);
@@ -25,54 +23,19 @@ public class ComputerCaseAPI {
     private ComputerCaseService computerCaseService;
 
     @PostMapping("/createComponent/ComputerCase")
-    public ResponseEntity<Map<String, Object>> createComputerCase(@RequestParam("brand") String brand,
-                                                                  @RequestParam("model") String model,
-                                                                  @RequestParam("description") String description,
-                                                                  @RequestParam("price") Integer price,
-                                                                  @RequestParam("country") String country,
-                                                                  @RequestParam("material") String material,
-                                                                  @RequestParam("width") Integer width,
-                                                                  @RequestParam("height") Integer height,
-                                                                  @RequestParam("depth") Integer depth,
-                                                                  @RequestParam("image") MultipartFile image){
+    public ResponseEntity<ComputerCaseModel> createComputerCase(@RequestBody ComputerCaseDto computerCaseDto){
 
-        try{
+        MultipartFile image = computerCaseDto.getImage();
 
-            if (image.isEmpty()) {
-                logger.warn("No image provided");
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-
-            ComputerCaseModel computerCaseModel = new ComputerCaseModel();
-            computerCaseModel.setBrand(brand);
-            computerCaseModel.setModel(model);
-            computerCaseModel.setDescription(description);
-            computerCaseModel.setPrice(price);
-            computerCaseModel.setCountry(country);
-            computerCaseModel.setMaterial(material);
-            computerCaseModel.setWidth(width);
-            computerCaseModel.setHeight(height);
-            computerCaseModel.setDepth(depth);
-            computerCaseModel.setImage(image.getBytes());
-
-            ComputerCaseModel savedComputerCase = computerCaseService.addComputerCase(computerCaseModel);
-
-            Map<String, Object> ComputerCaseResponse = new HashMap<>();
-            ComputerCaseResponse.put("type", "ComputerCase");
-            ComputerCaseResponse.put("id", savedComputerCase.getId());
-            ComputerCaseResponse.put("ComponentData", savedComputerCase);
-
-            logger.info("ComputerCase created successfully: {}", savedComputerCase);
-
-            return new ResponseEntity<>(ComputerCaseResponse, HttpStatus.CREATED);
-
-        }catch(IOException e){
-            e.printStackTrace();
-
-            logger.error("Failed to create ComputerCase", e);
-
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        if (image == null || image.isEmpty()) {
+            logger.warn("No image provided");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        logger.info("ComputerCase created successfully: {}", computerCaseDto);
+
+        return new ResponseEntity<>(computerCaseService.createComputerCase(computerCaseDto),
+                HttpStatus.CREATED);
 
     }
 

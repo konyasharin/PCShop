@@ -1,6 +1,7 @@
 package com.example.pc.Models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Table(name="ComputerCase")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ComputerCaseModel {
@@ -48,6 +50,5 @@ public class ComputerCaseModel {
     @Lob
     @Column(name = "image")
     private byte[] image;
-
 
 }
