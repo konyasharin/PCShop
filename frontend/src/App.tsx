@@ -4,6 +4,7 @@ import MainPage from './pages/MainPage/MainPage.tsx';
 import Header from './components/Header/Header.tsx';
 import PCBuildPage from './pages/PCBuildPage/PCBuildPage.tsx';
 import Loading from './components/Loading/Loading.tsx';
+import Footer from './components/Footer/Footer.tsx';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path={'/'} element={<MainPage />} />
         <Route path={'/PCBuild'} element={<PCBuildPage />} />
       </Routes>
+      <Footer />
     </>
   );
 }
