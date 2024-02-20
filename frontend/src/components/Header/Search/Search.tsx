@@ -1,28 +1,25 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './Search.module.css';
 import searchImg from '../../../assets/search.svg';
 import search from '../../../api/search.ts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from '../../../store/slices/loadingSlice.ts';
-import { TSearchBlock } from '../../../hooks/useWindowSearch.ts';
+import { RootState } from '../../../store/store.ts';
+import {
+  setActivateBlock,
+  setBlocks,
+  setSearchWindowIsActive,
+} from '../../../store/slices/windowSearchSlice.ts';
 
-type SearchProps = {
-  setIsActive: (newIsActive: boolean) => void;
-  searchRef: React.MutableRefObject<HTMLDivElement | null>;
-  searchBtnIsActive: boolean;
-  setBlocks: (blocks: TSearchBlock[]) => void;
-};
-
-const testState: { data: TSearchBlock[] } = {
-  data: [],
-};
-
-const Search: React.FC<SearchProps> = props => {
+function Search() {
   const [searchString, setSearchString] = useState('');
   const dispatch = useDispatch();
+  const { searchBtnIsActive } = useSelector(
+    (state: RootState) => state.windowSearch,
+  );
 
   return (
-    <div className={styles.search} ref={props.searchRef}>
+    <div className={styles.search}>
       <input
         onChange={e => setSearchString(e.target.value)}
         value={searchString}
@@ -34,20 +31,27 @@ const Search: React.FC<SearchProps> = props => {
         alt="search"
         className={styles.searchBtn}
         onClick={() => {
-          if (props.searchBtnIsActive) {
-            props.setIsActive(true);
+          if (searchBtnIsActive) {
+            dispatch(setSearchWindowIsActive(true));
             dispatch(setIsLoading(true));
             search().then(data => {
               console.log('ставим блоки');
-              testState.data = data;
-              props.setBlocks(testState.data);
+              dispatch(setBlocks(data));
               dispatch(setIsLoading(false));
+              for (let i = 0; i < data.length; i++) {
+                setTimeout(
+                  () => {
+                    dispatch(setActivateBlock({ index: i, newIsActive: true }));
+                  },
+                  500 * (i + 1),
+                );
+              }
             });
           }
         }}
       />
     </div>
   );
-};
+}
 
 export default Search;

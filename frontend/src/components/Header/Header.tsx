@@ -5,18 +5,8 @@ import Search from './Search/Search.tsx';
 import MainBtn from '../MainBtn/MainBtn.tsx';
 import styles from './Header.module.css';
 import SearchWindow from './Search/SearchWindow/SearchWindow.tsx';
-import useWindowSearch from '../../hooks/useWindowSearch.ts';
 
 function Header() {
-  const {
-    searchWindowIsActive,
-    setIsActiveHandle,
-    blocks,
-    searchWindowRef,
-    searchRef,
-    searchBtnIsActive,
-    setBlocks,
-  } = useWindowSearch();
   return (
     <header className={styles.header}>
       <Container className={styles.container}>
@@ -35,18 +25,9 @@ function Header() {
             Комплектующие
           </NavLink>
         </div>
-        <Search
-          setIsActive={setIsActiveHandle}
-          searchRef={searchRef}
-          searchBtnIsActive={searchBtnIsActive}
-          setBlocks={setBlocks}
-        />
+        <Search />
         <MainBtn className={styles.btn}>авторизация</MainBtn>
-        <SearchWindow
-          isActive={searchWindowIsActive}
-          blocks={blocks}
-          searchWindowRef={searchWindowRef}
-        />
+        <SearchWindow />
       </Container>
     </header>
   );
