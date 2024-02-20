@@ -9,7 +9,6 @@ function SearchWindow() {
   const { blocks, searchWindowIsActive } = useSelector(
     (state: RootState) => state.windowSearch,
   );
-  console.log(blocks);
   const isLoading = useSelector((state: RootState) => state.loading.isLoading);
   const searchWindowRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();

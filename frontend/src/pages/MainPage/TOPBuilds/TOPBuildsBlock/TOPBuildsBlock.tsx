@@ -1,5 +1,5 @@
 import styles from './TOPBuildsBlock.module.css';
-import Like from '../../Like/Like.tsx';
+import Like from 'components/Like/Like.tsx';
 
 type TopProps = {
   PCImg: string;

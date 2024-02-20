@@ -1,5 +1,5 @@
 import Main from '../../components/Main/Main.tsx';
-import TOPBuilds from '../../components/TopBuilds/TOPBuilds.tsx';
+import TOPBuilds from './TOPBuilds/TOPBuilds.tsx';
 
 function MainPage() {
   return (
