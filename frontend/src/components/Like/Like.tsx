@@ -6,6 +6,7 @@ import React from 'react';
 
 type LikeProps = {
   className?: string;
+  onClick?: () => void;
 };
 
 const Like: React.FC<LikeProps> = props => {
@@ -15,7 +16,10 @@ const Like: React.FC<LikeProps> = props => {
       <img
         src={isActive ? heartActive : heartDisabled}
         alt="like"
-        onClick={() => setIsActiveHandle(!isActive)}
+        onClick={() => {
+          if (props.onClick) props.onClick();
+          setIsActiveHandle(!isActive);
+        }}
       />
       <span>{likes}</span>
     </div>
