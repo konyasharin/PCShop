@@ -8,7 +8,7 @@ import RAM from 'assets/ram-white-icon.png';
 import cooling from 'assets/cooling-white-icon.png';
 import Like from 'components/Like/Like.tsx';
 
-const LastBuild: React.FC<TBuildPreview> = props => {
+const LastBuild: React.FC<TBuildPreview & { className?: string }> = props => {
   return (
     <div className={createClassNames([props.className, styles.block])}>
       <div className={styles.mainImg}>
