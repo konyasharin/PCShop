@@ -2,7 +2,9 @@ import styles from './TOPBuildsBlock.module.css';
 import Like from 'components/Like/Like.tsx';
 import TBuildPreview from 'types/TBuildPreview.ts';
 
-function TOPBuildsBlock(props: TBuildPreview & { prizeImg: string }) {
+function TOPBuildsBlock(
+  props: TBuildPreview & { prizeImg: string; className?: string },
+) {
   return (
     <div className={`${styles.base} ${props.className}`}>
       <div className={styles.backgroundLight}></div>

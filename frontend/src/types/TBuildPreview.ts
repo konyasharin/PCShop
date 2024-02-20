@@ -1,6 +1,5 @@
 type TBuildPreview = {
   img: string;
-  className?: string;
   name: string;
   description: {
     videoCard: string;
