@@ -1,11 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export type TSearchBlock = {
-  img: string;
-  title: string;
-  text: string;
-  isActive: boolean;
-};
+import TSearchBlock from 'types/TSearchBlock.ts';
 
 type TWindowSearchState = {
   searchWindowIsActive: boolean;

@@ -1,0 +1,108 @@
+.block{
+    width: 367px;
+    cursor: pointer;
+}
+
+.mainImg img{
+    display: block;
+}
+
+.mainImg{
+    border-radius: 50px 50px 0 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.mainImgBackground{
+    transition: .5s all;
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-color: #6C6CFF;
+    opacity: .2;
+}
+
+.downBlock {
+    height: 609px;
+    padding: 30px 21px 0 21px;
+    position: relative;
+}
+
+.downBlockDark, .downBlockLight{
+    transition: .5s all;
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+
+.downBlockLight{
+    background: linear-gradient(180.00deg, rgb(108, 108, 255) 0%,rgba(108, 108, 255, 0.7) 23.949%,rgba(108, 108, 255, 0.7) 23.959%,rgba(108, 108, 255, 0.3) 51.042%,rgba(108, 108, 255, 0.15) 73.958%,rgba(108, 108, 255, 0.05) 85.938%,rgba(0, 255, 255, 0) 100%,rgba(0, 255, 255, 0.05) 100%);
+    opacity: 1;
+}
+
+.downBlockDark{
+    background: linear-gradient(180.00deg, rgb(0, 0, 255) 0%,rgba(0, 0, 255, 0.05) 77.604%,rgba(0, 0, 255, 0) 100%);
+    opacity: 0;
+}
+
+.downBlock h3{
+    transition: .5s all;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.descriptionBlock{
+    transition: .5s all;
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.descriptionBlock img{
+    margin-right: 32px;
+}
+
+.like{
+    transition: .5s all;
+    position: absolute;
+    z-index: 2;
+    top: 18px;
+    left: 18px;
+    opacity: 0;
+}
+
+.block .downBlock img{
+    transition: .5s all;
+    filter: brightness(0%);
+}
+
+.block:hover .downBlock img{
+    filter: brightness(100%);
+}
+
+.block:hover .mainImgBackground{
+    background-color: #0000FF;
+    opacity: .7;
+}
+
+.block:hover .downBlockLight{
+    opacity: 0;
+}
+
+.block:hover .downBlockDark{
+    opacity: 1;
+}
+
+.block:hover .descriptionBlock, .block:hover h3{
+    color: #ffffff;
+}
+
+.block:hover .like{
+    opacity: 1;
+}

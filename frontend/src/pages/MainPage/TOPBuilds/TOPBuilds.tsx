@@ -16,37 +16,37 @@ function TOPBuilds() {
         <div className={styles.blocks}>
           <TOPBuildsBlock
             className={styles.block}
-            description={[
-              'RTX 4080 16GB',
-              'Ryzen 7 4600',
-              '32GB RAM',
-              'Водяное охлаждение',
-            ]}
-            PCImg={PCImg}
+            description={{
+              videoCard: 'RTX 4080 16GB',
+              processor: 'Ryzen 7 4600',
+              RAM: '32GB RAM',
+              cooling: 'Водяное охлаждение',
+            }}
+            img={PCImg}
             prizeImg={goldPrizeImg}
             name={'КОЛИБРИ'}
           />
           <TOPBuildsBlock
             className={styles.block}
-            description={[
-              'RTX 4080 16GB',
-              'Ryzen 7 4600',
-              '32GB RAM',
-              'Водяное охлаждение',
-            ]}
-            PCImg={PCImg}
+            description={{
+              videoCard: 'RTX 4080 16GB',
+              processor: 'Ryzen 7 4600',
+              RAM: '32GB RAM',
+              cooling: 'Водяное охлаждение',
+            }}
+            img={PCImg}
             prizeImg={silverPrizeImg}
             name={'КОЛИБРИ'}
           />
           <TOPBuildsBlock
             className={styles.block}
-            description={[
-              'RTX 4080 16GB',
-              'Ryzen 7 4600',
-              '32GB RAM',
-              'Водяное охлаждение',
-            ]}
-            PCImg={PCImg}
+            description={{
+              videoCard: 'RTX 4080 16GB',
+              processor: 'Ryzen 7 4600',
+              RAM: '32GB RAM',
+              cooling: 'Водяное охлаждение',
+            }}
+            img={PCImg}
             prizeImg={bronzePrizeImg}
             name={'КОЛИБРИ'}
           />

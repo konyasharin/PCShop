@@ -1,18 +1,8 @@
 import styles from './TOPBuildsBlock.module.css';
 import Like from 'components/Like/Like.tsx';
+import TBuildPreview from 'types/TBuildPreview.ts';
 
-type TopProps = {
-  PCImg: string;
-  className?: string;
-  prizeImg: string;
-  name: string;
-  description: string[];
-};
-
-function TOPBuildsBlock(props: TopProps) {
-  const description = props.description.map((item, i) => {
-    return <span key={i}>{item}</span>;
-  });
+function TOPBuildsBlock(props: TBuildPreview & { prizeImg: string }) {
   return (
     <div className={`${styles.base} ${props.className}`}>
       <div className={styles.backgroundLight}></div>
@@ -23,14 +13,19 @@ function TOPBuildsBlock(props: TopProps) {
           onClick={() => console.log('отключаем')}
         />
         <div className={styles.wrapperUpColor}></div>
-        <img src={props.PCImg} alt={'sys block'} className={styles.sysblock} />
+        <img src={props.img} alt={'sys block'} className={styles.sysblock} />
       </div>
       <div className={styles.mainText}>
         <div className={styles.title}>
           <h3 className={styles.name}>{props.name}</h3>
           <img src={props.prizeImg} alt={'prize'} className={styles.gprize} />
         </div>
-        <div className={styles.description}>{description}</div>
+        <div className={styles.description}>
+          <span>{props.description.videoCard}</span>
+          <span>{props.description.processor}</span>
+          <span>{props.description.RAM}</span>
+          <span>{props.description.cooling}</span>
+        </div>
       </div>
     </div>
   );

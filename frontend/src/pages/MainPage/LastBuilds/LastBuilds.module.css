@@ -1,0 +1,35 @@
+.blocks{
+    display: flex;
+    justify-content: space-between;
+}
+
+.arrows{
+    display: flex;
+    align-items: center;
+}
+
+.arrows button{
+    border: none;
+    background-color: inherit;
+    cursor: pointer;
+}
+
+.arrows button:last-child img{
+    rotate: 180deg;
+}
+
+.arrows img{
+    display: block;
+}
+
+.arrows button:last-child{
+    margin-left: 30px;
+}
+
+.title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    margin-top: 100px;
+}
