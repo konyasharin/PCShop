@@ -2,6 +2,7 @@ import styles from './Scale.module.css';
 import lowSmile from 'assets/smile-low.png';
 import middleSmile from 'assets/smile-middle.png';
 import highSmile from 'assets/smile-high.png';
+import React from 'react';
 
 enum colors {
   red = '#FF0B0B',
@@ -9,7 +10,7 @@ enum colors {
   green = '#16D840',
 }
 
-function Scale(props: { percents: number }) {
+const Scale: React.FC<{ percents: number }> = props => {
   let colorScaleInner = '';
   let smileImg;
   if (props.percents <= 50) {
@@ -34,6 +35,6 @@ function Scale(props: { percents: number }) {
       ></div>
     </div>
   );
-}
+};
 
 export default Scale;
