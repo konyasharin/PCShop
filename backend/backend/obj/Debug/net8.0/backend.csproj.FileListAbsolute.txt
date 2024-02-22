@@ -32,3 +32,45 @@ C:\Users\kolec\WebstormProjects\pcshop\backend\backend\obj\Debug\net8.0\refint\b
 C:\Users\kolec\WebstormProjects\pcshop\backend\backend\obj\Debug\net8.0\backend.pdb
 C:\Users\kolec\WebstormProjects\pcshop\backend\backend\obj\Debug\net8.0\backend.genruntimeconfig.cache
 C:\Users\kolec\WebstormProjects\pcshop\backend\backend\obj\Debug\net8.0\ref\backend.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\appsettings.Development.json
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\appsettings.json
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\backend.exe
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\backend.deps.json
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\backend.runtimeconfig.json
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\backend.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\backend.pdb
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Microsoft.OpenApi.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.csproj.AssemblyReference.cache
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.GeneratedMSBuildEditorConfig.editorconfig
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.AssemblyInfoInputs.cache
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.AssemblyInfo.cs
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.csproj.CoreCompileInputs.cache
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.MvcApplicationPartsAssemblyInfo.cs
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.MvcApplicationPartsAssemblyInfo.cache
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.sourcelink.json
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\staticwebassets.build.json
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\staticwebassets.development.json
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\staticwebassets\msbuild.backend.Microsoft.AspNetCore.StaticWebAssets.props
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\staticwebassets\msbuild.build.backend.props
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.backend.props
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.backend.props
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\staticwebassets.pack.json
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\scopedcss\bundle\backend.styles.css
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.csproj.Up2Date
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.dll
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\refint\backend.dll
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.pdb
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\backend.genruntimeconfig.cache
+C:\C# Web\PCshop\PCShop\backend\backend\obj\Debug\net8.0\ref\backend.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Microsoft.DotNet.PlatformAbstractions.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Microsoft.Extensions.DependencyModel.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Npgsql.dll
+C:\C# Web\PCshop\PCShop\backend\backend\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll

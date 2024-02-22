@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kolec\\WebstormProjects\\pcshop\\backend\\backend\\backend.csproj": {}
+    "C:\\C# Web\\PCshop\\PCShop\\backend\\backend\\backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kolec\\WebstormProjects\\pcshop\\backend\\backend\\backend.csproj": {
+    "C:\\C# Web\\PCshop\\PCShop\\backend\\backend\\backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kolec\\WebstormProjects\\pcshop\\backend\\backend\\backend.csproj",
+        "projectUniqueName": "C:\\C# Web\\PCshop\\PCShop\\backend\\backend\\backend.csproj",
         "projectName": "backend",
-        "projectPath": "C:\\Users\\kolec\\WebstormProjects\\pcshop\\backend\\backend\\backend.csproj",
-        "packagesPath": "C:\\Users\\kolec\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kolec\\WebstormProjects\\pcshop\\backend\\backend\\obj\\",
+        "projectPath": "C:\\C# Web\\PCshop\\PCShop\\backend\\backend\\backend.csproj",
+        "packagesPath": "C:\\Users\\sagop\\.nuget\\packages\\",
+        "outputPath": "C:\\C# Web\\PCshop\\PCShop\\backend\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\kolec\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\sagop\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -34,15 +34,40 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Mvc.Core": {
+              "target": "Package",
+              "version": "[2.2.5, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.1, )"
+            },
+            "Microsoft.AspNetCore.StaticFiles": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Npgsql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[8.0.2, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -68,7 +93,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
