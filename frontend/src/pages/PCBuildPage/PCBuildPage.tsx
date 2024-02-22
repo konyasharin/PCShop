@@ -1,23 +1,25 @@
-import Container from '../../components/Container/Container.tsx';
+import Container from 'components/Container/Container.tsx';
 import Scale from './Scale/Scale.tsx';
 import { useState } from 'react';
-import BuildsErrors from './BuildsErrors/BuildsErrors.tsx';
+import BuildsError from './BuildsError/BuildsError.tsx';
+import ChooseComponents from './ChooseComponents/ChooseComponents.tsx';
 
 function PCBuildPage() {
   const [scalePercents] = useState(40);
   return (
     <Container>
       <Scale percents={scalePercents} />
-      <BuildsErrors
+      <BuildsError
         type={'Warning'}
         title={'Процессор'}
         description={'Выберите процессор из списка'}
       />
-      <BuildsErrors
+      <BuildsError
         type={'Error'}
         title={'Процессор'}
         description={'Выберите процессор из списка'}
       />
+      <ChooseComponents />
     </Container>
   );
 }

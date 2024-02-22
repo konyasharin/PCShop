@@ -1,0 +1,49 @@
+.block{
+    background-color: #809FFF;
+    height: 120px;
+    border-radius: 0 20px 20px 0;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    overflow: hidden;
+}
+
+.block .mainImg{
+    filter: brightness(0%);
+    width: 50px;
+}
+
+.block h3{
+    display: inline;
+    position: relative;
+}
+
+.block .titleTextBlock{
+    margin-left: 30px;
+    width: 245px;
+}
+
+.block h3.important::after{
+    content: url("assets/star-red.png");
+    position: absolute;
+    display: block;
+    right: -11px;
+    bottom: 20px;
+}
+
+.block .componentName{
+    font-size: 30px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    width: 463px;
+    height: 60px;
+    background-color: #ffffff;
+    margin-left: 75px;
+    cursor: pointer;
+}
+
+.block .errorCorner{
+    margin-left: auto;
+}

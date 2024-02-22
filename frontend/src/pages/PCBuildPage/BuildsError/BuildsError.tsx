@@ -1,4 +1,4 @@
-import styles from './BuildsErrors.module.css';
+import styles from './BuildsError.module.css';
 import question from '../../../assets/Question.png';
 import cross from '../../../assets/Cross.png';
 import TBuildsErrors from 'types/TBuildsErrors.ts';
@@ -9,7 +9,7 @@ enum colors {
   yellow = '#F7A400B2',
 }
 
-const BuildsErrors: React.FC<TBuildsErrors> = props => {
+const BuildsError: React.FC<TBuildsErrors> = props => {
   const colorOfProblem = props.type === 'Warning' ? colors.yellow : colors.red;
 
   return (
@@ -39,4 +39,4 @@ const BuildsErrors: React.FC<TBuildsErrors> = props => {
   );
 };
 
-export default BuildsErrors;
+export default BuildsError;
