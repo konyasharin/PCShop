@@ -1,16 +1,18 @@
 import ChooseComponent from './ChooseComponent/ChooseComponent.tsx';
 import videoCardIcon from 'assets/videocard-white-icon.png';
 import processorIcon from 'assets/cpu-white-icon.png';
+import styles from './ChooseComponents.module.css';
 
 function ChooseComponents() {
   return (
-    <section>
+    <section className={styles.blocks}>
       <ChooseComponent
         img={videoCardIcon}
         type={'videoCard'}
         title={'Видеокарта'}
         isImportant={true}
         errorType={'Success'}
+        className={styles.block}
       />
       <ChooseComponent
         img={processorIcon}
@@ -18,6 +20,7 @@ function ChooseComponents() {
         title={'Процессор'}
         isImportant={true}
         errorType={'Warning'}
+        className={styles.block}
       />
       <ChooseComponent
         img={videoCardIcon}
@@ -25,6 +28,7 @@ function ChooseComponents() {
         title={'Видеокарта'}
         isImportant={false}
         errorType={'Error'}
+        className={styles.block}
       />
     </section>
   );

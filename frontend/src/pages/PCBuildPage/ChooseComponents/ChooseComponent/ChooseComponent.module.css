@@ -1,19 +1,21 @@
 .block{
-    background-color: #809FFF;
     height: 120px;
     border-radius: 0 20px 20px 0;
     display: flex;
     align-items: center;
     padding-left: 10px;
     overflow: hidden;
+    position: relative;
 }
 
 .block .mainImg{
+    transition: .5s all;
     filter: brightness(0%);
     width: 50px;
 }
 
 .block h3{
+    transition: .5s all;
     display: inline;
     position: relative;
 }
@@ -46,4 +48,40 @@
 
 .block .errorCorner{
     margin-left: auto;
+}
+
+.blockLight{
+    opacity: 1;
+    background-color: #809FFF;
+}
+
+.blockDark{
+    opacity: 0;
+    background: linear-gradient(90.00deg, rgb(0, 0, 255),rgb(152, 152, 255) 100%);
+}
+
+.blockDark, .blockLight{
+    position: absolute;
+    width: 1020px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    transition: .5s all;
+}
+
+.block:hover .blockLight{
+    opacity: 0;
+}
+
+.block:hover .blockDark{
+    opacity: 1;
+}
+
+.block:hover .mainImg{
+    filter: brightness(100%);
+}
+
+.block:hover h3{
+    color: #ffffff;
 }

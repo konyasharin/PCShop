@@ -1,0 +1,12 @@
+.block{
+    margin-bottom: 30px;
+}
+
+.block:last-child{
+    margin-bottom: 0;
+}
+
+.blocks{
+    margin-bottom: 70px;
+    margin-top: 40px;
+}

@@ -24,6 +24,8 @@ type ChooseComponentProps = {
 const ChooseComponent: React.FC<ChooseComponentProps> = props => {
   return (
     <div className={createClassNames([styles.block, props.className])}>
+      <div className={styles.blockLight}></div>
+      <div className={styles.blockDark}></div>
       <img src={props.img} alt={props.type} className={styles.mainImg} />
       <div className={styles.titleTextBlock}>
         <h3 className={props.isImportant ? styles.important : ''}>
