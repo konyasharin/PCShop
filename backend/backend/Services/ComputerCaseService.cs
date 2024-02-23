@@ -1,10 +1,9 @@
 ﻿using backend.Entities;
 using backend.IRepositories;
-using backend.IServices;
 
 namespace backend.Services
 {
-    public class ComputerCaseService : IComputerCaseService
+    public class ComputerCaseService : IComputerCaseRepository
     {
         private readonly IComputerCaseRepository _repository;
 
