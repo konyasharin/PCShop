@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
+        <UserSecretsId>4e618518-4029-4a46-b6d2-d401cd483d9d</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,6 +13,11 @@
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Npgsql" Version="8.0.2" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />

@@ -1,6 +1,7 @@
 ﻿using backend.Data;
 using backend.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
@@ -48,8 +49,25 @@ namespace backend.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("check")]
+        public IActionResult CheckDatabaseConnection()
+        {
+            try
+            {
+                dataContext.Database.OpenConnection();
+                dataContext.Database.CloseConnection();
+                return Ok("Подключено");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while checking database connection.");
+                return StatusCode(500, "Не подключено");
+            }
+        }
 
-        
+
+
     }
 
 

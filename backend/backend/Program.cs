@@ -9,7 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+var connectionString = builder.Configuration.GetConnectionString("postgresql://gen_user:BV%3B%5CuVH%3Bn%24%7D0%3AQ@188.225.27.212:5432/default_db");
+builder.Services.AddDbContext<DataContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString(connectionString));
+});
 
 var app = builder.Build();
 
