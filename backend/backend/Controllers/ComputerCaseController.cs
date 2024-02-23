@@ -1,24 +1,27 @@
 ﻿using backend.Data;
 using backend.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using backend.IServices;
 
 namespace backend.Controllers
 {
-    [Route("api")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ComputerCaseController : ControllerBase
     {
         private readonly ILogger<ComputerCaseController> logger;
         private readonly DataContext dataContext;
+        private readonly IComputerCaseService computerCaseService;
 
-        public ComputerCaseController(ILogger<ComputerCaseController> logger, DataContext dataContext)
+        public ComputerCaseController(ILogger<ComputerCaseController> logger, DataContext dataContext,
+            IComputerCaseService computerCaseService)
         {
             this.logger = logger;
             this.dataContext = dataContext;
+            this.computerCaseService = computerCaseService;
         }
 
-        [HttpPost("createComponent/ComputerCase")]
+        [HttpPost("createprocessor")]
         public async Task<IActionResult> CreateComputerCase(ComputerCase computerCase)
         {
             try
@@ -29,14 +32,14 @@ namespace backend.Controllers
                 }
 
 
-                dataContext.ComputerCases.Add(computerCase);
-                await dataContext.SaveChangesAsync();
+                await computerCaseService.AddComputerCase(computerCase);
 
                 logger.LogInformation("ComputerCase created with ID {ComputerCaseId}", computerCase.Id);
 
                 return Ok(new
                 {
-                    EntityName = "ComputerCase",
+                    Component = "ComputerCase",
+                    id = computerCase.Id,
                     Data = computerCase
                 });
 
@@ -49,22 +52,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("check")]
-        public IActionResult CheckDatabaseConnection()
-        {
-            try
-            {
-                dataContext.Database.OpenConnection();
-                dataContext.Database.CloseConnection();
-                return Ok("Подключено");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "An error occurred while checking database connection.");
-                return StatusCode(500, "Не подключено");
-            }
-        }
+    
 
 
 
