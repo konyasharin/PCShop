@@ -1,11 +1,15 @@
 import Container from '../../components/Container/Container.tsx';
 import Scale from './Scale/Scale.tsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BuildsErrors from './BuildsErrors/BuildsErrors.tsx';
 import PowerOfBuild from './PowerOfBuild/PowerOfBuild.tsx';
 
 function PCBuildPage() {
   const [scalePercents] = useState(40);
+  const [power, setPower] = useState<number>(0);
+  useEffect(() => {
+    setPower(5);
+  }, []);
   return (
     <Container>
       <Scale percents={scalePercents} />
@@ -19,7 +23,7 @@ function PCBuildPage() {
         title={'Процессор'}
         description={'Выберите процессор из списка'}
       />
-      <PowerOfBuild power={10} />
+      <PowerOfBuild power={power} price={'100$'} />
     </Container>
   );
 }
