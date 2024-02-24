@@ -35,7 +35,7 @@ namespace backend.Controllers
 
                 await videoCardRepository.AddVideoCard(videoCard);
 
-                logger.LogInformation("Ssd created with ID {VideoCardId}", videoCard.Id);
+                logger.LogInformation("VideoCard created with ID {VideoCardId}", videoCard.Id);
 
                 return Ok(new
                 {
