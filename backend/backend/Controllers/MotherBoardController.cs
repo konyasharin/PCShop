@@ -35,7 +35,7 @@ namespace backend.Controllers
 
                 await motherBoardRepository.AddMotherBoard(motherBoard);
 
-                logger.LogInformation("MotherBoard created with ID {CoolerId}", motherBoard.Id);
+                logger.LogInformation("MotherBoard created with ID {MotherBoardID}", motherBoard.Id);
 
                 return Ok(new
                 {

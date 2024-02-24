@@ -38,7 +38,7 @@ namespace backend.Repositories
 
         public async Task DeleteComputerCase(int id)
         {
-            var computerCase = await GetComputerCaseById(id);
+            var computerCase = await _context.ComputerCases.FindAsync(id);
             if (computerCase != null)
             {
                 _context.ComputerCases.Remove(computerCase);
@@ -46,14 +46,19 @@ namespace backend.Repositories
             }
         }
 
-        public Task<ComputerCase> GetComputerCaseById(long id)
+        public async Task<ComputerCase> GetComputerCaseById(long id)
         {
-            throw new NotImplementedException();
+            return await _context.ComputerCases.FindAsync(id);
         }
 
-        public Task DeleteComputerCase(long id)
+        public async Task DeleteComputerCase(long id)
         {
-            throw new NotImplementedException();
+            var computerCase = await _context.ComputerCases.FindAsync(id);
+            if (computerCase != null)
+            {
+                _context.ComputerCases.Remove(computerCase);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
