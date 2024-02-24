@@ -1,10 +1,11 @@
 ﻿using backend.Data;
 using backend.Entities;
 using Microsoft.EntityFrameworkCore;
+using backend.IRepositories;
 
 namespace backend.Repositories
 {
-    public class PowerUnitRepository
+    public class PowerUnitRepository : IPowerUnitRepository
     {
         private readonly DataContext _context;
 
@@ -50,14 +51,9 @@ namespace backend.Repositories
             return await _context.PowerUnits.FindAsync(id);
         }
 
-        public async Task DeletePowerUnit(long id)
+        public Task DeletePowerUnit(long id)
         {
-            var powerUnit = await _context.PowerUnits.FindAsync(id);
-            if (powerUnit != null)
-            {
-                _context.PowerUnits.Remove(powerUnit);
-                await _context.SaveChangesAsync();
-            }
+            throw new NotImplementedException();
         }
     }
 }

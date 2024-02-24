@@ -46,19 +46,14 @@ namespace backend.Repositories
             }
         }
 
-        public async Task<ComputerCase> GetComputerCaseById(long id)
+        public Task<ComputerCase> GetComputerCaseById(long id)
         {
-            return await _context.ComputerCases.FindAsync(id);
+            throw new NotImplementedException();
         }
 
-        public async Task DeleteComputerCase(long id)
+        public Task DeleteComputerCase(long id)
         {
-            var computerCase = await _context.ComputerCases.FindAsync(id);
-            if (computerCase != null)
-            {
-                _context.ComputerCases.Remove(computerCase);
-                await _context.SaveChangesAsync();
-            }
+            throw new NotImplementedException();
         }
     }
 }

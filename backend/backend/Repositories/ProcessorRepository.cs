@@ -46,12 +46,14 @@ namespace backend.Repositories
             }
         }
 
-        public async Task<Processor> GetProcessorById(long id)
-        {
-            return await _context.Processors.FindAsync(id);
-        }
+    
 
         public Task DeleteProcessor(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Processor> GetProcessorById(long id)
         {
             throw new NotImplementedException();
         }

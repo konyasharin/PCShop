@@ -1,10 +1,11 @@
 ﻿using backend.Data;
 using backend.Entities;
 using Microsoft.EntityFrameworkCore;
+using backend.IRepositories;
 
 namespace backend.Repositories
 {
-    public class CoolerRepository
+    public class CoolerRepository : ICoolerRepository
     {
         private readonly DataContext _context;
 
@@ -45,19 +46,14 @@ namespace backend.Repositories
             }
         }
 
-        public async Task<Cooler> GetCoolerById(long id)
+        public Task<Cooler> GetCoolerById(long id)
         {
-            return await _context.Coolers.FindAsync(id);
+            throw new NotImplementedException();
         }
 
-        public async Task DeleteCooler(long id)
+        public Task DeleteCooler(long id)
         {
-            var cooler = await _context.Coolers.FindAsync(id);
-            if (cooler != null)
-            {
-                _context.Coolers.Remove(cooler);
-                await _context.SaveChangesAsync();
-            }
+            throw new NotImplementedException();
         }
     }
 }

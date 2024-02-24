@@ -1,10 +1,11 @@
 ﻿using backend.Data;
 using backend.Entities;
 using Microsoft.EntityFrameworkCore;
+using backend.IRepositories;
 
 namespace backend.Repositories
 {
-    public class MotherBoardRepository
+    public class MotherBoardRepository : IMotherBoardRepository
     {
         private readonly DataContext _context;
 
@@ -45,19 +46,14 @@ namespace backend.Repositories
             }
         }
 
-        public async Task<MotherBoard> GetMotherBoardById(long id)
+        public Task<Cooler> GetMotherBoardById(long id)
         {
-            return await _context.MotherBoards.FindAsync(id);
+            throw new NotImplementedException();
         }
 
-        public async Task DeleteMotherBoard(long id)
+        public Task DeleteMotherBoard(long id)
         {
-            var motherBoard = await _context.MotherBoards.FindAsync(id);
-            if (motherBoard != null)
-            {
-                _context.MotherBoards.Remove(motherBoard);
-                await _context.SaveChangesAsync();
-            }
+            throw new NotImplementedException();
         }
     }
 }

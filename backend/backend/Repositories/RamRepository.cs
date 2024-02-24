@@ -46,7 +46,7 @@ namespace backend.Repositories
             }
         }
 
-        Task<Processor> IRamRepository.GetRamById(long id)
+        Task<RAM> IRamRepository.GetRamById(long id)
         {
             throw new NotImplementedException();
         }
