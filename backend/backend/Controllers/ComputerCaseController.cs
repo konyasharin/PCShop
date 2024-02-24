@@ -1,7 +1,7 @@
 ﻿using backend.Data;
 using backend.Entities;
+using backend.IRepositories;
 using Microsoft.AspNetCore.Mvc;
-using backend.IServices;
 
 namespace backend.Controllers
 {
@@ -11,17 +11,17 @@ namespace backend.Controllers
     {
         private readonly ILogger<ComputerCaseController> logger;
         private readonly DataContext dataContext;
-        private readonly IComputerCaseService computerCaseService;
+        private readonly IComputerCaseRepository computerCaseRepository;
 
         public ComputerCaseController(ILogger<ComputerCaseController> logger, DataContext dataContext,
-            IComputerCaseService computerCaseService)
+            IComputerCaseRepository computerCaseRepository)
         {
             this.logger = logger;
             this.dataContext = dataContext;
-            this.computerCaseService = computerCaseService;
+            this.computerCaseRepository = computerCaseRepository;
         }
 
-        [HttpPost("createprocessor")]
+        [HttpPost("createComputerCase")]
         public async Task<IActionResult> CreateComputerCase(ComputerCase computerCase)
         {
             try
@@ -31,8 +31,7 @@ namespace backend.Controllers
                     return BadRequest(ModelState);
                 }
 
-
-                await computerCaseService.AddComputerCase(computerCase);
+                await computerCaseRepository.AddComputerCase(computerCase);
 
                 logger.LogInformation("ComputerCase created with ID {ComputerCaseId}", computerCase.Id);
 
@@ -42,20 +41,13 @@ namespace backend.Controllers
                     id = computerCase.Id,
                     Data = computerCase
                 });
-
             }
-
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError(ex, "Error creating ComputerCase");
                 return StatusCode(500, "Internal server error");
             }
         }
-
-    
-
-
-
     }
 
 
