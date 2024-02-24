@@ -1,0 +1,11 @@
+.title{
+    font-weight: 700;
+}
+
+.checkBox, .title {
+    margin-bottom: 5px;
+}
+
+.checkBox:last-child{
+    margin-bottom: 10px;
+}

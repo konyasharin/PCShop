@@ -6,6 +6,7 @@ import ChooseComponents from './ChooseComponents/ChooseComponents.tsx';
 import CheckBox from 'components/CheckBox/CheckBox.tsx';
 import useCheckBoxes from 'hooks/useCheckBoxes.ts';
 import useRadios from 'hooks/useRadios.ts';
+import Radio from 'components/Radio/Radio.tsx';
 
 function PCBuildPage() {
   const [scalePercents] = useState(40);
@@ -32,7 +33,7 @@ function PCBuildPage() {
   });
   const radios = radiosState.map((radio, i) => {
     return (
-      <CheckBox
+      <Radio
         text={radio.text}
         isActive={radio.isActive}
         onChange={() => setRadioIsActive(i)}

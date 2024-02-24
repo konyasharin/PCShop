@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import loadingReducer from './slices/loadingSlice.ts';
 import windowSearchReducer from './slices/windowSearchSlice.ts';
+import filterReducer from './slices/filtersSlice.ts';
 
 export const store = configureStore({
   reducer: {
     loading: loadingReducer,
     windowSearch: windowSearchReducer,
+    filters: filterReducer,
   },
 });
 
