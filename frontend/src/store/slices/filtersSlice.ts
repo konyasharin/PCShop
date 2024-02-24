@@ -1,103 +1,86 @@
 import { createSlice } from '@reduxjs/toolkit';
 import TCheckBox from 'types/TCheckBox.ts';
-import TComponentTypes from 'types/TComponentTypes.ts';
 
-export type filtersState = TComponentTypes & {
-  checkBoxes: { name: string; checkBoxes: TCheckBox[] }[];
-  radios: { name: string; checkBoxes: TCheckBox[] }[];
-  inputs: {
+export type TFilters = {
+  checkBoxesBlocks: {
     name: string;
-    inputs: { from: { value: string }; to: { value: string } };
+    checkBoxes: TCheckBox[];
+  }[];
+  radiosBlocks: {
+    name: string;
+    checkBoxes: TCheckBox[];
+  }[];
+  inputsBlocks: {
+    name: string;
+    inputs: { value: string; name: string; placeholder: string }[];
   }[];
 };
 
-const initialState: filtersState[] = [
-  {
-    type: 'videoCard',
-    checkBoxes: [
+type TFiltersState = {
+  videoCard: TFilters;
+  processor: TFilters;
+};
+
+const initialState: TFiltersState = {
+  videoCard: {
+    checkBoxesBlocks: [
       {
         name: 'Производитель',
         checkBoxes: [
-          { text: 'Gigabyte', isActive: false },
-          { text: 'Asrock', isActive: false },
-          { text: 'ASUS', isActive: false },
+          { text: 'Gigabyte' },
+          { text: 'Asrock' },
+          { text: 'ASUS' },
         ],
       },
       {
         name: 'Видеопамять',
-        checkBoxes: [
-          { text: '4GB', isActive: false },
-          { text: '8GB', isActive: false },
-          { text: '16GB', isActive: false },
-        ],
+        checkBoxes: [{ text: '4GB' }, { text: '8GB' }, { text: '16GB' }],
       },
     ],
-    radios: [
+    radiosBlocks: [
       {
         name: 'Тест',
-        checkBoxes: [
-          { text: 'Тест', isActive: false },
-          { text: 'Тест1', isActive: false },
-        ],
+        checkBoxes: [{ text: 'Тест' }, { text: 'Тест1' }],
       },
     ],
-    inputs: [
+    inputsBlocks: [
       {
         name: 'Цена',
-        inputs: {
-          from: {
-            value: '0',
-          },
-          to: {
-            value: '100000',
-          },
-        },
+        inputs: [
+          { value: '0', name: 'PriceFrom', placeholder: 'От' },
+          { value: '10000', name: 'PriceTo', placeholder: 'До' },
+        ],
       },
     ],
   },
-  {
-    type: 'processor',
-    checkBoxes: [
+  processor: {
+    checkBoxesBlocks: [
       {
         name: 'Производитель',
-        checkBoxes: [
-          { text: 'Intel', isActive: false },
-          { text: 'AMD', isActive: false },
-        ],
+        checkBoxes: [{ text: 'Intel' }, { text: 'AMD' }],
       },
       {
-        name: 'Ядра',
-        checkBoxes: [
-          { text: '4 ядра', isActive: false },
-          { text: '8 ядер', isActive: false },
-          { text: '12 ядер', isActive: false },
-        ],
+        name: 'Число ядер',
+        checkBoxes: [{ text: '4' }, { text: '8' }, { text: '16' }],
       },
     ],
-    radios: [
+    radiosBlocks: [
       {
         name: 'Тест',
-        checkBoxes: [
-          { text: 'Тест', isActive: false },
-          { text: 'Тест1', isActive: false },
-        ],
+        checkBoxes: [{ text: 'Тест' }, { text: 'Тест1' }],
       },
     ],
-    inputs: [
+    inputsBlocks: [
       {
         name: 'Цена',
-        inputs: {
-          from: {
-            value: '0',
-          },
-          to: {
-            value: '100000',
-          },
-        },
+        inputs: [
+          { value: '0', name: 'PriceFrom', placeholder: 'От' },
+          { value: '10000', name: 'PriceTo', placeholder: 'До' },
+        ],
       },
     ],
   },
-];
+};
 
 const filtersSlice = createSlice({
   name: 'filters',

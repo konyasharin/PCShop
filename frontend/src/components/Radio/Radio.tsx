@@ -1,10 +1,16 @@
 import React from 'react';
 import TCheckBox from 'types/TCheckBox.ts';
 import styles from './Radio.module.css';
+import createClassNames from 'utils/createClassNames.ts';
 
-const Radio: React.FC<TCheckBox & { onChange: () => void }> = props => {
+type RadioProps = TCheckBox & {
+  onChange: () => void;
+  className?: string;
+};
+
+const Radio: React.FC<RadioProps> = props => {
   return (
-    <div className={styles.radioBlock}>
+    <div className={createClassNames([styles.radioBlock, props.className])}>
       <input
         type="radio"
         checked={props.isActive}

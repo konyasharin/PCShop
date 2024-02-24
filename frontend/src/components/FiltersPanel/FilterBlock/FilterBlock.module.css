@@ -2,10 +2,10 @@
     font-weight: 700;
 }
 
-.checkBox, .title {
+.block, .title {
     margin-bottom: 5px;
 }
 
-.checkBox:last-child{
+.block:last-child{
     margin-bottom: 10px;
 }

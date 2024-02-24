@@ -22,14 +22,6 @@ function ChooseComponents() {
         errorType={'Warning'}
         className={styles.block}
       />
-      <ChooseComponent
-        img={videoCardIcon}
-        type={'videoCard'}
-        title={'Видеокарта'}
-        isImportant={false}
-        errorType={'Error'}
-        className={styles.block}
-      />
     </section>
   );
 }

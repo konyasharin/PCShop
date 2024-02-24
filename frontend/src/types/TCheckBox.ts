@@ -1,5 +1,5 @@
 type TCheckBox = {
-  isActive: boolean;
+  isActive?: boolean;
   text: string;
 };
 

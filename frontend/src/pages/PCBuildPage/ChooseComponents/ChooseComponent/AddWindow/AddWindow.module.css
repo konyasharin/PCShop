@@ -1,0 +1,7 @@
+.filterBlockElement{
+    margin-bottom: 5px;
+}
+
+.filterBlockElement:last-child{
+    margin-bottom: 10px;
+}
