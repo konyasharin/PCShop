@@ -11,27 +11,37 @@ namespace backend.Entities
         public long Id { get; set; }
 
         [Column("brand")]
-        public required string Brand { get; set; }
+        [Required]
+        public string Brand { get; set; }
 
         [Column("model")]
-        public required string Model { get; set; }
+        [Required]
+        public string Model { get; set; }
 
         [Column("price")]
-        public required int Price { get; set; }
+        [Required]
+        public int Price { get; set; }
 
         [Column("country")]
-        public required string Country { get; set; }
+        [Required]
+        public string Country { get; set; }
 
         [Column("frequency")]
-        public required int frequency { get; set; }
+        [Required]
+        public int frequency { get; set; }
 
         [Column("socket")]
-        public required string socket { get; set; }
+        [Required]
+        public string socket { get; set; }
 
         [Column("chipset")]
-        public required string chipset { get; set; }
+        [Required]
+        public string chipset { get; set; }
 
         [Column("image")]
-        public required byte[] Image { get; set; }
+        [Required]
+        public byte[] Image { get; set; }
+
+        public Assembly assembly { get; set; }
     }
 }
