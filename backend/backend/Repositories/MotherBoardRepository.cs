@@ -19,7 +19,7 @@ namespace backend.Repositories
             return await _context.MotherBoards.ToListAsync();
         }
 
-        public async Task<MotherBoard> GetMotherBoardById(int id)
+        public async Task<MotherBoard> GetMotherBoardById(long id)
         {
             return await _context.MotherBoards.FindAsync(id);
         }
@@ -36,7 +36,7 @@ namespace backend.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteMotherBoard(int id)
+        public async Task DeleteMotherBoard(long id)
         {
             var motherBoard = await _context.MotherBoards.FindAsync(id);
             if (motherBoard != null)
@@ -46,12 +46,7 @@ namespace backend.Repositories
             }
         }
 
-        public Task<Cooler> GetMotherBoardById(long id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteMotherBoard(long id)
+        Task<Cooler> IMotherBoardRepository.GetMotherBoardById(long id)
         {
             throw new NotImplementedException();
         }

@@ -19,7 +19,7 @@ namespace backend.Repositories
             return await _context.PowerUnits.ToListAsync();
         }
 
-        public async Task<PowerUnit> GetPowerUnitById(int id)
+        public async Task<PowerUnit> GetPowerUnitById(long id)
         {
             return await _context.PowerUnits.FindAsync(id);
         }
@@ -36,7 +36,7 @@ namespace backend.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeletePowerUnit(int id)
+        public async Task DeletePowerUnit(long id)
         {
             var powerUnit = await _context.PowerUnits.FindAsync(id);
             if (powerUnit != null)
@@ -46,14 +46,6 @@ namespace backend.Repositories
             }
         }
 
-        public async Task<PowerUnit> GetPowerUnitById(long id)
-        {
-            return await _context.PowerUnits.FindAsync(id);
-        }
-
-        public Task DeletePowerUnit(long id)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

@@ -50,5 +50,76 @@ namespace backend.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllCoolers()
+        {
+            try
+            {
+                var coolers = await сoolerRepository.GetAllCoolers();
+                return Ok(coolers);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting all Coolers");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCoolerById(long id)
+        {
+            try
+            {
+                var cooler = await сoolerRepository.GetCoolerById(id);
+
+                if (cooler == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(cooler);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting Cooler");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCooler(long id, Cooler cooler)
+        {
+            if (id != cooler.Id)
+            {
+                return BadRequest("ID mismatch");
+            }
+
+            try
+            {
+                await сoolerRepository.UpdateCooler(cooler);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error updating Cooler");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCooler(long id)
+        {
+            try
+            {
+                await сoolerRepository.DeleteCooler(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error deleting Cooler");
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }

@@ -51,5 +51,76 @@ namespace backend.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllRams()
+        {
+            try
+            {
+                var rams = await ramRepository.GetAllRams();
+                return Ok(rams);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting all RAMs");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetRamById(long id)
+        {
+            try
+            {
+                var ram = await ramRepository.GetRamById(id);
+
+                if (ram == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(ram);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting RAM");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateRam(long id, RAM ram)
+        {
+            if (id != ram.Id)
+            {
+                return BadRequest("ID mismatch");
+            }
+
+            try
+            {
+                await ramRepository.UpdateRam(ram);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error updating RAM");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRam(long id)
+        {
+            try
+            {
+                await ramRepository.DeleteRam(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error deleting RAM");
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }

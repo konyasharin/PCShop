@@ -51,5 +51,76 @@ namespace backend.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllSsds()
+        {
+            try
+            {
+                var ssds = await ssdRepository.GetAllSsds();
+                return Ok(ssds);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting all SSDs");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSsdById(long id)
+        {
+            try
+            {
+                var ssd = await ssdRepository.GetSsdById(id);
+
+                if (ssd == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(ssd);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting SSD");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateRam(long id, SSD ssd)
+        {
+            if (id != ssd.Id)
+            {
+                return BadRequest("ID mismatch");
+            }
+
+            try
+            {
+                await ssdRepository.UpdateSsd(ssd);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error updating SSD");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSsd(long id)
+        {
+            try
+            {
+                await ssdRepository.DeleteSsd(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error deleting SSD");
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }

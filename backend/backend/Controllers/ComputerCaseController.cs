@@ -48,7 +48,91 @@ namespace backend.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-    }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllComputerCases()
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var computerCases = await computerCaseRepository.GetAllComputerCases();
+                return Ok(computerCases);
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting all ComputerCases");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetComputerCaseById(long id)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var computerCase = await computerCaseRepository.GetComputerCaseById(id);
+
+                if (computerCase == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(computerCase);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting all ComputerCases");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateComputerCase(long id, ComputerCase computerCase)
+        {
+            if (id != computerCase.Id)
+            {
+                return BadRequest("ID mismatch");
+            }
+
+            try
+            {
+                await computerCaseRepository.UpdateComputerCase(computerCase);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error updating ComputerCase");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteComputerCase(long id)
+        {
+            try
+            {
+                await computerCaseRepository.DeleteComputerCase(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error deleting ComputerCase");
+                return StatusCode(500, "Internal server error");
+            }
+
+
+
+        }
+    }
 
 }

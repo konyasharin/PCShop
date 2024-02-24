@@ -19,7 +19,7 @@ namespace backend.Repositories
             return await _context.Coolers.ToListAsync();
         }
 
-        public async Task<Cooler> GetCoolerById(int id)
+        public async Task<Cooler> GetCoolerById(long id)
         {
             return await _context.Coolers.FindAsync(id);
         }
@@ -36,7 +36,7 @@ namespace backend.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteCooler(int id)
+        public async Task DeleteCooler(long id)
         {
             var сooler = await _context.Coolers.FindAsync(id);
             if (сooler != null)
@@ -46,14 +46,6 @@ namespace backend.Repositories
             }
         }
 
-        public Task<Cooler> GetCoolerById(long id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteCooler(long id)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

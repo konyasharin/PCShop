@@ -27,7 +27,23 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Тестирование API
 app.MapGet("/", () => "hello");
-app.MapGet("/api/ComputerCase/createprocessor", () => "computerCase");
+app.MapGet("/api/ComputerCase/createComputerCase", () => "computerCase");
+app.MapGet("/api/Cooler/createCooler", () => "cooler");
+app.MapGet("/api/MotherBoard/createMotherBoard", () => "motherboard");
+app.MapGet("/api/PowerUnit/createPowerUnit", () => "powerunit");
+app.MapGet("/api/Processor/createProcessor", () => "processor");
+app.MapGet("/api/RAM/createRam", () => "ram");
+app.MapGet("/api/SSD/createSsd", () => "ssd");
+app.MapGet("/api/VideoCard/createVideoCard", () => "videoCard");
 
+app.MapGet("/api/ComputerCase/1", () => "Данные computercase");
+app.MapGet("/api/Cooler/1", () => "Данные cooler");
+app.MapGet("/api/Motherboard/1", () => "Данные motherboard");
+app.MapGet("/api/PowerUnit/1", () => "Данные powerunit");
+app.MapGet("/api/Processor/1", () => "Данные processor");
+app.MapGet("/api/RAM/1", () => "Данные ram");
+app.MapGet("/api/SSD/1", () => "Данные ssd");
+app.MapGet("/api/VideoCard/1", () => "Данные videocard");
 app.Run();
