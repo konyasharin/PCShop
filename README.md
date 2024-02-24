@@ -10,25 +10,25 @@
 https://localhost:7202/api/ComputerCase/createComputerCase
 
 
-https://localhost:7202/api/ComputerCase/createProcessor
+https://localhost:7202/api/Processor/createProcessor
 
 
-https://localhost:7202/api/ComputerCase/createMotherBoard
+https://localhost:7202/api/MotherBoard/createMotherBoard
 
 
-https://localhost:7202/api/ComputerCase/createSsd
+https://localhost:7202/api/SSD/createSsd
 
 
-https://localhost:7202/api/ComputerCase/createRam
+https://localhost:7202/api/RAM/createRam
 
 
-https://localhost:7202/api/ComputerCase/createPowerUnit
+https://localhost:7202/api/PowerUnit/createPowerUnit
 
 
-https://localhost:7202/api/ComputerCase/createVideoCard
+https://localhost:7202/api/VideoCard/createVideoCard
 
 
-https://localhost:7202/api/ComputerCase/createCooler
+https://localhost:7202/api/Cooler/createCooler
 
 
  вид json ответа
