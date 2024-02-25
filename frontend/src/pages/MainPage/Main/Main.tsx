@@ -21,9 +21,7 @@ function Main() {
           <span className={styles.quote}>
             «Соберите PC своей мечты вместе с нами»
           </span>
-          <div className={styles.button}>
-            <Btn>собрать пк</Btn>
-          </div>
+          <Btn className={styles.button}>собрать пк</Btn>
         </div>
       </Container>
     </section>
