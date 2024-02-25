@@ -1,7 +1,7 @@
 import Container from 'components/Container/Container.tsx';
 import Scale from './Scale/Scale.tsx';
 import { useEffect, useState } from 'react';
-import BuildsError from './BuildsErrors/BuildsErrors.tsx';
+import BuildsError from './BuildsError/BuildsError.tsx';
 import PowerOfBuild from './PowerOfBuild/PowerOfBuild.tsx';
 import ChooseComponents from './ChooseComponents/ChooseComponents.tsx';
 import Input from 'components/Input/Input.tsx';
