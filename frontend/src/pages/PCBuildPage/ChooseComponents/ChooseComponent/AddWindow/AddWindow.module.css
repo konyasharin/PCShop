@@ -5,3 +5,24 @@
 .filterBlockElement:last-child{
     margin-bottom: 10px;
 }
+
+.window{
+    display: flex;
+}
+
+.windowDisable{
+    display: none;
+}
+
+.rightBlock{
+    margin-left: 19px;
+    width: 100%;
+}
+
+.rightBlock h2{
+    margin-bottom: 30px;
+}
+
+.card{
+    margin-top: 20px;
+}

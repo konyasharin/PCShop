@@ -10,7 +10,7 @@ const FilterBlock: React.FC<FilterBlock> = props => {
   return (
     <div>
       <h6 className={styles.title}>{props.title}</h6>
-      <div className={styles.block}>{props.children}</div>
+      <div>{props.children}</div>
     </div>
   );
 };

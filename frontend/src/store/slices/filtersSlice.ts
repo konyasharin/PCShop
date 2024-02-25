@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import TCheckBox from 'types/TCheckBox.ts';
+import EComponentTypes from 'enums/EComponentTypes.ts';
 
 export type TFilters = {
   checkBoxesBlocks: {
@@ -17,8 +18,7 @@ export type TFilters = {
 };
 
 type TFiltersState = {
-  videoCard: TFilters;
-  processor: TFilters;
+  [componentType in EComponentTypes]: TFilters;
 };
 
 const initialState: TFiltersState = {
@@ -47,8 +47,8 @@ const initialState: TFiltersState = {
       {
         name: 'Цена',
         inputs: [
-          { value: '0', name: 'PriceFrom', placeholder: 'От' },
-          { value: '10000', name: 'PriceTo', placeholder: 'До' },
+          { value: '', name: 'PriceFrom', placeholder: 'От' },
+          { value: '', name: 'PriceTo', placeholder: 'До' },
         ],
       },
     ],
@@ -74,8 +74,8 @@ const initialState: TFiltersState = {
       {
         name: 'Цена',
         inputs: [
-          { value: '0', name: 'PriceFrom', placeholder: 'От' },
-          { value: '10000', name: 'PriceTo', placeholder: 'До' },
+          { value: '', name: 'PriceFrom', placeholder: 'От' },
+          { value: '', name: 'PriceTo', placeholder: 'До' },
         ],
       },
     ],

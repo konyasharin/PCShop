@@ -1,4 +1,6 @@
 import React from 'react';
+import styles from './InputsBlock.module.css';
+import createClassNames from 'utils/createClassNames.ts';
 
 type InputsBlockProps = {
   inputs: {
@@ -16,10 +18,11 @@ const InputsBlock: React.FC<InputsBlockProps> = props => {
       {...props.inputs.map(input => {
         return (
           <input
+            type={'number'}
             placeholder={input.placeholder}
             onChange={e => props.onChange(input.name, e.target.value)}
             value={input.value}
-            className={props.inputClassName ? props.inputClassName : ''}
+            className={createClassNames([props.inputClassName, styles.input])}
           />
         );
       })}

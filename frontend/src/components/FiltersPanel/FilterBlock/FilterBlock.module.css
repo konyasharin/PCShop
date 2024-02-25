@@ -2,10 +2,6 @@
     font-weight: 700;
 }
 
-.block, .title {
+.title {
     margin-bottom: 5px;
-}
-
-.block:last-child{
-    margin-bottom: 10px;
 }

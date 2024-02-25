@@ -6,6 +6,7 @@
     padding-left: 10px;
     overflow: hidden;
     position: relative;
+    margin-bottom: 30px;
 }
 
 .block .mainImg{
@@ -84,4 +85,8 @@
 
 .block:hover h3{
     color: #ffffff;
+}
+
+.fullBlock{
+    margin-bottom: 30px;
 }

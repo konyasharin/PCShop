@@ -2,25 +2,26 @@ import ChooseComponent from './ChooseComponent/ChooseComponent.tsx';
 import videoCardIcon from 'assets/videocard-white-icon.png';
 import processorIcon from 'assets/cpu-white-icon.png';
 import styles from './ChooseComponents.module.css';
+import EComponentTypes from 'enums/EComponentTypes.ts';
 
 function ChooseComponents() {
   return (
     <section className={styles.blocks}>
       <ChooseComponent
         img={videoCardIcon}
-        type={'videoCard'}
+        type={EComponentTypes.videoCard}
         title={'Видеокарта'}
         isImportant={true}
         errorType={'Success'}
-        className={styles.block}
+        searchTitle={'Выберите видеокарту'}
       />
       <ChooseComponent
         img={processorIcon}
-        type={'processor'}
+        type={EComponentTypes.processor}
         title={'Процессор'}
         isImportant={true}
         errorType={'Warning'}
-        className={styles.block}
+        searchTitle={'Выберите процессор'}
       />
     </section>
   );

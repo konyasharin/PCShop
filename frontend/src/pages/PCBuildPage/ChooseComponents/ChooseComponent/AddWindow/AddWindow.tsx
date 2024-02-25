@@ -1,6 +1,6 @@
 import FiltersPanel from 'components/FiltersPanel/FiltersPanel.tsx';
-import React from 'react';
-import TComponentTypes from 'types/TComponentTypes.ts';
+import React, { useState } from 'react';
+import EComponentTypes from 'enums/EComponentTypes.ts';
 import useFilters from 'hooks/useFilters.ts';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store/store.ts';
@@ -9,8 +9,19 @@ import RadiosBlock from 'components/RadiosBlock/RadiosBlock.tsx';
 import InputsBlock from 'components/FiltersPanel/InputsBlock/InputsBlock.tsx';
 import FilterBlock from 'components/FiltersPanel/FilterBlock/FilterBlock.tsx';
 import styles from './AddWindow.module.css';
+import Input from 'components/Input/Input.tsx';
+import ChooseComponentCard from 'components/cards/ChooseComponentCard/ChooseComponentCard.tsx';
+import videoCardImg from 'assets/videocard.jpg';
+import Btn from 'components/Btn/Btn.tsx';
 
-const AddWindow: React.FC<TComponentTypes> = props => {
+type AddWindowProps = {
+  type: EComponentTypes;
+  searchTitle: string;
+  isActive: boolean;
+};
+
+const AddWindow: React.FC<AddWindowProps> = props => {
+  const [searchString, setSearchString] = useState('');
   const { filters, setCheckBoxIsActive, setRadioIsActive, setInputValue } =
     useFilters(
       // Потом нужно добавить в редакс все типы компонентов
@@ -59,12 +70,50 @@ const AddWindow: React.FC<TComponentTypes> = props => {
     );
   });
   return (
-    <FiltersPanel
-      type={props.type}
-      checkBoxesBlocks={checkBoxes}
-      radiosBlocks={radiosBlocks}
-      inputsBlocks={inputsBlocks}
-    />
+    <div className={props.isActive ? styles.window : styles.windowDisable}>
+      <FiltersPanel
+        type={props.type}
+        checkBoxesBlocks={checkBoxes}
+        radiosBlocks={radiosBlocks}
+        inputsBlocks={inputsBlocks}
+      />
+      <div className={styles.rightBlock}>
+        <h2>{props.searchTitle}</h2>
+        <Input
+          value={searchString}
+          onChange={newSearchString => setSearchString(newSearchString)}
+          placeholder={'Поиск'}
+        />
+        <ChooseComponentCard
+          name={'Gigabyte RTX 3080'}
+          text={
+            '8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак'
+          }
+          price={100}
+          img={videoCardImg}
+          className={styles.card}
+        />
+        <ChooseComponentCard
+          name={'Gigabyte RTX 3080'}
+          text={
+            '8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак'
+          }
+          price={100}
+          img={videoCardImg}
+          className={styles.card}
+        />
+        <ChooseComponentCard
+          name={'Gigabyte RTX 3080'}
+          text={
+            '8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак'
+          }
+          price={100}
+          img={videoCardImg}
+          className={styles.card}
+        />
+        <Btn>Показать еще</Btn>
+      </div>
+    </div>
   );
 };
 

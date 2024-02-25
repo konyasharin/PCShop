@@ -28,6 +28,7 @@
       "store/*": ["store/*"],
       "types/*": ["types/*"],
       "utils/*": ["utils/*"],
+      "enums/*": ["enums/*"],
     }
   },
   "include": ["src"],
