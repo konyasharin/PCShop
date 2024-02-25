@@ -22,16 +22,16 @@ namespace backend.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Assembly>()
-        .HasKey(a => new
-        {
-            a.SsdId,
-            a.CoolerId,
-            a.RamId,
-            a.MotherBoardId,
-            a.ComputerCaseId,
-            a.ProcessorId,
-            a.PowerUnitId,
-            a.VideoCardId
+                .HasKey(a => new
+                {
+                    a.SsdId,
+                    a.CoolerId,
+                    a.RamId,
+                    a.MotherBoardId,
+                    a.ComputerCaseId,
+                    a.ProcessorId,
+                    a.PowerUnitId,
+                    a.VideoCardId
         });
 
             modelBuilder.Entity<Assembly>()

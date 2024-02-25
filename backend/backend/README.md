@@ -9,44 +9,158 @@
 
 https://localhost:7202/api/ComputerCase/createComputerCase
 
+Создаём корпус компуктера
+**Входные данные:**
+
+{
+	"name": "computercase name"
+	"width": "computercase width"
+	"height": "computercase height"
+
+}
+
+Ошибка
+
+{
+	"error": "error text"
+}
+
 
 https://localhost:7202/api/Processor/createProcessor
+
+Создаём Processor
+**Входные данные:**
+
+{
+	"name": "processor name"
+	"power": "processor power"
+	"cores": "processor cores"
+
+}
+
+Ошибка
+
+{
+	"error": "error text"
+}
 
 
 https://localhost:7202/api/MotherBoard/createMotherBoard
 
+Создаём MotherBoard
+**Входные данные:**
+
+{
+	"name": "motherboard name"
+	"socket": "ram socket"
+	"chipset": "ram chipset"
+
+}
+
+Ошибка
+
+{
+	"error": "error text"
+}
+
 
 https://localhost:7202/api/SSD/createSsd
+
+Создаём SSD
+**Входные данные:**
+
+{
+	"name": "ssd name"
+	"brand": "SSd brand"
+	"capacity": "SSD capacity"
+
+}
+
+Ошибка
+
+{
+	"error": "error text"
+}
 
 
 https://localhost:7202/api/RAM/createRam
 
+Создаём RAM
+**Входные данные:**
+
+{
+	"name": "ram name"
+	"frequecny": "ram frequency"
+	"timings": "ram timings"
+
+}
+
+Ошибка
+
+{
+	"error": "error text"
+}
+
 
 https://localhost:7202/api/PowerUnit/createPowerUnit
+
+Создаём корпус компуктера
+**Входные данные:**
+
+{
+	"name": "computercase name"
+	"width": "computercase width"
+	"height": "computercase height"
+
+}
+
+Ошибка
+
+{
+	"error": "error text"
+}
 
 
 https://localhost:7202/api/VideoCard/createVideoCard
 
+Создаём Видеокарту
+**Входные данные:**
+
+{
+	"name": "название видеокарты"
+	"model": "Модель видеокарты"
+	"capacity_db_": "Videocard capacity_db_"
+
+}
+
+Ошибка
+
+{
+	"error": "error text"
+}
+
 
 https://localhost:7202/api/Cooler/createCooler
 
+Создаём Куллер
+**Входные данные:**
 
- вид json ответа
- 
- 
- {
- 
-  "Component": "ComputerCase",
-  
-  "id": 1, 
-  
-  "Data": {
-  
-    // данные о компоненте
-    
-  }
-  
+{
+	"name": "Название куллера"
+	"model": "Модель куллера"
+	"power": "Мощность куллера"
+
 }
+
+Ошибка
+
+{
+	"error": "error text"
+}
+
+
+
+ 
    
 Для проверки Get, Put и Delete
 
