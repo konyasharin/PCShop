@@ -1,13 +1,18 @@
 import Container from 'components/Container/Container.tsx';
 import Scale from './Scale/Scale.tsx';
-import { useState } from 'react';
-import BuildsError from './BuildsError/BuildsError.tsx';
+import { useEffect, useState } from 'react';
+import BuildsError from './BuildsErrors/BuildsErrors.tsx';
+import PowerOfBuild from './PowerOfBuild/PowerOfBuild.tsx';
 import ChooseComponents from './ChooseComponents/ChooseComponents.tsx';
 import Input from 'components/Input/Input.tsx';
 
 function PCBuildPage() {
   const [scalePercents] = useState(40);
   const [buildName, setBuildName] = useState('');
+  const [power, setPower] = useState<number>(0);
+  useEffect(() => {
+    setPower(5);
+  }, []);
   return (
     <Container>
       <Input
@@ -27,6 +32,7 @@ function PCBuildPage() {
         description={'Выберите процессор из списка'}
       />
       <ChooseComponents />
+      <PowerOfBuild power={power} price={'100$'} />
     </Container>
   );
 }

@@ -1,0 +1,45 @@
+.powerBuild {
+    display: flex;
+    align-items: center;
+    margin-top: 70px;
+    height: 44px;
+}
+
+.powerNumber {
+    margin-left: 8px;
+    color: rgba(0, 0, 255, 1);
+}
+
+.greyCircle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    margin-left: 5px;
+    border: 2px solid rgba(177, 171, 171, 1);
+}
+
+.powerCircles {
+    display: flex;
+    margin-left: 5px;
+}
+
+.circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-left: 10px;
+    border: 2px solid #000000
+}
+
+.priceBuild {
+    display: flex;
+    margin-top: 30px;
+}
+
+.price {
+    margin-left: 8px;
+    color: rgba(0, 0, 255, 1);
+}
