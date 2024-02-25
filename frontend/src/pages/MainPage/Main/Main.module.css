@@ -44,3 +44,16 @@
 .button {
     margin-top: 35px;
 }
+
+.button::after {
+    content: "";
+    position: absolute;
+    width: 60px;
+    height: 52px;
+    background-image: url('../../../assets/group.png');
+    background-size: cover;
+    left: calc(251px);
+    transform: translateY(-10px);
+    opacity: 0;
+    transition: opacity .2s ease-in-out;
+}

@@ -111,7 +111,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
           img={videoCardImg}
           className={styles.card}
         />
-        <Btn>Показать еще</Btn>
+        <Btn className={styles.button}>Показать еще...</Btn>
       </div>
     </div>
   );
