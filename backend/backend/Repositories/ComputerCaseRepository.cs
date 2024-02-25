@@ -9,9 +9,9 @@ namespace backend.Repositories
     {
         private readonly DataContext _context;
 
-        public ComputerCaseRepository(DataContext context)
+        public ComputerCaseRepository(DataContext _context)
         {
-            _context = context;
+            this._context = _context;
         }
 
         public async Task<List<ComputerCase>> GetAllComputerCases()

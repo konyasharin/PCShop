@@ -10,9 +10,9 @@ namespace backend.Repositories
     {
         private readonly DataContext _context;
 
-        public SsdRepository(DataContext context)
+        public SsdRepository(DataContext _context)
         {
-            _context = context;
+            this._context = _context;
         }
 
         public async Task<List<SSD>> GetAllSsds()

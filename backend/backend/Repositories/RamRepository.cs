@@ -9,9 +9,9 @@ namespace backend.Repositories
     {
         private readonly DataContext _context;
 
-        public RamRepository(DataContext context)
+        public RamRepository(DataContext _context)
         {
-            _context = context;
+            this._context = _context;
         }
 
         public async Task<List<RAM>> GetAllRams()
