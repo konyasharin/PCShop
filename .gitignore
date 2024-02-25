@@ -24,5 +24,7 @@
 /frontend/*.sln
 /frontend/*.sw?
 
-#nv
+#env
 /backend/backend/*.env
+/backend/.vs
+
