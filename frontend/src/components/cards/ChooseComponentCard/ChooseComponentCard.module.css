@@ -1,0 +1,39 @@
+.card{
+    width: 100%;
+    padding: 23px 21px;
+    background-color: #809FFF;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.card img{
+    width: 160px;
+    height: 133px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.card .middleBlock{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 470px;
+    height: 133px;
+    margin-left: 13px;
+}
+
+.card h2{
+    margin-left: auto;
+    margin-bottom: 0;
+    color: #0000FF;
+}
+
+.btn{
+    width: 173px;
+    margin-top: auto;
+}
+
+.card .description h5{
+    margin-bottom: 5px;
+}

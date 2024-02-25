@@ -5,12 +5,13 @@
     margin-top: 20px;
     height: 132px;
     background-color: #809FFF26;
+    border-radius: 20px 0 0 20px;
+    overflow: hidden;
 }
 
 .rectangle {
     width: 12px;
     height: 132px;
-    border-radius: 20px 0 0 20px;
 }
 
 .circle {

@@ -1,0 +1,13 @@
+.radioBlock{
+    display: flex;
+    align-items: center;
+}
+
+.radio{
+    width: 15px;
+    height: 15px;
+}
+
+.radioBlock h6{
+    margin-left: 5px;
+}

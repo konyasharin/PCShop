@@ -1,0 +1,11 @@
+.panel{
+    background-color: #809FFF;
+    width: 173px;
+    padding: 10px;
+    border-radius: 10px;
+    height: fit-content;
+}
+
+.btn{
+    width: 100%;
+}

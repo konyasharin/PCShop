@@ -1,0 +1,13 @@
+.checkBox{
+    width: 15px;
+    height: 15px;
+}
+
+.checkBoxBlock{
+    display: flex;
+    align-items: center;
+}
+
+.checkBoxBlock h6{
+    margin-left: 5px;
+}
