@@ -99,7 +99,7 @@ namespace backend.Controllers
             try
             {
                 await ramRepository.UpdateRam(ram);
-                return Ok();
+                return Ok($"RAM data with Index {id} updated");
             }
             catch (Exception ex)
             {
@@ -114,7 +114,7 @@ namespace backend.Controllers
             try
             {
                 await ramRepository.DeleteRam(id);
-                return Ok();
+                return Ok($"RAM data with Index {id} deleted");
             }
             catch (Exception ex)
             {

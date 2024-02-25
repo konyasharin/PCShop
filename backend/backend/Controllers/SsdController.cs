@@ -99,7 +99,7 @@ namespace backend.Controllers
             try
             {
                 await ssdRepository.UpdateSsd(ssd);
-                return Ok();
+                return Ok($"SSD data with Index {id} updated");
             }
             catch (Exception ex)
             {
@@ -114,7 +114,7 @@ namespace backend.Controllers
             try
             {
                 await ssdRepository.DeleteSsd(id);
-                return Ok();
+                return Ok($"SSD data with Index {id} deleted");
             }
             catch (Exception ex)
             {

@@ -98,7 +98,7 @@ namespace backend.Controllers
             try
             {
                 await сoolerRepository.UpdateCooler(cooler);
-                return Ok();
+                return Ok($"Cooler data with Index {id} updated");
             }
             catch (Exception ex)
             {
@@ -113,7 +113,7 @@ namespace backend.Controllers
             try
             {
                 await сoolerRepository.DeleteCooler(id);
-                return Ok();
+                return Ok($"Cooler data with Index {id} deleted");
             }
             catch (Exception ex)
             {

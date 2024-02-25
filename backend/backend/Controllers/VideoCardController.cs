@@ -98,7 +98,7 @@ namespace backend.Controllers
             try
             {
                 await videoCardRepository.UpdateVideoCard(videoCard);
-                return Ok();
+                return Ok($"VideoCard data with Index {id} updated");
             }
             catch (Exception ex)
             {
@@ -113,7 +113,7 @@ namespace backend.Controllers
             try
             {
                 await videoCardRepository.DeleteVideoCard(id);
-                return Ok();
+                return Ok($"VideoCard data with Index {id} deleted");
             }
             catch (Exception ex)
             {

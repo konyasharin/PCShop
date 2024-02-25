@@ -98,7 +98,7 @@ namespace backend.Controllers
             try
             {
                 await motherBoardRepository.UpdateMotherBoard(motherBoard);
-                return Ok();
+                return Ok($"MotherBoard data with Index {id} updated");
             }
             catch (Exception ex)
             {
@@ -113,7 +113,7 @@ namespace backend.Controllers
             try
             {
                 await motherBoardRepository.DeleteMotherBoard(id);
-                return Ok();
+                return Ok($"MotherBoard data with Index {id} deleted");
             }
             catch (Exception ex)
             {

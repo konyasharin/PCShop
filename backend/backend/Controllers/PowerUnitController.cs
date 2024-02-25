@@ -98,7 +98,7 @@ namespace backend.Controllers
             try
             {
                 await powerUnitRepository.UpdatePowerUnit(powerUnit);
-                return Ok();
+                return Ok($"PowerUnit data with Index {id} updated");
             }
             catch (Exception ex)
             {
@@ -113,7 +113,7 @@ namespace backend.Controllers
             try
             {
                 await powerUnitRepository.DeletePowerUnit(id);
-                return Ok();
+                return Ok($"PowerUnit data with Index {id} deleted");
             }
             catch (Exception ex)
             {

@@ -98,7 +98,7 @@ namespace backend.Controllers
             try
             {
                 await processorRepository.UpdateProcessor(processor);
-                return Ok();
+                return Ok($"Processor data with Index {id} updated");
             }
             catch (Exception ex)
             {
@@ -113,7 +113,7 @@ namespace backend.Controllers
             try
             {
                 await processorRepository.DeleteProcessor(id);
-                return Ok();
+                return Ok($"Processor data with Index {id} deleted");
             }
             catch (Exception ex)
             {

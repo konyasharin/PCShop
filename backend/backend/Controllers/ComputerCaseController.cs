@@ -107,7 +107,7 @@ namespace backend.Controllers
             try
             {
                 await computerCaseRepository.UpdateComputerCase(computerCase);
-                return Ok();
+                return Ok($"ComputerCase data with Index {id} updated");
             }
             catch (Exception ex)
             {
@@ -119,10 +119,11 @@ namespace backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComputerCase(long id)
         {
+
             try
             {
                 await computerCaseRepository.DeleteComputerCase(id);
-                return Ok();
+                return Ok($"ComputerCase data with Index {id} deleted");
             }
             catch (Exception ex)
             {
