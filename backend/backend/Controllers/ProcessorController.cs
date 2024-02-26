@@ -41,7 +41,18 @@ namespace backend.Controllers
                 {
                     Component = "PowerUnit",
                     id = processor.Id,
-                    Data = processor
+                    Data = new
+                    {
+                        brand = processor.Brand,
+                        model = processor.Model,
+                        country = processor.Country,
+                        clock_frequency = processor.Clock_frequency,
+                        turbo_frequency = processor.Turbo_frequency,
+                        heat_dissipation = processor.Heat_dissipation,
+                        price = processor.Price,
+                        description = processor.Description,
+                        image = processor.Image
+                    }
                 });
             }
             catch (Exception ex)
@@ -88,17 +99,47 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProcessor(long id, Processor processor)
+        public async Task<IActionResult> UpdateProcessor(long id, Processor updatedProcessor)
         {
-            if (id != processor.Id)
-            {
-                return BadRequest("ID mismatch");
-            }
-
+           
             try
             {
+                var processor = await processorRepository.GetProcessorById(id);
+
+                if(processor == null)
+                {
+                    return NotFound();
+                }
+
+                processor.Brand = updatedProcessor.Brand;
+                processor.Model = updatedProcessor.Model;
+                processor.Country = updatedProcessor.Country;
+                processor.Clock_frequency = updatedProcessor.Clock_frequency;
+                processor.Turbo_frequency = updatedProcessor.Turbo_frequency;
+                processor.Heat_dissipation = updatedProcessor.Heat_dissipation;
+                processor.Price = updatedProcessor.Price;
+                processor.Description = updatedProcessor.Description;
+                processor.Image = updatedProcessor.Image;
+
                 await processorRepository.UpdateProcessor(processor);
-                return Ok($"Processor data with Index {id} updated");
+
+                return Ok(new
+                {
+                    Component = "PowerUnit",
+                    id = processor.Id,
+                    Data = new
+                    {
+                        brand = processor.Brand,
+                        model = processor.Model,
+                        country = processor.Country,
+                        clock_frequency = processor.Clock_frequency,
+                        turbo_frequency = processor.Turbo_frequency,
+                        heat_dissipation = processor.Heat_dissipation,
+                        price = processor.Price,
+                        description = processor.Description,
+                        image = processor.Image
+                    }
+                });
             }
             catch (Exception ex)
             {

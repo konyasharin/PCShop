@@ -13,18 +13,19 @@ namespace backend.Controllers
     {
         private readonly ILogger<CoolerController> logger;
         private readonly DataContext dataContext;
-        private readonly ICoolerRepository сoolerRepository;
+        private readonly ICoolerRepository coolerRepository;
+    
 
         public CoolerController(ILogger<CoolerController> logger, DataContext dataContext,
             ICoolerRepository сoolerRepository)
         {
             this.logger = logger;
             this.dataContext = dataContext;
-            this.сoolerRepository = сoolerRepository;
+            this.coolerRepository = сoolerRepository;
         }
 
         [HttpPost("createCooler")]
-        public async Task<IActionResult> CreateCooler(Cooler сooler)
+        public async Task<IActionResult> CreateCooler(Cooler cooler)
         {
             try
             {
@@ -33,15 +34,25 @@ namespace backend.Controllers
                     return BadRequest(ModelState);
                 }
 
-                await сoolerRepository.AddCooler(сooler);
+                await coolerRepository.AddCooler(cooler);
 
-                logger.LogInformation("Cooler created with ID {CoolerId}", сooler.Id);
+                logger.LogInformation("Cooler created with ID {CoolerId}", cooler.Id);
 
                 return Ok(new
                 {
                     Component = "Cooler",
-                    id = сooler.Id,
-                    Data = сooler
+                    id = cooler.Id,
+                    Data = new
+                    {
+                        brand = cooler.Brand,
+                        model = cooler.Model,
+                        country = cooler.Country,
+                        speed = cooler.Speed,
+                        power = cooler.Power,
+                        price = cooler.Price,
+                        description = cooler.Description,
+                        image = cooler.Image
+                    }
                 });
             }
             catch (Exception ex)
@@ -56,7 +67,7 @@ namespace backend.Controllers
         {
             try
             {
-                var coolers = await сoolerRepository.GetAllCoolers();
+                var coolers = await coolerRepository.GetAllCoolers();
                 return Ok(coolers);
             }
             catch (Exception ex)
@@ -71,7 +82,7 @@ namespace backend.Controllers
         {
             try
             {
-                var cooler = await сoolerRepository.GetCoolerById(id);
+                var cooler = await coolerRepository.GetCoolerById(id);
 
                 if (cooler == null)
                 {
@@ -88,17 +99,47 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCooler(long id, Cooler cooler)
+        public async Task<IActionResult> UpdateCooler(long id, Cooler updatedCooler)
         {
-            if (id != cooler.Id)
-            {
-                return BadRequest("ID mismatch");
-            }
-
             try
             {
-                await сoolerRepository.UpdateCooler(cooler);
-                return Ok($"Cooler data with Index {id} updated");
+       
+                var cooler = await coolerRepository.GetCoolerById(id);
+
+                if (cooler == null)
+                {
+                    return NotFound(); 
+                }
+
+               
+                cooler.Brand = updatedCooler.Brand;
+                cooler.Model = updatedCooler.Model;
+                cooler.Country = updatedCooler.Country;
+                cooler.Speed = updatedCooler.Speed;
+                cooler.Power = updatedCooler.Power;
+                cooler.Price = updatedCooler.Price;
+                cooler.Description = updatedCooler.Description;
+                cooler.Image = cooler.Image;
+                    
+                await coolerRepository.UpdateCooler(cooler);
+
+
+                return Ok(new
+                {
+                    Component = "Cooler",
+                    id = cooler.Id,
+                    Data = new
+                    {
+                        brand = cooler.Brand,
+                        model = cooler.Model,
+                        country = cooler.Country,
+                        speed = cooler.Speed,
+                        power = cooler.Power,
+                        price = cooler.Price,
+                        description = cooler.Description,
+                        image = cooler.Image
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -112,7 +153,7 @@ namespace backend.Controllers
         {
             try
             {
-                await сoolerRepository.DeleteCooler(id);
+                await coolerRepository.DeleteCooler(id);
                 return Ok($"Cooler data with Index {id} deleted");
             }
             catch (Exception ex)

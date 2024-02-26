@@ -26,13 +26,17 @@ namespace backend.Entities
         [Required]
         public string Country { get; set; }
 
-        [Column("speed")]
+        [Column("battery")]
         [Required]
-        public int Speed { get; set; }
+        public string Battery { get; set; }
 
-        [Column("power")]
+        [Column("voltage")]
         [Required]
-        public int Power { get; set; }
+        public int Voltage { get; set; }
+
+        [Column("description")]
+        [Required]
+        public string Description { get; set; }
 
         [Column("image")]
         [Required]

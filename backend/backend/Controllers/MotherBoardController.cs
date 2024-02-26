@@ -4,6 +4,7 @@ using backend.IRepositories;
 using backend.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing;
 
 namespace backend.Controllers
 {
@@ -41,7 +42,18 @@ namespace backend.Controllers
                 {
                     Component = "MotherBoard",
                     id = motherBoard.Id,
-                    Data = motherBoard
+                    Data = new
+                    {
+                        brand = motherBoard.Brand,
+                        model = motherBoard.Model,
+                        country = motherBoard.Country,
+                        frequency = motherBoard.Frequency,
+                        socket = motherBoard.Socket,
+                        chipset = motherBoard.Chipset,
+                        price = motherBoard.Price,
+                        description = motherBoard.Description,
+                        image = motherBoard.Image
+                    }
                 });
             }
             catch (Exception ex)
@@ -67,7 +79,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCoolerById(long id)
+        public async Task<IActionResult> GetMotherBoardById(long id)
         {
             try
             {
@@ -88,21 +100,51 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMotherBoard(long id, MotherBoard motherBoard)
+        public async Task<IActionResult> UpdateMotherBoard(long id, MotherBoard updatedMotherBoard)
         {
-            if (id != motherBoard.Id)
-            {
-                return BadRequest("ID mismatch");
-            }
-
             try
             {
+                var motherBoard = await motherBoardRepository.GetMotherBoardById(id);
+
+                if (motherBoard == null)
+                {
+                    return NotFound();
+                }
+
+                motherBoard.Brand = updatedMotherBoard.Brand;
+                motherBoard.Model = updatedMotherBoard.Model;
+                motherBoard.Country = updatedMotherBoard.Country;
+                motherBoard.Frequency = updatedMotherBoard.Frequency;
+                motherBoard.Socket = updatedMotherBoard.Socket;
+                motherBoard.Chipset = updatedMotherBoard.Chipset;
+                motherBoard.Price = updatedMotherBoard.Price;
+                motherBoard.Description = updatedMotherBoard.Description;
+                motherBoard.Image = updatedMotherBoard.Image;
+
                 await motherBoardRepository.UpdateMotherBoard(motherBoard);
-                return Ok($"MotherBoard data with Index {id} updated");
+
+                return Ok(new
+                {
+                    Component = "MotherBoard",
+                    id = motherBoard.Id,
+                    Data = new
+                    {
+                        brand = motherBoard.Brand,
+                        model = motherBoard.Model,
+                        country = motherBoard.Country,
+                        frequency = motherBoard.Frequency,
+                        socket = motherBoard.Socket,
+                        chipset = motherBoard.Chipset,
+                        price = motherBoard.Price,
+                        description = motherBoard.Description,
+                        image = motherBoard.Image
+                    }
+                });
+
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                logger.LogError(ex, "Error updating MotherBoard");
+                logger.LogError(ex, "Error updating Motherboard");
                 return StatusCode(500, "Internal server error");
             }
         }

@@ -39,7 +39,7 @@
     "ContainingType": "Program\u002B\u003C\u003Ec",
     "Method": "\u003C\u003CMain\u003E$\u003Eb__0_2",
     "RelativePath": "api/ComputerCase/createComputerCase",
-    "HttpMethod": "GET",
+    "HttpMethod": "PUT",
     "IsController": false,
     "Order": 0,
     "Parameters": [],

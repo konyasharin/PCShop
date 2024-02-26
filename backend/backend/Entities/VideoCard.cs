@@ -34,6 +34,10 @@ namespace backend.Entities
         [Required]
         public int Memory_type { get; set; }
 
+        [Column("description")]
+        [Required]
+        public string Description { get; set; }
+
         [Column("image")]
         [Required]
         public byte[] Image { get; set; }

@@ -29,7 +29,7 @@ app.UseHttpsRedirection();
 
 // Тестирование API
 app.MapGet("/", () => "hello");
-app.MapGet("/api/ComputerCase/createComputerCase", () => "computerCase");
+app.MapPut("/api/ComputerCase/createComputerCase", () => "computerCase");
 app.MapGet("/api/Cooler/createCooler", () => "cooler");
 app.MapGet("/api/MotherBoard/createMotherBoard", () => "motherboard");
 app.MapGet("/api/PowerUnit/createPowerUnit", () => "powerunit");

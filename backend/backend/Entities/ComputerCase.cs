@@ -42,6 +42,10 @@ namespace backend.Entities
         [Required]
         public int Depth { get; set; }
 
+        [Column("description")]
+        [Required]
+        public string Description { get; set; }
+
         [Column("image")]
         [Required]
         public byte[] Image { get; set; }

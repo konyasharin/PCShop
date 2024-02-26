@@ -28,15 +28,19 @@ namespace backend.Entities
 
         [Column("frequency")]
         [Required]
-        public int frequency { get; set; }
+        public int Frequency { get; set; }
 
         [Column("socket")]
         [Required]
-        public string socket { get; set; }
+        public string Socket { get; set; }
 
         [Column("chipset")]
         [Required]
-        public string chipset { get; set; }
+        public string Chipset { get; set; }
+
+        [Column("description")]
+        [Required]
+        public string Description { get; set; }
 
         [Column("image")]
         [Required]

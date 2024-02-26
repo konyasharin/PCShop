@@ -30,6 +30,10 @@ namespace backend.Entities
         [Required]
         public int Capacity { get; set; }
 
+        [Column("description")]
+        [Required]
+        public string Description { get; set; }
+
         [Column("image")]
         [Required]
         public byte[] Image { get; set; }

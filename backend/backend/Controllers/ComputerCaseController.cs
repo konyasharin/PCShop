@@ -1,6 +1,7 @@
 ﻿using backend.Data;
 using backend.Entities;
 using backend.IRepositories;
+using backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -39,7 +40,19 @@ namespace backend.Controllers
                 {
                     Component = "ComputerCase",
                     id = computerCase.Id,
-                    Data = computerCase
+                    Data = new
+                    {
+                        brand = computerCase.Brand,
+                        model = computerCase.Model,
+                        country = computerCase.Country,
+                        material = computerCase.Material,
+                        width = computerCase.Width,
+                        height = computerCase.Height,
+                        depth = computerCase.Depth,
+                        price = computerCase.Price,
+                        description = computerCase.Description,
+                        image = computerCase.Image
+                    }
                 });
             }
             catch (Exception ex)
@@ -97,21 +110,54 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateComputerCase(long id, ComputerCase computerCase)
+        public async Task<IActionResult> UpdateComputerCase(long id, ComputerCase updatedComputerCase)
         {
-            if (id != computerCase.Id)
-            {
-                return BadRequest("ID mismatch");
-            }
-
             try
             {
+                
+                var computerCase = await computerCaseRepository.GetComputerCaseById(id);
+
+                if (computerCase == null)
+                {
+                    return NotFound();
+                }
+
+                computerCase.Brand = updatedComputerCase.Brand;
+                computerCase.Model = updatedComputerCase.Model;
+                computerCase.Country = updatedComputerCase.Country;
+                computerCase.Material = updatedComputerCase.Material;
+                computerCase.Width = updatedComputerCase.Width;
+                computerCase.Height = updatedComputerCase.Height;
+                computerCase.Depth = updatedComputerCase.Depth;
+                computerCase.Price = updatedComputerCase.Price;
+                computerCase.Description = updatedComputerCase.Description;
+                computerCase.Image = updatedComputerCase.Image;
+
                 await computerCaseRepository.UpdateComputerCase(computerCase);
-                return Ok($"ComputerCase data with Index {id} updated");
+
+                
+                return Ok(new
+                {
+                    Component = "ComputerCase",
+                    id = computerCase.Id,
+                    Data = new
+                    {
+                        brand = computerCase.Brand,
+                        model = computerCase.Model,
+                        country = computerCase.Country,
+                        material = computerCase.Material,
+                        width = computerCase.Width,
+                        height = computerCase.Height,
+                        depth = computerCase.Depth,
+                        price = computerCase.Price,
+                        description = computerCase.Description,
+                        image = computerCase.Image
+                    }
+                });
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error updating ComputerCase");
+                logger.LogError(ex, "Error updating PowerUnit");
                 return StatusCode(500, "Internal server error");
             }
         }

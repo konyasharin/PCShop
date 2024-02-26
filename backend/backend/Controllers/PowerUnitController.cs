@@ -41,7 +41,17 @@ namespace backend.Controllers
                 {
                     Component = "PowerUnit",
                     id = powerUnit.Id,
-                    Data = powerUnit
+                    Data = new
+                    {
+                        brand = powerUnit.Brand,
+                        model = powerUnit.Model,
+                        country = powerUnit.Country,
+                        battery = powerUnit.Battery,
+                        voltage = powerUnit.Voltage,
+                        price = powerUnit.Price,
+                        description = powerUnit.Description,
+                        image = powerUnit.Image
+                    }
                 });
             }
             catch (Exception ex)
@@ -88,17 +98,46 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePowerUnit(long id, PowerUnit powerUnit)
+        public async Task<IActionResult> UpdatePowerUnit(long id, PowerUnit updatePowerUnit)
         {
-            if (id != powerUnit.Id)
-            {
-                return BadRequest("ID mismatch");
-            }
 
             try
             {
+                var powerUnit = await powerUnitRepository.GetPowerUnitById(id);
+
+                if (powerUnit == null)
+                {
+                    return NotFound();
+                }
+
+                powerUnit.Brand = updatePowerUnit.Brand;
+                powerUnit.Model = updatePowerUnit.Model;
+                powerUnit.Country = updatePowerUnit.Country;
+                powerUnit.Battery = updatePowerUnit.Battery;
+                powerUnit.Voltage = updatePowerUnit.Voltage;
+                powerUnit.Price = updatePowerUnit.Price;
+                powerUnit.Description = updatePowerUnit.Description;
+                powerUnit.Image = updatePowerUnit.Image;
+
                 await powerUnitRepository.UpdatePowerUnit(powerUnit);
-                return Ok($"PowerUnit data with Index {id} updated");
+
+                return Ok(new
+                {
+                    Component = "PowerUnit",
+                    id = powerUnit.Id,
+                    Data = new
+                    {
+                        brand = powerUnit.Brand,
+                        model = powerUnit.Model,
+                        country = powerUnit.Country,
+                        battery = powerUnit.Battery,
+                        voltage = powerUnit.Voltage,
+                        price = powerUnit.Price,
+                        description = powerUnit.Description,
+                        image = powerUnit.Image
+                    }
+                });
+
             }
             catch (Exception ex)
             {

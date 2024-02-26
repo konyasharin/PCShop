@@ -42,7 +42,18 @@ namespace backend.Controllers
                 {
                     Component = "Ram",
                     id = ram.Id,
-                    Data = ram
+                    Data = new
+                    {
+                        brand = ram.Brand,
+                        model = ram.Model,
+                        country = ram.Country,
+                        frequency = ram.Frequency,
+                        timings = ram.Timings,
+                        capacity_db = ram.Capacity_db,
+                        price = ram.Price,
+                        description = ram.Description,
+                        image = ram.Image
+                    }
                 });
             }
             catch (Exception ex)
@@ -89,17 +100,46 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRam(long id, RAM ram)
+        public async Task<IActionResult> UpdateRam(long id, RAM updateRam)
         {
-            if (id != ram.Id)
-            {
-                return BadRequest("ID mismatch");
-            }
-
+         
             try
             {
+                var ram = await ramRepository.GetRamById(id);
+
+                if (ram == null)
+                {
+                    return NotFound();
+                }
+
+                ram.Brand = updateRam.Brand;
+                ram.Model = updateRam.Model;
+                ram.Country = updateRam.Country;
+                ram.Frequency = updateRam.Frequency;
+                ram.Timings = updateRam.Timings;
+                ram.Capacity_db = updateRam.Capacity_db;
+                ram.Price = updateRam.Price;
+                ram.Description = updateRam.Description;
+                ram.Image = ram.Image;
+
                 await ramRepository.UpdateRam(ram);
-                return Ok($"RAM data with Index {id} updated");
+                return Ok(new
+                {
+                    Component = "Ram",
+                    id = ram.Id,
+                    Data = new
+                    {
+                        brand = ram.Brand,
+                        model = ram.Model,
+                        country = ram.Country,
+                        frequency = ram.Frequency,
+                        timings = ram.Timings,
+                        capacity_db = ram.Capacity_db,
+                        price = ram.Price,
+                        description = ram.Description,
+                        image = ram.Image
+                    }
+                });
             }
             catch (Exception ex)
             {

@@ -41,7 +41,17 @@ namespace backend.Controllers
                 {
                     Component = "VideoCard",
                     id = videoCard.Id,
-                    Data = videoCard
+                    Data = new
+                    {
+                        brand = videoCard.Brand,
+                        model = videoCard.Model,
+                        country = videoCard.Country,
+                        memory_db = videoCard.Memoty_db,
+                        memory_type = videoCard.Memory_type,
+                        price = videoCard.Price,
+                        description = videoCard.Description,
+                        image = videoCard.Image
+                    }
                 });
             }
             catch (Exception ex)
@@ -88,17 +98,46 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateVideoCard(long id, VideoCard videoCard)
+        public async Task<IActionResult> UpdateVideoCard(long id, VideoCard updateVideoCard)
         {
-            if (id != videoCard.Id)
-            {
-                return BadRequest("ID mismatch");
-            }
-
+            
             try
             {
-                await videoCardRepository.UpdateVideoCard(videoCard);
-                return Ok($"VideoCard data with Index {id} updated");
+                var videocard = await videoCardRepository.GetVideoCardById(id);
+
+                if (videocard == null)
+                {
+                    return NotFound();
+                }
+
+                videocard.Brand = updateVideoCard.Brand;
+                videocard.Model = updateVideoCard.Model;
+                videocard.Country = updateVideoCard.Country;
+                videocard.Memoty_db = updateVideoCard.Memoty_db;
+                videocard.Memory_type = updateVideoCard.Memory_type;
+                videocard.Price = updateVideoCard.Price;
+                videocard.Description = updateVideoCard.Description;
+                videocard.Image = updateVideoCard.Image;
+
+                await videoCardRepository.UpdateVideoCard(videocard);
+
+                return Ok(new
+                {
+                    Component = "VideoCard",
+                    id = videocard.Id,
+                    Data = new
+                    {
+                        brand = videocard.Brand,
+                        model = videocard.Model,
+                        country = videocard.Country,
+                        memory_db = videocard.Memoty_db,
+                        memory_type = videocard.Memory_type,
+                        price = videocard.Price,
+                        description = videocard.Description,
+                        image = videocard.Image
+                    }
+                });
+
             }
             catch (Exception ex)
             {

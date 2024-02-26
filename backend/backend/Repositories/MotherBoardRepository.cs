@@ -46,9 +46,6 @@ namespace backend.Repositories
             }
         }
 
-        Task<Cooler> IMotherBoardRepository.GetMotherBoardById(long id)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

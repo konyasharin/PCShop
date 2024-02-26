@@ -42,7 +42,16 @@ namespace backend.Controllers
                 {
                     Component = "Ssd",
                     id = ssd.Id,
-                    Data = ssd
+                    Data = new
+                    {
+                        brand = ssd.Brand,
+                        model = ssd.Model,
+                        country = ssd.Country,
+                        capacity = ssd.Capacity,
+                        price = ssd.Price,
+                        description = ssd.Description,
+                        image = ssd.Image
+                    }
                 });
             }
             catch (Exception ex)
@@ -89,17 +98,43 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRam(long id, SSD ssd)
+        public async Task<IActionResult> UpdateRam(long id, SSD updateSsd)
         {
-            if (id != ssd.Id)
-            {
-                return BadRequest("ID mismatch");
-            }
-
+           
             try
             {
+                var ssd = await ssdRepository.GetSsdById(id);
+
+                if (ssd == null)
+                {
+                    return NotFound();
+                }
+
+                ssd.Brand = updateSsd.Brand;
+                ssd.Model = updateSsd.Model;
+                ssd.Country = updateSsd.Country;
+                ssd.Capacity = updateSsd.Capacity;
+                ssd.Price = updateSsd.Price;
+                ssd.Description = updateSsd.Description;
+                ssd.Image = updateSsd.Image;
+
                 await ssdRepository.UpdateSsd(ssd);
-                return Ok($"SSD data with Index {id} updated");
+
+                return Ok(new
+                {
+                    Component = "Ssd",
+                    id = ssd.Id,
+                    Data = new
+                    {
+                        brand = ssd.Brand,
+                        model = ssd.Model,
+                        country = ssd.Country,
+                        capacity = ssd.Capacity,
+                        price = ssd.Price,
+                        description = ssd.Description,
+                        image = ssd.Image
+                    }
+                });
             }
             catch (Exception ex)
             {
