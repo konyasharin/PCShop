@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AssemblyController : ControllerBase
     {
@@ -85,21 +85,21 @@ namespace backend.Controllers
                 return Ok(assemblies);
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError(ex, "Error getting all AssemblyControllers");
                 return StatusCode(500, "Internal server error");
             }
 
-            
+
         }
 
-        [HttpPost("createAssembly")]
+        [HttpPost("createassembly")]
         public async Task<IActionResult> CreateAssembly(Assembly assembly)
         {
             try
             {
-             
+
 
                 if (!ModelState.IsValid)
                 {
@@ -115,7 +115,7 @@ namespace backend.Controllers
                 var ssd = await dataContext.SSDs.FindAsync(assembly.SsdId);
                 var videocard = await dataContext.VideoCards.FindAsync(assembly.VideoCardId);
 
-                if (processor == null || computerCase == null || cooler == null 
+                if (processor == null || computerCase == null || cooler == null
                     || motherboard == null || powerUnit == null || ram == null
                     || ssd == null || videocard == null)
                 {
@@ -131,7 +131,22 @@ namespace backend.Controllers
                 {
                     Component = "Assembly",
                     id = assembly.Id,
-                    Data = assembly
+                    Data = new
+                    {
+                        name = assembly.Name,
+                        price = assembly.Price,
+                        computerCaseId = assembly.ComputerCaseId,
+                        coolerId = assembly.CoolerId,
+                        motherBoardId = assembly.MotherBoardId,
+                        processorId = assembly.ProcessorId,
+                        ramId = assembly.RamId,
+                        ssdId = assembly.SsdId,
+                        videocardId = assembly.VideoCardId,
+                        powerUnitId = assembly.PowerUnitId,
+                        likes = assembly.Likes,
+                        creation_time = assembly.Creation_time,
+
+                    }
                 });
             }
             catch (Exception ex)
@@ -142,6 +157,79 @@ namespace backend.Controllers
         }
 
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAssembly(long id, Assembly updatedAssembly)
+        {
+            try
+            {
+                var assembly = await assemblyRepository.GetAssemblyById(id);
 
+                if (assembly == null)
+                {
+                    return NotFound();
+                }
+
+                assembly.Name = updatedAssembly.Name;
+                assembly.Price = updatedAssembly.Price;
+                assembly.ComputerCaseId = updatedAssembly.ComputerCaseId;
+                assembly.CoolerId = updatedAssembly.CoolerId;
+                assembly.MotherBoardId = updatedAssembly.MotherBoardId;
+                assembly.ProcessorId = updatedAssembly.ProcessorId;
+                assembly.RamId = updatedAssembly.RamId;
+                assembly.SsdId = updatedAssembly.SsdId;
+                assembly.VideoCardId = updatedAssembly.VideoCardId;
+                assembly.PowerUnitId = updatedAssembly.PowerUnitId;
+                assembly.Likes = updatedAssembly.Likes;
+                assembly.Creation_time = updatedAssembly.Creation_time;
+
+                await assemblyRepository.UpdateAssembly(assembly);
+
+                return Ok(new
+                {
+                    Component = "Assembly",
+                    id = assembly.Id,
+                    Data = new
+                    {
+                        name = assembly.Name,
+                        price = assembly.Price,
+                        computerCaseId = assembly.ComputerCaseId,
+                        coolerId = assembly.CoolerId,
+                        motherBoardId = assembly.MotherBoardId,
+                        processorId = assembly.ProcessorId,
+                        ramId = assembly.RamId,
+                        ssdId = assembly.SsdId,
+                        videocardId = assembly.VideoCardId,
+                        powerUnitId = assembly.PowerUnitId,
+                        likes = assembly.Likes,
+                        creation_time = assembly.Creation_time,
+
+                    }
+                });
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error updating ComputerCase");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAssembly(long id)
+        {
+
+            try
+            {
+                await assemblyRepository.DeleteAssembly(id);
+                return Ok($"Assembly data with Index {id} deleted");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error deleting Assembly");
+                return StatusCode(500, "Internal server error");
+            }
+
+
+        }
     }
 }

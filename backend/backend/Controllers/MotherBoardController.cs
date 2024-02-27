@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class MotherBoardController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace backend.Controllers
             this.motherBoardRepository = motherBoardRepository;
         }
 
-        [HttpPost("createMotherBoard")]
+        [HttpPost("createmotherboard")]
         public async Task<IActionResult> CreateMotherBoard(MotherBoard motherBoard)
         {
             try

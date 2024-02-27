@@ -8,7 +8,7 @@ using System.Runtime.Intrinsics.X86;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class SsdController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace backend.Controllers
             this.ssdRepository = ssdRepository;
         }
 
-        [HttpPost("createSsd")]
+        [HttpPost("createssd")]
         public async Task<IActionResult> CreateSsd(SSD ssd)
         {
             try

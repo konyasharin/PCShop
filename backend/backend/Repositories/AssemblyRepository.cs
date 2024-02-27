@@ -41,7 +41,7 @@ namespace backend.Repositories
 
             if (condition)
             {
-                assembly.price = processor.Price + computerCase.Price + cooler.Price +
+                assembly.Price = processor.Price + computerCase.Price + cooler.Price +
                     motherboard.Price + powerunit.Price + ram.Price + ssd.Price +
                     videocard.Price;
 
@@ -73,7 +73,7 @@ namespace backend.Repositories
 
         public async Task<List<Assembly>> GetAllAssembliesSortedByTimeAdded()
         {
-            return await _context.Assemblies.OrderBy(a => a.creation_time).ToListAsync();
+            return await _context.Assemblies.OrderBy(a => a.Creation_time).ToListAsync();
         }
     }
 }

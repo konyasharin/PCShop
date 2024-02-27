@@ -18,7 +18,6 @@
     "Component": "ComputerCase",
     "id": 1, //long
     "Data": {
-        "Id": 1,  //long
         "brand": "comptercase brand",  //string
         "model": "computercase model",  //string
         "country": "computercase country", //string
@@ -52,7 +51,6 @@
     "Component": "Processor",   //string
     "id": 1,   //long
     "Data": {
-        "Id": 1,  //long
         "brand": "processor brand",  //string
         "model": "processor model",  //string
         "country": "processor country",  //string
@@ -86,7 +84,6 @@
     "Component": "MotherBoard",  //string
     "id": 1,  //long
     "Data": {
-        "Id": 1,  //long
         "brand": "motherboard brand",   //string
         "model": "motherboard model",   //string
         "country": "motherboard country",  //string
@@ -120,7 +117,6 @@
     "Component": "SSD",  //string
     "id": 1,  //long
     "Data": {
-        "Id": 1, //long
         "brand": "ssd brand",  //string
         "model": "ssd model",  //string
         "country": "ssd country", //string
@@ -153,7 +149,6 @@
     "Component": "RAM",  //string
     "id": 1,  //long
     "Data": {
-        "Id": 1,  //long
         "brand": "ram brand",  //string
         "model": "ram model",  //string
         "country": "ram country", //string
@@ -187,7 +182,6 @@
     "Component": "PowerUnit", //string
     "id": 1, //long
     "Data": {
-        "Id": 1,  //string
         "brand": "powerunit brand", //string
         "model": "powerunit model", //string
         "country": "powerunit country", //string
@@ -218,9 +212,8 @@
 ```json
 {
     "Component": "VideoCard",
-    "id": 1,                                    //long
+    "id": 1, //long             
     "Data": {
-        "Id": 1,                                //long
         "brand": "ram brand",                  //string
         "model": "ram model",                 //string
         "country": "ram country",             //string
@@ -252,9 +245,8 @@
 ```json
 {
     "Component": "Cooler",  //long
-    "id": 1,
+    "id": 1, //long
     "Data": {
-        "Id": 1,
         "brand": "cooler brand", //string
         "model": "ram model", //string
         "country": "ram country", //string
@@ -343,12 +335,9 @@
 		"Processor data with Index {id} updated"
 	}
 
-'''
-
-```json
-{
-	"Processor data with Index {id} deleted"
-}
+    {
+        "Processor data with Index {id} deleted"
+    }
 ```
 
 
@@ -378,12 +367,10 @@
 		"MotherBoard data with Index {id} updated"
 	}
 
-'''
 
-```json
-{
-	"MotherBoard data with Index {id} deleted"
-}
+    {
+        "MotherBoard data with Index {id} deleted"
+    }
 ```
 
 
@@ -412,12 +399,10 @@
 		"SSD data with Index {id} updated"
 	}
 
-'''
 
-```json
-{
-	"SSD data with Index {id} deleted"
-}
+    {
+        "SSD data with Index {id} deleted"
+    }
 ```
 
 5) https://localhost:7202/api/RAM/1
@@ -447,12 +432,10 @@
 		"RAM data with Index {id} updated"
 	}
 
-'''
 
-```json
-{
-	"RAM data with Index {id} deleted"
-}
+    {
+        "RAM data with Index {id} deleted"
+    }
 ```
 
 6) https://localhost:7202/api/PowerUnit/1
@@ -480,12 +463,10 @@
 		"PowerUnit data with Index {id} updated"
 	}
 
-'''
 
-```json
-{
-	"PowerUnit data with Index {id} deleted"
-}
+    {
+        "PowerUnit data with Index {id} deleted"
+    }
 ```
 
 7) https://localhost:7202/api/VideoCard/1
@@ -515,12 +496,10 @@
 		"VideoCard data with Index {id} updated"
 	}
 
-'''
 
-```json
-{
-	"VideoCard data with Index {id} deleted"
-}
+    {
+        "VideoCard data with Index {id} deleted"
+    }
 ```
 
 8) https://localhost:7202/api/Cooler/1
@@ -549,10 +528,8 @@
 		"Cooler data with Index {id} updated"
 	}
 
-'''
 
-```json
-{
-	"Cooler data with Index {id} deleted"
-}
+    {
+        "Cooler data with Index {id} deleted"
+    }
 ```

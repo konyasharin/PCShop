@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "liOq2HItvn3mB63uhHK/Y706FiR9+LYo2Yid8HGT5ko4r5fCzbJd772FmSZ44g3HtMt1GnRRYxwqcFJy4IpkQw==",
+  "dgSpecHash": "Fx/JPMI8+UMdOHLi2y8ODt7rQqB1SMUnS3kEMOn+AX9MuVCtv/F+jTcpUglMIS+JeWw9AVv6UYuqi/F0JvOf6A==",
   "success": true,
   "projectFilePath": "C:\\C# Web\\PCshop\\PCShop\\backend\\backend\\backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\sagop\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\sagop\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
+    "C:\\Users\\sagop\\.nuget\\packages\\dapper\\2.1.28\\dapper.2.1.28.nupkg.sha512",
     "C:\\Users\\sagop\\.nuget\\packages\\dotnetenv\\3.0.0\\dotnetenv.3.0.0.nupkg.sha512",
     "C:\\Users\\sagop\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\sagop\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

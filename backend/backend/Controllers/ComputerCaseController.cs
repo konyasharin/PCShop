@@ -3,10 +3,13 @@ using backend.Entities;
 using backend.IRepositories;
 using backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
+using System.Data;
+using Dapper;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ComputerCaseController : ControllerBase
     {
@@ -22,7 +25,7 @@ namespace backend.Controllers
             this.computerCaseRepository = computerCaseRepository;
         }
 
-        [HttpPost("createComputerCase")]
+        [HttpPost("createcomputercase")]
         public async Task<IActionResult> CreateComputerCase(ComputerCase computerCase)
         {
             try
@@ -32,16 +35,17 @@ namespace backend.Controllers
                     return BadRequest(ModelState);
                 }
 
+
+                DotNetEnv.Env.Load();
+                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+
                 await computerCaseRepository.AddComputerCase(computerCase);
 
-                logger.LogInformation("ComputerCase created with ID {ComputerCaseId}", computerCase.Id);
-
-                return Ok(new
+                await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    Component = "ComputerCase",
-                    id = computerCase.Id,
-                    Data = new
+                    var parameters = new
                     {
+                        id = computerCase.Id,
                         brand = computerCase.Brand,
                         model = computerCase.Model,
                         country = computerCase.Country,
@@ -51,12 +55,41 @@ namespace backend.Controllers
                         depth = computerCase.Depth,
                         price = computerCase.Price,
                         description = computerCase.Description,
-                        image = computerCase.Image
-                    }
-                });
+                        image = computerCase.Image,
+                    };
+
+                   connection.Open();
+                    connection.Execute("INSERT INTO ComputerCase (brand, model, country, material, width," +
+                        " height, depth, price, description, image)" +
+                        "VALUES (@Brand, @Model, @Country, @Material, @Width, @Height, @Depth, @Price, " +
+                        "@Description, @Image)", computerCase);
+
+
+                    logger.LogInformation("ComputerCase created with ID {ComputerCaseId}", computerCase.Id);
+
+                    return Ok(new
+                    {
+                        Component = "ComputerCase",
+                        id = computerCase.Id,
+                        Data = new
+                        {
+                            brand = computerCase.Brand,
+                            model = computerCase.Model,
+                            country = computerCase.Country,
+                            material = computerCase.Material,
+                            width = computerCase.Width,
+                            height = computerCase.Height,
+                            depth = computerCase.Depth,
+                            price = computerCase.Price,
+                            description = computerCase.Description,
+                            image = computerCase.Image
+                        }
+                    });
+                }
             }
             catch (Exception ex)
             {
+
                 logger.LogError(ex, "Error creating ComputerCase");
                 return StatusCode(500, "Internal server error");
             }
@@ -157,7 +190,7 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error updating PowerUnit");
+                logger.LogError(ex, "Error updating ComputerCase");
                 return StatusCode(500, "Internal server error");
             }
         }

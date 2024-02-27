@@ -8,7 +8,7 @@ using System.Runtime.Intrinsics.Arm;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class RamController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace backend.Controllers
             this.ramRepository = ramRepository;
         }
 
-        [HttpPost("createRam")]
+        [HttpPost("createram")]
         public async Task<IActionResult> CreateRam(RAM ram)
         {
             try

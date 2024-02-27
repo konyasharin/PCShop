@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ProcessorController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace backend.Controllers
             this.processorRepository = processorRepository;
         }
 
-        [HttpPost("createProcessor")]
+        [HttpPost("createprocessor")]
         public async Task<IActionResult> CreateProcessor(Processor processor)
         {
             try

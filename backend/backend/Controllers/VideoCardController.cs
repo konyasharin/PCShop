@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class VideoCardController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace backend.Controllers
             this.videoCardRepository = videoCardRepository;
         }
 
-        [HttpPost("createVideoCard")]
+        [HttpPost("createvideocard")]
         public async Task<IActionResult> CreateVideoCard(VideoCard videoCard)
         {
             try

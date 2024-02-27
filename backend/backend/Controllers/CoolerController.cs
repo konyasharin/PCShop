@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class CoolerController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace backend.Controllers
             this.coolerRepository = сoolerRepository;
         }
 
-        [HttpPost("createCooler")]
+        [HttpPost("createcooler")]
         public async Task<IActionResult> CreateCooler(Cooler cooler)
         {
             try

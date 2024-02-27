@@ -19,11 +19,11 @@ namespace backend.Entities
         public long Likes { get; set; }
 
         [Column("creation_time")]
-        public DateTime creation_time { get; set; }
+        public DateTime Creation_time { get; set; }
 
         [Column("price")]
         [Required]
-        public int price { get; set; }
+        public int Price { get; set; }
 
         [Column("processorId")]
         [ForeignKey("processorId")]

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PowerUnitController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace backend.Controllers
             this.powerUnitRepository = powerUnitRepository;
         }
 
-        [HttpPost("createPowerUnit")]
+        [HttpPost("createpowerunit")]
         public async Task<IActionResult> CreatePowerUnit(PowerUnit powerUnit)
         {
             try
