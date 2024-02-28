@@ -27,4 +27,6 @@
 #env
 /backend/backend/*.env
 
+/backend/*.vs
+
 

@@ -1,9 +1,8 @@
-﻿using backend.Data;
-using backend.Entities;
-using backend.IRepositories;
-using backend.Repositories;
+﻿using backend.Entities;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
 
 namespace backend.Controllers
 {
@@ -12,152 +11,50 @@ namespace backend.Controllers
     public class PowerUnitController : ControllerBase
     {
         private readonly ILogger<PowerUnitController> logger;
-        private readonly DataContext dataContext;
-        private readonly IPowerUnitRepository powerUnitRepository;
 
-        public PowerUnitController(ILogger<PowerUnitController> logger, DataContext dataContext,
-            IPowerUnitRepository powerUnitRepository)
+        public PowerUnitController(ILogger<PowerUnitController> logger)
         {
             this.logger = logger;
-            this.dataContext = dataContext;
-            this.powerUnitRepository = powerUnitRepository;
+
+
         }
 
         [HttpPost("createpowerunit")]
-        public async Task<IActionResult> CreatePowerUnit(PowerUnit powerUnit)
+        public async void CreatePowerUnit(PowerUnit powerunit)
         {
+
             try
             {
-                if (!ModelState.IsValid)
+                DotNetEnv.Env.Load();
+                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+
+                await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    return BadRequest(ModelState);
-                }
-
-                await powerUnitRepository.AddPowerUnit(powerUnit);
-
-                logger.LogInformation("PowerUnit created with ID {PowerUnitId}", powerUnit.Id);
-
-                return Ok(new
-                {
-                    Component = "PowerUnit",
-                    id = powerUnit.Id,
-                    Data = new
+                    var parameters = new
                     {
-                        brand = powerUnit.Brand,
-                        model = powerUnit.Model,
-                        country = powerUnit.Country,
-                        battery = powerUnit.Battery,
-                        voltage = powerUnit.Voltage,
-                        price = powerUnit.Price,
-                        description = powerUnit.Description,
-                        image = powerUnit.Image
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error creating PowerUnit");
-                return StatusCode(500, "Internal server error");
-            }
-        }
+                        id = powerunit.Id,
+                        brand = powerunit.Brand,
+                        model = powerunit.Model,
+                        country = powerunit.Country,
+                        battery = powerunit.Battery,
+                        voltage = powerunit.Voltage,
+                        price = powerunit.Price,
+                        description = powerunit.Description,
+                        image = powerunit.Image,
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllPowerUnits()
-        {
-            try
-            {
-                var poweunits = await powerUnitRepository.GetAllPowerUnits();
-                return Ok(poweunits);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error getting all PowerUnits");
-                return StatusCode(500, "Internal server error");
-            }
-        }
+                    };
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPowerUnitById(long id)
-        {
-            try
-            {
-                var powerUnit = await powerUnitRepository.GetPowerUnitById(id);
-
-                if (powerUnit == null)
-                {
-                    return NotFound();
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+                    connection.Execute("INSERT INTO public.powerunit (Id, Brand, Model, Country, Battery, Voltage," +
+                        "Price, Description, Image)" +
+                        "VALUES (@Id, @Brand, @Model, @Country, @Battery, @Voltage, @Price, @Description, @Image)", powerunit);
+                    logger.LogInformation("powerUnit data saved to database");
                 }
-
-                return Ok(powerUnit);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error getting PowerUnit");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePowerUnit(long id, PowerUnit updatePowerUnit)
-        {
-
-            try
-            {
-                var powerUnit = await powerUnitRepository.GetPowerUnitById(id);
-
-                if (powerUnit == null)
-                {
-                    return NotFound();
-                }
-
-                powerUnit.Brand = updatePowerUnit.Brand;
-                powerUnit.Model = updatePowerUnit.Model;
-                powerUnit.Country = updatePowerUnit.Country;
-                powerUnit.Battery = updatePowerUnit.Battery;
-                powerUnit.Voltage = updatePowerUnit.Voltage;
-                powerUnit.Price = updatePowerUnit.Price;
-                powerUnit.Description = updatePowerUnit.Description;
-                powerUnit.Image = updatePowerUnit.Image;
-
-                await powerUnitRepository.UpdatePowerUnit(powerUnit);
-
-                return Ok(new
-                {
-                    Component = "PowerUnit",
-                    id = powerUnit.Id,
-                    Data = new
-                    {
-                        brand = powerUnit.Brand,
-                        model = powerUnit.Model,
-                        country = powerUnit.Country,
-                        battery = powerUnit.Battery,
-                        voltage = powerUnit.Voltage,
-                        price = powerUnit.Price,
-                        description = powerUnit.Description,
-                        image = powerUnit.Image
-                    }
-                });
-
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error updating PowerUnit");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePowerUnit(long id)
-        {
-            try
-            {
-                await powerUnitRepository.DeletePowerUnit(id);
-                return Ok($"PowerUnit data with Index {id} deleted");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error deleting PowerUnit");
-                return StatusCode(500, "Internal server error");
+                logger.LogError("PowerUnit data did not save in database");
             }
         }
     }

@@ -1,9 +1,9 @@
-﻿using backend.Data;
-using backend.Entities;
-using backend.IRepositories;
-using backend.Repositories;
+﻿using backend.Entities;
+using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
+using System.Linq.Expressions;
 
 namespace backend.Controllers
 {
@@ -12,38 +12,28 @@ namespace backend.Controllers
     public class CoolerController : ControllerBase
     {
         private readonly ILogger<CoolerController> logger;
-        private readonly DataContext dataContext;
-        private readonly ICoolerRepository coolerRepository;
-    
 
-        public CoolerController(ILogger<CoolerController> logger, DataContext dataContext,
-            ICoolerRepository сoolerRepository)
+        public CoolerController(ILogger<CoolerController> logger)
         {
             this.logger = logger;
-            this.dataContext = dataContext;
-            this.coolerRepository = сoolerRepository;
+
+
         }
 
         [HttpPost("createcooler")]
-        public async Task<IActionResult> CreateCooler(Cooler cooler)
+        public async void CreateCooler(Cooler cooler)
         {
+
             try
             {
-                if (!ModelState.IsValid)
+                DotNetEnv.Env.Load();
+                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+
+                await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    return BadRequest(ModelState);
-                }
-
-                await coolerRepository.AddCooler(cooler);
-
-                logger.LogInformation("Cooler created with ID {CoolerId}", cooler.Id);
-
-                return Ok(new
-                {
-                    Component = "Cooler",
-                    id = cooler.Id,
-                    Data = new
+                    var parameters = new
                     {
+                        id = cooler.Id,
                         brand = cooler.Brand,
                         model = cooler.Model,
                         country = cooler.Country,
@@ -51,115 +41,20 @@ namespace backend.Controllers
                         power = cooler.Power,
                         price = cooler.Price,
                         description = cooler.Description,
-                        image = cooler.Image
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error creating Cooler");
-                return StatusCode(500, "Internal server error");
-            }
-        }
+                        image = cooler.Image,
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllCoolers()
-        {
-            try
-            {
-                var coolers = await coolerRepository.GetAllCoolers();
-                return Ok(coolers);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error getting all Coolers");
-                return StatusCode(500, "Internal server error");
-            }
-        }
+                    };
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCoolerById(long id)
-        {
-            try
-            {
-                var cooler = await coolerRepository.GetCoolerById(id);
-
-                if (cooler == null)
-                {
-                    return NotFound();
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+                    connection.Execute("INSERT INTO public.cooler (Id, Brand, Model, Country, Speed, Power," +
+                        "Price, Description, Image)" +
+                        "VALUES (@Id, @Brand, @Model, @Country, @Speed, @Power, @Price, @Description, @Image)", cooler);
+                    logger.LogInformation("Cooler data saved to database");
                 }
-
-                return Ok(cooler);
-            }
-            catch (Exception ex)
+            }catch(Exception ex)
             {
-                logger.LogError(ex, "Error getting Cooler");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCooler(long id, Cooler updatedCooler)
-        {
-            try
-            {
-       
-                var cooler = await coolerRepository.GetCoolerById(id);
-
-                if (cooler == null)
-                {
-                    return NotFound(); 
-                }
-
-               
-                cooler.Brand = updatedCooler.Brand;
-                cooler.Model = updatedCooler.Model;
-                cooler.Country = updatedCooler.Country;
-                cooler.Speed = updatedCooler.Speed;
-                cooler.Power = updatedCooler.Power;
-                cooler.Price = updatedCooler.Price;
-                cooler.Description = updatedCooler.Description;
-                cooler.Image = cooler.Image;
-                    
-                await coolerRepository.UpdateCooler(cooler);
-
-
-                return Ok(new
-                {
-                    Component = "Cooler",
-                    id = cooler.Id,
-                    Data = new
-                    {
-                        brand = cooler.Brand,
-                        model = cooler.Model,
-                        country = cooler.Country,
-                        speed = cooler.Speed,
-                        power = cooler.Power,
-                        price = cooler.Price,
-                        description = cooler.Description,
-                        image = cooler.Image
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error updating Cooler");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCooler(long id)
-        {
-            try
-            {
-                await coolerRepository.DeleteCooler(id);
-                return Ok($"Cooler data with Index {id} deleted");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error deleting Cooler");
-                return StatusCode(500, "Internal server error");
+                logger.LogError("Cooler data did not save in database");
             }
         }
     }

@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Entities
 {
-    [Table("ComputerCase")]
+    [Table("computer_case")]
     public class ComputerCase
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public int Id { get; set; }
 
         [Column("brand")]
         [Required]
@@ -50,7 +50,7 @@ namespace backend.Entities
         [Required]
         public byte[] Image { get; set; }
 
-        public Assembly assembly { get; set; }
+      
        
     }
 }

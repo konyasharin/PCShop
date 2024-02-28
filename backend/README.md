@@ -8,16 +8,15 @@
 # На данных момент можно проверить работу Post запроса для каждого компонента на страницах:
 
 
-1) https://localhost:7202/api/ComputerCase/createComputerCase
+1) https://localhost:7202/ComputerCase/createcomputercase
 
 ## Создаём корпус компуктера
 ### Входные данные:
 
 ```json
 {
-    "Component": "ComputerCase",
-    "id": 1, //long
-    "Data": {
+   
+        "id": 1, //int
         "brand": "comptercase brand",  //string
         "model": "computercase model",  //string
         "country": "computercase country", //string
@@ -28,29 +27,21 @@
 		"price": "computercase price",  //int
 		"description": "computercase description", //string
 		"image": "computercase image"  //byte[]
-    }
+  
 }
 ```
 
-### Ошибка
 
-```json
-{
-    "statusCode": 500,
-    "message": "Internal server error"
-}
-```
 
-2) https://localhost:7202/api/Processor/createProcessor
+2) https://localhost:7202/Processor/createprocessor
 
 ## Создаём Processor
 ### Входные данные: 
 
 ```json
 {
-    "Component": "Processor",   //string
-    "id": 1,   //long
-    "Data": {
+    
+        "id": 1,   //int
         "brand": "processor brand",  //string
         "model": "processor model",  //string
         "country": "processor country",  //string
@@ -60,30 +51,21 @@
 		"price": "processor price",   //int
 		"description": "processor description",   //string
 		"image": "processor image"   //byte[]
-    }
-}
-```
-
-### Ошибка
-
-```json
-{
-    "statusCode": 500,
-    "message": "Internal server error"
 }
 ```
 
 
-3) https://localhost:7202/api/MotherBoard/createMotherBoard
+
+
+3) https://localhost:7202/MotherBoard/createmotherboard
 
 ## Создаём MotherBoard
 ### Входные данные:
 
 ```json
 {
-    "Component": "MotherBoard",  //string
-    "id": 1,  //long
-    "Data": {
+    
+        "id": 1,  //int
         "brand": "motherboard brand",   //string
         "model": "motherboard model",   //string
         "country": "motherboard country",  //string
@@ -93,30 +75,21 @@
 		"price": "motherboard price",  //int
 		"description": "motherboard description",  //string
 		"image": "motherboard image"  //byte[]
-    }
+    
 }
 ```
 
 
-### Ошибка
 
-```json
-{
-    "statusCode": 500,
-    "message": "Internal server error"
-}
-```
-
-4) https://localhost:7202/api/SSD/createSsd
+4) https://localhost:7202/SSD/createssd
 
 ## Создаём SSD
 ### Входные данные:
 
 ```json
 {
-    "Component": "SSD",  //string
-    "id": 1,  //long
-    "Data": {
+    
+        "id": 1,  //int
         "brand": "ssd brand",  //string
         "model": "ssd model",  //string
         "country": "ssd country", //string
@@ -124,31 +97,23 @@
 		"price": "ssd price", //int
 		"description": "ssd description", //string
 		"image": "ssd image" //byte[]
-    }
+    
 }
 ```
 
 
-### Ошибка
-
-```json
-{
-    "statusCode": 500,
-    "message": "Internal server error"
-}
-```
 
 
-5) https://localhost:7202/api/RAM/createRam
+
+5) https://localhost:7202/RAM/createram
 
 Создаём RAM
 ## Входные данные:
 
 ```json
 {
-    "Component": "RAM",  //string
-    "id": 1,  //long
-    "Data": {
+    
+        "id": 1,  //int
         "brand": "ram brand",  //string
         "model": "ram model",  //string
         "country": "ram country", //string
@@ -158,30 +123,21 @@
 		"price": "ram price",  //int
 		"description": "ram description",  //string
 		"image": "ram image"  //byte[]
-    }
-}
-```
-
-### Ошибка
-
-```json
-{
-    "statusCode": 500,
-    "message": "Internal server error"
+    
 }
 ```
 
 
-6) https://localhost:7202/api/PowerUnit/createPowerUnit
+
+6) https://localhost:7202/PowerUnit/createpowerunit
 
 ## PowerUnit
 ### Входные данные:
 
 ```json
 {
-    "Component": "PowerUnit", //string
-    "id": 1, //long
-    "Data": {
+   
+        "id": 1, //long
         "brand": "powerunit brand", //string
         "model": "powerunit model", //string
         "country": "powerunit country", //string
@@ -190,30 +146,17 @@
 		"price": "powerunit price", //int
 		"description": "powerunit description", //string
 		"image": "powerunit image" //byte[]
-    }
-}
-```
-
-### Ошибка
-
-```json
-{
-    "statusCode": 500,
-    "message": "Internal server error"
+    
 }
 ```
 
 
-7) https://localhost:7202/api/VideoCard/createVideoCard
 
-## Создаём Видеокарту
-### Входные данные:
 
 ```json
 {
-    "Component": "VideoCard",
-    "id": 1, //long             
-    "Data": {
+   
+        "id": 1, //int            
         "brand": "ram brand",                  //string
         "model": "ram model",                 //string
         "country": "ram country",             //string
@@ -223,30 +166,21 @@
 		"price": "videocard price",                    //int
 		"description": "videocard description",    //text
 		"image": "videocard image"                 //byte[]
-    }
-}
-```
-
-### Ошибка
-
-```json
-{
-    "statusCode": 500,
-    "message": "Internal server error"
+    
 }
 ```
 
 
-8) https://localhost:7202/api/Cooler/createCooler
+
+8) https://localhost:7202/api/Cooler/createcooler
 
 ## Создаём Куллер
 ### Входные данные:
 
 ```json
 {
-    "Component": "Cooler",  //long
-    "id": 1, //long
-    "Data": {
+   
+        "id": 1, //long
         "brand": "cooler brand", //string
         "model": "ram model", //string
         "country": "ram country", //string
@@ -255,19 +189,9 @@
 		"price": "ram price",  //int
 		"description": "ram description",   //string
 		"image": "ram image"   //byte[]
-    }
+    
 }
 ```
-
-### Ошибка
-
-```json
-{
-    "statusCode": 500,
-    "message": "Internal server error"
-}
-```
-
 
 
  

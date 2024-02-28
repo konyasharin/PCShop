@@ -1,11 +1,9 @@
 ﻿using backend.Data;
 using backend.Entities;
-using backend.IRepositories;
-using backend.Repositories;
+using Dapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
-using System.Data;
-using Dapper;
 
 namespace backend.Controllers
 {
@@ -14,32 +12,22 @@ namespace backend.Controllers
     public class ComputerCaseController : ControllerBase
     {
         private readonly ILogger<ComputerCaseController> logger;
-        private readonly DataContext dataContext;
-        private readonly IComputerCaseRepository computerCaseRepository;
+      
 
-        public ComputerCaseController(ILogger<ComputerCaseController> logger, DataContext dataContext,
-            IComputerCaseRepository computerCaseRepository)
+        public ComputerCaseController(ILogger<ComputerCaseController> logger)
         {
             this.logger = logger;
-            this.dataContext = dataContext;
-            this.computerCaseRepository = computerCaseRepository;
+    
         }
 
         [HttpPost("createcomputercase")]
-        public async Task<IActionResult> CreateComputerCase(ComputerCase computerCase)
+        public async void CreateCreateCase(ComputerCase computerCase)
         {
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
-                await computerCaseRepository.AddComputerCase(computerCase);
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -56,163 +44,21 @@ namespace backend.Controllers
                         price = computerCase.Price,
                         description = computerCase.Description,
                         image = computerCase.Image,
+
                     };
 
-                   connection.Open();
-                    connection.Execute("INSERT INTO ComputerCase (brand, model, country, material, width," +
-                        " height, depth, price, description, image)" +
-                        "VALUES (@Brand, @Model, @Country, @Material, @Width, @Height, @Depth, @Price, " +
-                        "@Description, @Image)", computerCase);
-
-
-                    logger.LogInformation("ComputerCase created with ID {ComputerCaseId}", computerCase.Id);
-
-                    return Ok(new
-                    {
-                        Component = "ComputerCase",
-                        id = computerCase.Id,
-                        Data = new
-                        {
-                            brand = computerCase.Brand,
-                            model = computerCase.Model,
-                            country = computerCase.Country,
-                            material = computerCase.Material,
-                            width = computerCase.Width,
-                            height = computerCase.Height,
-                            depth = computerCase.Depth,
-                            price = computerCase.Price,
-                            description = computerCase.Description,
-                            image = computerCase.Image
-                        }
-                    });
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+                    connection.Execute("INSERT INTO public.computer_case (Id, Brand, Model, Country, Material, Width, Height, Depth," +
+                        "Price, Description, Image)" +
+                        "VALUES (@Id, @Brand, @Model, @Country, @Material, @Width, @Height, @Depth, @Price, @Description, @Image)", computerCase);
+                    logger.LogInformation("ComputerCase data saved to database");
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-
-                logger.LogError(ex, "Error creating ComputerCase");
-                return StatusCode(500, "Internal server error");
+                logger.LogError("ComputerCase data did not save in database");
             }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllComputerCases()
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var computerCases = await computerCaseRepository.GetAllComputerCases();
-                return Ok(computerCases);
-
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error getting all ComputerCases");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetComputerCaseById(long id)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var computerCase = await computerCaseRepository.GetComputerCaseById(id);
-
-                if (computerCase == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(computerCase);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error getting all ComputerCases");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateComputerCase(long id, ComputerCase updatedComputerCase)
-        {
-            try
-            {
-                
-                var computerCase = await computerCaseRepository.GetComputerCaseById(id);
-
-                if (computerCase == null)
-                {
-                    return NotFound();
-                }
-
-                computerCase.Brand = updatedComputerCase.Brand;
-                computerCase.Model = updatedComputerCase.Model;
-                computerCase.Country = updatedComputerCase.Country;
-                computerCase.Material = updatedComputerCase.Material;
-                computerCase.Width = updatedComputerCase.Width;
-                computerCase.Height = updatedComputerCase.Height;
-                computerCase.Depth = updatedComputerCase.Depth;
-                computerCase.Price = updatedComputerCase.Price;
-                computerCase.Description = updatedComputerCase.Description;
-                computerCase.Image = updatedComputerCase.Image;
-
-                await computerCaseRepository.UpdateComputerCase(computerCase);
-
-                
-                return Ok(new
-                {
-                    Component = "ComputerCase",
-                    id = computerCase.Id,
-                    Data = new
-                    {
-                        brand = computerCase.Brand,
-                        model = computerCase.Model,
-                        country = computerCase.Country,
-                        material = computerCase.Material,
-                        width = computerCase.Width,
-                        height = computerCase.Height,
-                        depth = computerCase.Depth,
-                        price = computerCase.Price,
-                        description = computerCase.Description,
-                        image = computerCase.Image
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error updating ComputerCase");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteComputerCase(long id)
-        {
-
-            try
-            {
-                await computerCaseRepository.DeleteComputerCase(id);
-                return Ok($"ComputerCase data with Index {id} deleted");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error deleting ComputerCase");
-                return StatusCode(500, "Internal server error");
-            }
-
-
-
         }
     }
-
 }

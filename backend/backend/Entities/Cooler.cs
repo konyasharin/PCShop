@@ -43,7 +43,7 @@ namespace backend.Entities
         [Required]
         public byte[] Image { get; set; }
 
-        public Assembly assembly { get; set; }
+       
 
     }
 }
