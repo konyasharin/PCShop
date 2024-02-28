@@ -5,7 +5,7 @@ using Npgsql;
 
 namespace backend.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class RamController : ControllerBase
     {
@@ -19,13 +19,33 @@ namespace backend.Controllers
         }
 
         [HttpPost("createRam")]
-        public async void CreateRam(RAM ram)
+        public async Task<IActionResult> CreateRam(RAM ram)
         {
 
             try
             {
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+
+                if (ram.Frequency < 0 || ram.Frequency > 100000)
+                {
+                    return BadRequest("Frequency must be between 0 and 100000");
+                }
+
+                if (ram.Timings < 0 || ram.Timings > 10000)
+                {
+                    return BadRequest("Timings must be between 0 and 10000");
+                }
+
+                if (ram.Capacity_db < 0 || ram.Capacity_db > 10000)
+                {
+                    return BadRequest("Capacity_db must be between 0 and 10000");
+                }
+
+                if (ram.Price < 0)
+                {
+                    return BadRequest("Price must not be less than 0");
+                }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -46,15 +66,20 @@ namespace backend.Controllers
 
                     connection.Open();
                     logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.ram (Id, Brand, Model, Country, Frequency, Timings, Capacity_db" +
-                        "Price, Description, Image)" +
+                    connection.Execute("INSERT INTO public.ram (id, brand, model, country, frequency, timings, capacity_db," +
+                        "price, description, image)" +
                         "VALUES (@Id, @Brand, @Model, @Country, @Frequency, @Timings, @Capacity_db, @Price, @Description, @Image)", ram);
+
                     logger.LogInformation("Ram data saved to database");
+
+                    String result = "Ram data saved to database";
+                    return Ok(result);
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Ram data did not save in database. Exception: {ex}");
+                return BadRequest(ex.Message);
             }
         }
 

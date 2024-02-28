@@ -20,13 +20,24 @@ namespace backend.Controllers
         }
 
         [HttpPost("createSsd")]
-        public async void CreateSsd(SSD ssd)
+        public async Task<IActionResult> CreateSsd(SSD ssd)
         {
+
 
             try
             {
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+
+                if (ssd.Capacity < 0 || ssd.Capacity > 10000)
+                {
+                    return BadRequest("Capacity must be between 0 and 10000");
+                }
+
+                if (ssd.Price < 0)
+                {
+                    return BadRequest("Price must not be less than 0");
+                }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -48,16 +59,21 @@ namespace backend.Controllers
                     connection.Execute("INSERT INTO public.ssd (Id, Brand, Model, Country, Capacity," +
                         "Price, Description, Image)" +
                         "VALUES (@Id, @Brand, @Model, @Country, @Capacity, @Price, @Description, @Image)", ssd);
+
                     logger.LogInformation("SSD data saved to database");
+
+                    String result = "Ssd data saved to database";
+                    return Ok(result);
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"SSD data did not save in database. \nEsception: {ex}");
+                return BadRequest(ex);
             }
         }
 
-        [HttpGet("GetSsd/{id}")]
+        [HttpGet("getSsd/{id}")]
         public async Task<IActionResult> GetSsdById(int id)
         {
             try

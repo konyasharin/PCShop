@@ -2,6 +2,7 @@
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Npgsql;
 
 namespace backend.Controllers
@@ -19,9 +20,18 @@ namespace backend.Controllers
 
         }
 
-        [HttpPost("CreateMotherBoard")]
-        public async void CreateMotherBoard(MotherBoard motherBoard)
+        [HttpPost("createMotherBoard")]
+        public async Task<IActionResult> CreateMotherBoard(MotherBoard motherBoard)
         {
+            if (motherBoard.Frequency < 0 || motherBoard.Frequency > 100000)
+            {
+                return BadRequest("Frequency must be between 0 and 100000");
+            }
+
+            if (motherBoard.Price < 0)
+            {
+                return BadRequest("Price must not be less than 0");
+            }
 
             try
             {
@@ -47,15 +57,20 @@ namespace backend.Controllers
 
                     connection.Open();
                     logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.motherboard (Id, Brand, Model, Country, Frequency, Socket, Chipset," +
+                    connection.Execute("INSERT INTO public.mother_board (Id, Brand, Model, Country, Frequency, Socket, Chipset," +
                         "Price, Description, Image)" +
                         "VALUES (@Id, @Brand, @Model, @Country, @Frequency, @Socket, @Chipset, @Price, @Description, @Image)", motherBoard);
+
                     logger.LogInformation("MotherBoard data saved to database");
+
+                    String result = "MotherBoard data saved to database";
+                    return Ok(result);
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"MotherBoard data did not save in database. Exception: {ex}");
+                return BadRequest(ex.Message);
                
             }
         }

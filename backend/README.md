@@ -31,7 +31,20 @@
 }
 ```
 
+### Ограничения:
 
+1) Weight от 10 до 100
+2) Height от 20 до 150
+3) Depth от 20 до 100
+4) Цена больше 0
+
+### Пример ошибки
+
+```json
+
+"Height must be between 30 and 150"
+
+```
 
 2) https://localhost:7202/Processor/createProcessor
 
@@ -45,6 +58,7 @@
         "brand": "processor brand",  //string
         "model": "processor model",  //string
         "country": "processor country",  //string
+        "cores": 5, //int
         "clock_frequency": "processor clock_frequency",  //int
 		"turbo_frequency": "processor turbo_frequency",  //int
 		"heat_dissipation": "processor heat_dissipation",  //int
@@ -54,8 +68,26 @@
 }
 ```
 
+### Ограничения:
+
+1) Число ядер от 1 до 8
+2) Цена больше 0
+3) Heat_dissipation от 0 до 10000
+4) Turbo_frequency от 0 до 100000 и должна быть больше clock_frequency
+5) Clock_frequency от о до 50000 и должна быть меньше turbo_frequency
 
 
+### Пример ошибки при несоблюдении диапазона численных данных
+
+```json
+
+"Height must be between 30 and 150"
+
+```
+
+"Height must be between 30 and 150"
+
+```
 
 3) https://localhost:7202/MotherBoard/createMotherBoard
 
@@ -78,8 +110,18 @@
     
 }
 ```
+### Ограничения
 
+1) Частота от 0 до 100000
+2) Цены больше 0
 
+### Пример ошибки при несоблюдении диапазона численных данных
+
+```json
+
+"Height must be between 30 and 150"
+
+```
 
 4) https://localhost:7202/SSD/createSsd
 
@@ -100,12 +142,21 @@
     
 }
 ```
+### Ограничения
+
+1) Capacity от 0 до 10000
+2) Price больше 0
+
+### Пример ошибки при несоблюдении диапазона численных данных
+
+```json
+
+"Height must be between 30 and 150"
+
+```
 
 
-
-
-
-5) https://localhost:7202/RAM/createRam
+5) https://localhost:7202/Ram/createRam
 
 Создаём RAM
 ## Входные данные:
@@ -127,6 +178,19 @@
 }
 ```
 
+### Ограничения
+
+1) Цена больше 0
+2) Timings и Capacity_db от 0 до 10000
+3) Частота от 0 до 100000
+
+### Пример ошибки при несоблюдении диапазона численных данных
+
+```json
+
+"Height must be between 30 and 150"
+
+```
 
 
 6) https://localhost:7202/PowerUnit/createPowerUnit
@@ -137,7 +201,7 @@
 ```json
 {
    
-        "id": 1, //long
+        "id": 1, //int
         "brand": "powerunit brand", //string
         "model": "powerunit model", //string
         "country": "powerunit country", //string
@@ -149,9 +213,20 @@
     
 }
 ```
+### ограничения
 
+1) Цена больше 0
+2) Напряжение от 0 до 50000
 
+### Пример ошибки при несоблюдении диапазона численных данных
 
+```json
+
+"Height must be between 30 and 150"
+
+```
+
+7) 
 
 ```json
 {
@@ -161,8 +236,7 @@
         "model": "ram model",                 //string
         "country": "ram country",             //string
         "memory_db": "videocard memory_db",  //int   
-		"memory_type": "videocard memory_type",  //string
-		"capacity_db": "videocard capacity_db",   
+		"memory_type": "videocard memory_type",  //string  
 		"price": "videocard price",                    //int
 		"description": "videocard description",    //text
 		"image": "videocard image"                 //byte[]
@@ -170,6 +244,18 @@
 }
 ```
 
+### Ограничения
+
+1) Частота от 0 до 100000
+2) Memory_db от 0 до 10000
+
+### Пример ошибки при несоблюдении диапазона численных данных
+
+```json
+
+"Height must be between 30 and 150"
+
+```
 
 
 8) https://localhost:7202/api/Cooler/createCooler
@@ -180,7 +266,7 @@
 ```json
 {
    
-        "id": 1, //long
+        "id": 1, //int
         "brand": "cooler brand", //string
         "model": "ram model", //string
         "country": "ram country", //string
@@ -192,11 +278,62 @@
     
 }
 ```
+### Ограничения
+
+1) Цена больше 0
+2) Speed и power должны быть от 0 до 10000
+
+### Пример ошибки при несоблюдении диапазона численных данных
+
+```json
+
+"Height must be between 30 and 150"
+
+```
 
 
- 
+9) https://localhost:7202/api/Assembly/createAssembly
+
+## Создаём сборку
+### Входные данные
+
+```json
+{
+   
+        "id": 1, //int
+        "name": "cooler brand", //string
+        "price": 566, //int
+        "computerCaseId": 1,
+        "coolerId": 1,
+        "motherBoardId": 1,
+        "processorId": 1,
+        "ramId": 1,
+        "ssdId": 1,
+        "videoCardId": 1,
+        "powerUnitId": 1,
+		"likes": 56,
+        "creation_time": "2024-02-28"
+    
+}
+```
+
+### Ограничения
+
+1) Цена больше 0
+2) Цена сборки складывается из цен компонентов + цена за сборку 3000
+
+ ### Пример ошибки при несоблюдении диапазона численных данных
+
+```json
+
+"Height must be between 30 and 150"
+
+```
+
    
 # Для проверки Get, Put и Delete
+
+### Везде выдаёт ошибку если price < 0 и все численные значения должны быть больше 0, но некоторые со своими особенностями
 
 1) https://localhost:7202/api/ComputerCase/GetComputerCase/1
 
@@ -239,7 +376,9 @@ https://localhost:7202/ComputerCase/DeleteComputerCase/1
 
 https://localhost:7202/api/ComputerCase/GetAllComputerCases
 
+## Ошибки
 
+### width, height и depth не могут быть больше 100, 150 и 150 соответственно
 
 2) https://localhost:7202/api/Processor/GetProcessor/1
 
@@ -281,6 +420,8 @@ https://localhost:7202/ComputerCase/DeleteProcessor/1
 
 https://localhost:7202/api/Processor/GetAllProcessors
 
+## Ошибки
+### clock_frequency должен быть от 0 до 50000 и меньше турбоfrequency
 
 3) https://localhost:7202/api/MotherBoard/GetMotherBoard/1
 
@@ -420,6 +561,7 @@ https://localhost:7202/api/Ram/GetAllRam
     }
 }
 ```
+### Выдаёт ошибку если price < 0 and voltage must be in range from 0 to 50000
 
 ### Update with Put
 
@@ -522,3 +664,101 @@ https://localhost:7202/Cooler/DeleteCooler/1
 ### Get All 
 
 https://localhost:7202/api/Cooler/GetAllCoolers
+
+9) https://localhost:7202/api/Assembly/getAssembly/1
+
+### Errors
+
+```json
+{
+    "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+    "title": "Not Found",
+    "status": 404,
+    "traceId": "00-02b585e18cfb3c1206ecc5b3e4603a00-4425c4a7f2e4991e-00"
+
+    "Internal server error" //При неверном индексе
+}
+```
+10) https://localhost:7202/api/Assembly/getAllAssemblies
+
+Получение всех сборок
+# Это также формат для вывода всех данных!!
+
+```json
+
+    [
+    {
+        "id": 1,
+        "name": "cooler brand",
+        "price": 400,
+        "likes": 58,
+        "creation_time": "2024-02-28T00:00:00",
+        "computerCaseId": 1,
+        "coolerId": 1,
+        "motherBoardId": 1,
+        "powerUnitId": 1,
+        "processorId": 1,
+        "ramId": 1,
+        "ssdId": 1,
+        "videoCardId": 1
+    },
+    {
+        "id": 2,
+        "name": "cooler brand",
+        "price": 4310,
+        "likes": 0,
+        "creation_time": "2024-02-28T00:00:00",
+        "computerCaseId": 1,
+        "coolerId": 1,
+        "motherBoardId": 1,
+        "powerUnitId": 1,
+        "processorId": 1,
+        "ramId": 1,
+        "ssdId": 1,
+        "videoCardId": 1
+    },
+    {
+        "id": 3,
+        "name": "cooler brand",
+        "price": 4310,
+        "likes": 0,
+        "creation_time": "2024-02-29T03:02:15.333766",
+        "computerCaseId": 1,
+        "coolerId": 1,
+        "motherBoardId": 1,
+        "powerUnitId": 1,
+        "processorId": 1,
+        "ramId": 1,
+        "ssdId": 1,
+        "videoCardId": 1
+    }
+]
+```
+
+11) https://localhost:7202/api/Assembly/getAssembly/2
+
+Получение сборки по индексу
+
+12) https://localhost:7202/api/Assembly/deleteAssembly/3
+
+Удаление сборки по индексу
+
+13) https://localhost:7202/api/Assembly/updateAssembly/3
+
+обновление по индексу
+
+14) https://localhost:7202/api/Assembly/getAllAssemblies/desc
+
+Вывод сборок по времени убывания
+
+15) https://localhost:7202/api/Assembly/getAllAssemblies/asc
+
+Вывод сборок по времени возрастания
+
+16) https://localhost:7202/api/Assembly/likeAssembly/1
+
+Лайк сборки
+
+17)  https://localhost:7202/api/Assembly/getPopularAssemblies
+
+Вывод популярных сборок

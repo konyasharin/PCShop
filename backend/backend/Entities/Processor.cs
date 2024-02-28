@@ -22,6 +22,10 @@ namespace backend.Entities
         [Required]
         public int Price { get; set; }
 
+        [Column("cores")]
+        [Required]
+        public int Cores { get; set; }
+
         [Column("country")]
         [Required]
         public string Country { get; set; }

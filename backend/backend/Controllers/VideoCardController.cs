@@ -20,13 +20,23 @@ namespace backend.Controllers
         }
 
         [HttpPost("createVideoCard")]
-        public async void CreateVideoCard(VideoCard videoCard)
+        public async Task<IActionResult> CreateVideoCard(VideoCard videoCard)
         {
 
             try
             {
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+
+                if (videoCard.Price < 0)
+                {
+                    return BadRequest("Price must not be less than 0");
+                }
+
+                if (videoCard.Memory_db < 0 || videoCard.Memory_db > 10000)
+                {
+                    return BadRequest("Memory_db must be between 0 and 10000");
+                }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -36,7 +46,7 @@ namespace backend.Controllers
                         brand = videoCard.Brand,
                         model =videoCard.Model,
                         country = videoCard.Country,
-                        memory_db = videoCard.Memoty_db,
+                        memory_db = videoCard.Memory_db,
                         memory_type = videoCard.Memory_type,
                         price =videoCard.Price,
                         description = videoCard.Description,
@@ -46,15 +56,20 @@ namespace backend.Controllers
 
                     connection.Open();
                     logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.videocard (Id, Brand, Model, Country, Memory_db, Memory_type" +
+                    connection.Execute("INSERT INTO public.video_card (Id, Brand, Model, Country, Memory_db, Memory_type," +
                         "Price, Description, Image)" +
                         "VALUES (@Id, @Brand, @Model, @Country, @Memory_db, @Memory_type, @Price, @Description, @Image)", videoCard);
+
                     logger.LogInformation("VideoCard data saved to database");
+
+                    String result = "VideoCard data saved to database";
+                    return Ok(result);
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"VideoCard data did not save in database. \nException: {ex}");
+                return BadRequest(ex);
             }
         }
 
@@ -108,7 +123,7 @@ namespace backend.Controllers
                     return BadRequest("Price must not be less than 0");
                 }
 
-                if (updatedVideoCard.Memoty_db < 0 || updatedVideoCard.Memoty_db > 10000)
+                if (updatedVideoCard.Memory_db < 0 || updatedVideoCard.Memory_db > 10000)
                 {
                     return BadRequest("Memory_db must be between 0 and 10000");
                 }
@@ -122,7 +137,7 @@ namespace backend.Controllers
                         brand = updatedVideoCard.Brand,
                         model = updatedVideoCard.Model,
                         country = updatedVideoCard.Country,
-                        memory_db = updatedVideoCard.Memoty_db,
+                        memory_db = updatedVideoCard.Memory_db,
                         memory_type = updatedVideoCard.Memory_type,
                         price = updatedVideoCard.Price,
                         description = updatedVideoCard.Description,

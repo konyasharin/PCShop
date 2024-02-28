@@ -28,11 +28,11 @@ namespace backend.Entities
 
         [Column("memory_db")]
         [Required]
-        public int Memoty_db { get; set; }
+        public int Memory_db { get; set; }
 
         [Column("memory_type")]
         [Required]
-        public int Memory_type { get; set; }
+        public string Memory_type { get; set; }
 
         [Column("description")]
         [Required]

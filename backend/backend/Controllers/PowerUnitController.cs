@@ -2,6 +2,7 @@
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Npgsql;
 
 namespace backend.Controllers
@@ -20,13 +21,23 @@ namespace backend.Controllers
         }
 
         [HttpPost("CreatePowerUnit")]
-        public async void CreatePowerUnit(PowerUnit powerunit)
+        public async Task<IActionResult> CreatePowerUnit(PowerUnit powerunit)
         {
 
             try
             {
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+
+                if (powerunit.Price < 0)
+                {
+                    return BadRequest("Price must not be less than 0");
+                }
+
+                if (powerunit.Voltage < 0 || powerunit.Voltage > 50000)
+                {
+                    return BadRequest("Voltage must be between 0 and 50000");
+                }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -46,15 +57,20 @@ namespace backend.Controllers
 
                     connection.Open();
                     logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.powerunit (Id, Brand, Model, Country, Battery, Voltage," +
+                    connection.Execute("INSERT INTO public.power_unit (Id, Brand, Model, Country, Battery, Voltage," +
                         "Price, Description, Image)" +
                         "VALUES (@Id, @Brand, @Model, @Country, @Battery, @Voltage, @Price, @Description, @Image)", powerunit);
+
                     logger.LogInformation("powerUnit data saved to database");
+
+                    String result = "PowerUnit data saved to database";
+                    return Ok(result);
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError("PowerUnit data did not save in database");
+                return BadRequest(ex);
             }
         }
 

@@ -1,8 +1,40 @@
 [
   {
-    "ContainingType": "backend.Controllers.RamController",
-    "Method": "DeleteRam",
-    "RelativePath": "Ram/DeleteRam/{id}",
+    "ContainingType": "backend.Controllers.AssemblyController",
+    "Method": "GetAssemblyById",
+    "RelativePath": "api/Assembly/GetAssembly/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.AssemblyController",
+    "Method": "CreateAssembly",
+    "RelativePath": "api/Assembly/createAssembly",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "assembly",
+        "Type": "backend.Entities.Assembly",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.AssemblyController",
+    "Method": "DeleteAssembly",
+    "RelativePath": "api/Assembly/deleteAssembly/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -16,9 +48,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "backend.Controllers.RamController",
-    "Method": "GetAllRams",
-    "RelativePath": "Ram/GetAllRam",
+    "ContainingType": "backend.Controllers.AssemblyController",
+    "Method": "GetAllAssemblieses",
+    "RelativePath": "api/Assembly/getAllAssemblies",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -26,10 +58,40 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "backend.Controllers.RamController",
-    "Method": "GetRamById",
-    "RelativePath": "Ram/GetRam/{id}",
+    "ContainingType": "backend.Controllers.AssemblyController",
+    "Method": "GetAllByTimeAsc",
+    "RelativePath": "api/Assembly/getAllAssemblies/asc",
     "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.AssemblyController",
+    "Method": "GetAllByTimesDesc",
+    "RelativePath": "api/Assembly/getAllAssemblies/desc",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.AssemblyController",
+    "Method": "GetPopularAssemblies",
+    "RelativePath": "api/Assembly/getPopularAssemblies",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.AssemblyController",
+    "Method": "LikeAssembly",
+    "RelativePath": "api/Assembly/likeAssembly/{id}",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -42,9 +104,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "backend.Controllers.RamController",
-    "Method": "UpdateRam",
-    "RelativePath": "Ram/UpdateRam/{id}",
+    "ContainingType": "backend.Controllers.AssemblyController",
+    "Method": "UpdateAssembly",
+    "RelativePath": "api/Assembly/updateAssembly/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -55,34 +117,12 @@
         "IsRequired": true
       },
       {
-        "Name": "updatedRam",
-        "Type": "backend.Entities.RAM",
+        "Name": "updatedAssembly",
+        "Type": "backend.Entities.Assembly",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
-  },
-  {
-    "ContainingType": "backend.Controllers.RamController",
-    "Method": "CreateRam",
-    "RelativePath": "Ram/createRam",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "ram",
-        "Type": "backend.Entities.RAM",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
   },
   {
     "ContainingType": "backend.Controllers.ComputerCaseController",
@@ -98,16 +138,6 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "backend.Controllers.ComputerCaseController",
-    "Method": "GetAllComputerCases",
-    "RelativePath": "api/ComputerCase/GetAllComputerCases",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -150,7 +180,7 @@
   {
     "ContainingType": "backend.Controllers.ComputerCaseController",
     "Method": "CreateCreateCase",
-    "RelativePath": "api/ComputerCase/createcomputercase",
+    "RelativePath": "api/ComputerCase/createComputerCase",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -161,13 +191,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.ComputerCaseController",
+    "Method": "GetAllComputerCases",
+    "RelativePath": "api/ComputerCase/getAllComputerCases",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "backend.Controllers.CoolerController",
@@ -183,13 +217,7 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "backend.Controllers.CoolerController",
@@ -256,28 +284,6 @@
   },
   {
     "ContainingType": "backend.Controllers.MotherBoardController",
-    "Method": "CreateMotherBoard",
-    "RelativePath": "api/MotherBoard/CreateMotherBoard",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "motherBoard",
-        "Type": "backend.Entities.MotherBoard",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "backend.Controllers.MotherBoardController",
     "Method": "DeleteMotherBoard",
     "RelativePath": "api/MotherBoard/DeleteMotherBoard/{id}",
     "HttpMethod": "DELETE",
@@ -340,6 +346,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "backend.Controllers.MotherBoardController",
+    "Method": "CreateMotherBoard",
+    "RelativePath": "api/MotherBoard/createMotherBoard",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "motherBoard",
+        "Type": "backend.Entities.MotherBoard",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "backend.Controllers.PowerUnitController",
     "Method": "CreatePowerUnit",
     "RelativePath": "api/PowerUnit/CreatePowerUnit",
@@ -353,13 +375,7 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "backend.Controllers.PowerUnitController",
@@ -426,28 +442,6 @@
   },
   {
     "ContainingType": "backend.Controllers.ProcessorController",
-    "Method": "CreateProcessor",
-    "RelativePath": "api/Processor/CreateProcessor",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "processor",
-        "Type": "backend.Entities.Processor",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "backend.Controllers.ProcessorController",
     "Method": "DeleteComputerCase",
     "RelativePath": "api/Processor/DeleteProcessor/{id}",
     "HttpMethod": "DELETE",
@@ -510,6 +504,101 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "backend.Controllers.ProcessorController",
+    "Method": "CreateProcessor",
+    "RelativePath": "api/Processor/createProcessor",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "processor",
+        "Type": "backend.Entities.Processor",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.RamController",
+    "Method": "DeleteRam",
+    "RelativePath": "api/Ram/DeleteRam/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.RamController",
+    "Method": "GetAllRams",
+    "RelativePath": "api/Ram/GetAllRam",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.RamController",
+    "Method": "GetRamById",
+    "RelativePath": "api/Ram/GetRam/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.RamController",
+    "Method": "UpdateRam",
+    "RelativePath": "api/Ram/UpdateRam/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedRam",
+        "Type": "backend.Entities.RAM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.RamController",
+    "Method": "CreateRam",
+    "RelativePath": "api/Ram/createRam",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ram",
+        "Type": "backend.Entities.RAM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "backend.Controllers.SsdController",
     "Method": "DeleteSsd",
     "RelativePath": "api/Ssd/DeleteSsd/{id}",
@@ -533,22 +622,6 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "backend.Controllers.SsdController",
-    "Method": "GetSsdById",
-    "RelativePath": "api/Ssd/GetSsd/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
     "ReturnTypes": []
   },
   {
@@ -586,13 +659,23 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.SsdController",
+    "Method": "GetSsdById",
+    "RelativePath": "api/Ssd/getSsd/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
       {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
       }
-    ]
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "backend.Controllers.VideoCardController",
@@ -671,12 +754,6 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   }
 ]

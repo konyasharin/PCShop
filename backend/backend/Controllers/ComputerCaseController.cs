@@ -13,21 +13,43 @@ namespace backend.Controllers
     {
         private readonly ILogger<ComputerCaseController> logger;
       
-
         public ComputerCaseController(ILogger<ComputerCaseController> logger)
         {
             this.logger = logger;
     
         }
 
-        [HttpPost("createcomputercase")]
-        public async void CreateCreateCase(ComputerCase computerCase)
+        [HttpPost("createComputerCase")]
+        public async Task<IActionResult> CreateCreateCase(ComputerCase computerCase)
         {
 
             try
             {
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+
+                if (computerCase.Price < 0)
+                {
+                    string error = "Price must not be less than 0";
+                    return BadRequest(error);
+                }
+
+                if (computerCase.Width < 10 || computerCase.Width > 100)
+                {
+                    string error = "Width must be between 10 and 100.";
+                    return BadRequest(error);
+                }
+
+                if (computerCase.Height < 30 || computerCase.Height > 150)
+                {
+                    string error = "Height must be between 30 and 150";
+                    return BadRequest(error);
+                }
+
+                if (computerCase.Depth < 20 || computerCase.Depth > 100)
+                {
+                    return BadRequest("Depth must be between 20 and 100");
+                }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -52,16 +74,22 @@ namespace backend.Controllers
                     connection.Execute("INSERT INTO public.computer_case (Id, Brand, Model, Country, Material, Width, Height, Depth," +
                         "Price, Description, Image)" +
                         "VALUES (@Id, @Brand, @Model, @Country, @Material, @Width, @Height, @Depth, @Price, @Description, @Image)", computerCase);
+
                     logger.LogInformation("ComputerCase data saved to database");
+
+                    String result = "ComputerCase data saved to database";
+
+                    return Ok(result);
                 }
             }
             catch(Exception ex)
             {
                 logger.LogError($"ComputerCase data failed to save in database. Exception: {ex}");
+                return BadRequest(ex);
             }
         }
 
-        [HttpGet("GetAllComputerCases")]
+        [HttpGet("getAllComputerCases")]
         public async Task<IActionResult> GetAllComputerCases()
         {
             logger.LogInformation("Get method has started");

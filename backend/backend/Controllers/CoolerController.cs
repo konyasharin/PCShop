@@ -19,13 +19,28 @@ namespace backend.Controllers
         }
 
         [HttpPost("CreateCooler")]
-        public async void CreateCooler(Cooler cooler)
+        public async Task<IActionResult> CreateCooler(Cooler cooler)
         {
 
             try
             {
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+
+                if (cooler.Speed > 0 || cooler.Speed < 10000)
+                {
+                    return BadRequest("Speed must be between 0 and 10000");
+                }
+
+                if (cooler.Power > 0 || cooler.Power < 10000)
+                {
+                    return BadRequest("Speed must be between 0 and 10000");
+                }
+
+                if (cooler.Price < 0)
+                {
+                    return BadRequest("Price must not be less then 0");
+                }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -48,11 +63,16 @@ namespace backend.Controllers
                     connection.Execute("INSERT INTO public.cooler (Id, Brand, Model, Country, Speed, Power," +
                         "Price, Description, Image)" +
                         "VALUES (@Id, @Brand, @Model, @Country, @Speed, @Power, @Price, @Description, @Image)", cooler);
+
                     logger.LogInformation("Cooler data saved to database");
+                    string result = "Cooler data saved to database";
+
+                    return Ok(result);
                 }
             }catch(Exception ex)
             {
                 logger.LogError("Cooler data did not save in database");
+                return BadRequest(ex.Message);
             }
         }
 
