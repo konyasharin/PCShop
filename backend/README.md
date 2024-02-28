@@ -8,7 +8,7 @@
 # На данных момент можно проверить работу Post запроса для каждого компонента на страницах:
 
 
-1) https://localhost:7202/ComputerCase/createcomputercase
+1) https://localhost:7202/api/ComputerCase/createComputerCase
 
 ## Создаём корпус компуктера
 ### Входные данные:
@@ -33,7 +33,7 @@
 
 
 
-2) https://localhost:7202/Processor/createprocessor
+2) https://localhost:7202/Processor/createProcessor
 
 ## Создаём Processor
 ### Входные данные: 
@@ -57,7 +57,7 @@
 
 
 
-3) https://localhost:7202/MotherBoard/createmotherboard
+3) https://localhost:7202/MotherBoard/createMotherBoard
 
 ## Создаём MotherBoard
 ### Входные данные:
@@ -81,7 +81,7 @@
 
 
 
-4) https://localhost:7202/SSD/createssd
+4) https://localhost:7202/SSD/createSsd
 
 ## Создаём SSD
 ### Входные данные:
@@ -105,7 +105,7 @@
 
 
 
-5) https://localhost:7202/RAM/createram
+5) https://localhost:7202/RAM/createRam
 
 Создаём RAM
 ## Входные данные:
@@ -129,7 +129,7 @@
 
 
 
-6) https://localhost:7202/PowerUnit/createpowerunit
+6) https://localhost:7202/PowerUnit/createPowerUnit
 
 ## PowerUnit
 ### Входные данные:
@@ -172,7 +172,7 @@
 
 
 
-8) https://localhost:7202/api/Cooler/createcooler
+8) https://localhost:7202/api/Cooler/createCooler
 
 ## Создаём Куллер
 ### Входные данные:
@@ -198,7 +198,7 @@
    
 # Для проверки Get, Put и Delete
 
-1) https://localhost:7202/api/ComputerCase/1
+1) https://localhost:7202/api/ComputerCase/GetComputerCase/1
 
 ```json
 {
@@ -222,18 +222,26 @@
 
 ```json
 	{
-		"ComputerCase data with Index {id} updated"
+		"ComputerCase data updated in the database"
 	}
 
-'''
 
-```json
-{
-	"ComputerCase data with Index {id} deleted"
-}
+    {
+        "ComputerCase data deleted from the database"
+    }
 ```
 
-2) https://localhost:7202/api/Processor/1
+https://localhost:7202/ComputerCase/UpdateComputerCase/1
+
+https://localhost:7202/ComputerCase/DeleteComputerCase/1
+
+### Get All 
+
+https://localhost:7202/api/ComputerCase/GetAllComputerCases
+
+
+
+2) https://localhost:7202/api/Processor/GetProcessor/1
 
 ```json
 {
@@ -256,16 +264,25 @@
 
 ```json
 	{
-		"Processor data with Index {id} updated"
+		"Processor data updated in the database"
 	}
 
+
     {
-        "Processor data with Index {id} deleted"
+        "Processor data deleted from the database"
     }
 ```
 
+https://localhost:7202/ComputerCase/Updateprocessor/1
 
-3) https://localhost:7202/api/MotherBoard/1
+https://localhost:7202/ComputerCase/DeleteProcessor/1
+
+### Get All 
+
+https://localhost:7202/api/Processor/GetAllProcessors
+
+
+3) https://localhost:7202/api/MotherBoard/GetMotherBoard/1
 
 ```json
 {
@@ -288,18 +305,26 @@
 
 ```json
 	{
-		"MotherBoard data with Index {id} updated"
+		"MotherBoard data updated in the database"
 	}
 
 
     {
-        "MotherBoard data with Index {id} deleted"
+        "MotherBoard data deleted from the database"
     }
 ```
 
+https://localhost:7202/ComputerCase/UpdateMotherBoard/1
+
+https://localhost:7202/ComputerCase/DeleteMotherBoard/1
+
+### Get All 
+
+https://localhost:7202/api/MotherBoard/GetAllMotherBoards
 
 
-4) https://localhost:7202/api/SSD/1
+
+4) https://localhost:7202/api/SSD/GetSsd/1
 
 ```json
 {
@@ -320,16 +345,24 @@
 
 ```json
 	{
-		"SSD data with Index {id} updated"
+		"SSD data updated in the database"
 	}
 
 
     {
-        "SSD data with Index {id} deleted"
+        "SSD data deleted from the database"
     }
 ```
 
-5) https://localhost:7202/api/RAM/1
+https://localhost:7202/Ssd/UpdateSsd/1
+
+https://localhost:7202/Ssd/DeleteSsd/1
+
+### Get All 
+
+https://localhost:7202/api/Ssd/GetAllSsd
+
+5) https://localhost:7202/api/RAM/GetRam/1
 
 ```json
 {
@@ -353,16 +386,24 @@
 
 ```json
 	{
-		"RAM data with Index {id} updated"
+		"RAM data updated in the database"
 	}
 
 
     {
-        "RAM data with Index {id} deleted"
+        "RAM data deleted from the database"
     }
 ```
 
-6) https://localhost:7202/api/PowerUnit/1
+https://localhost:7202/Ram/UpdateRam/1
+
+https://localhost:7202/Ram/DeleteRam/1
+
+### Get All 
+
+https://localhost:7202/api/Ram/GetAllRam
+
+6) https://localhost:7202/api/PowerUnit/GetPowerUnit/1
 
 ```json
 {
@@ -384,25 +425,33 @@
 
 ```json
 	{
-		"PowerUnit data with Index {id} updated"
+		"PowerUnit data updated in the database"
 	}
 
 
     {
-        "PowerUnit data with Index {id} deleted"
+        "PowerUnit data deleted from the database"
     }
 ```
 
-7) https://localhost:7202/api/VideoCard/1
+https://localhost:7202/PowerUnit/UpdatePowerUnit/1
+
+https://localhost:7202/PowerUnit/DeletePowerUnit/1
+
+### Get All 
+
+https://localhost:7202/api/PowerUnit/GetAllPowerUnits
+
+7) https://localhost:7202/api/VideoCard/GetVideoCard/1
 
 ```json
 {
     
      {
         "Id": 1,                                //long
-        "brand": "ram brand",                  //string
-        "model": "ram model",                 //string
-        "country": "ram country",             //string
+        "brand": "brand",                  //string
+        "model": "model",                 //string
+        "country": " country",             //string
         "memory_db": "videocard memory_db",  //int   
 		"memory_type": "videocard memory_type",  //string
 		"capacity_db": "videocard capacity_db",   
@@ -417,16 +466,24 @@
 
 ```json
 	{
-		"VideoCard data with Index {id} updated"
+		"VideoCard data updated in the database"
 	}
 
 
     {
-        "VideoCard data with Index {id} deleted"
+        "VideoCard data deleted from the database"
     }
 ```
 
-8) https://localhost:7202/api/Cooler/1
+https://localhost:7202/VideoCard/UpdateVideoCard/1
+
+https://localhost:7202/VideoCard/DeleteVideCard/1
+
+### Get All 
+
+https://localhost:7202/api/VideoCard/GetAllVideoCards
+
+8) https://localhost:7202/api/Cooler/GetCooler/1
 
 ```json
 {
@@ -449,11 +506,19 @@
 
 ```json
 	{
-		"Cooler data with Index {id} updated"
+		"Cooler data updated in the database"
 	}
 
 
     {
-        "Cooler data with Index {id} deleted"
+        "Cooler data deleted from the database"
     }
 ```
+
+https://localhost:7202/Cooler/UpdateCooler/1
+
+https://localhost:7202/Cooler/DeleteCooler/1
+
+### Get All 
+
+https://localhost:7202/api/Cooler/GetAllCoolers

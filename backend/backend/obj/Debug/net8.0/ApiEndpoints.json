@@ -1,8 +1,156 @@
 [
   {
+    "ContainingType": "backend.Controllers.RamController",
+    "Method": "DeleteRam",
+    "RelativePath": "Ram/DeleteRam/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.RamController",
+    "Method": "GetAllRams",
+    "RelativePath": "Ram/GetAllRam",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.RamController",
+    "Method": "GetRamById",
+    "RelativePath": "Ram/GetRam/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.RamController",
+    "Method": "UpdateRam",
+    "RelativePath": "Ram/UpdateRam/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedRam",
+        "Type": "backend.Entities.RAM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.RamController",
+    "Method": "CreateRam",
+    "RelativePath": "Ram/createRam",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ram",
+        "Type": "backend.Entities.RAM",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.ComputerCaseController",
+    "Method": "DeleteComputerCase",
+    "RelativePath": "api/ComputerCase/DeleteComputerCase/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.ComputerCaseController",
+    "Method": "GetAllComputerCases",
+    "RelativePath": "api/ComputerCase/GetAllComputerCases",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.ComputerCaseController",
+    "Method": "GetComputerCaseById",
+    "RelativePath": "api/ComputerCase/GetComputerCase/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.ComputerCaseController",
+    "Method": "UpdateComputerCase",
+    "RelativePath": "api/ComputerCase/UpdateComputerCase/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedComputerCase",
+        "Type": "backend.Entities.ComputerCase",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "backend.Controllers.ComputerCaseController",
     "Method": "CreateCreateCase",
-    "RelativePath": "ComputerCase/createcomputercase",
+    "RelativePath": "api/ComputerCase/createcomputercase",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -24,7 +172,7 @@
   {
     "ContainingType": "backend.Controllers.CoolerController",
     "Method": "CreateCooler",
-    "RelativePath": "Cooler/createcooler",
+    "RelativePath": "api/Cooler/CreateCooler",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -32,6 +180,494 @@
       {
         "Name": "cooler",
         "Type": "backend.Entities.Cooler",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.CoolerController",
+    "Method": "DeleteCooler",
+    "RelativePath": "api/Cooler/DeleteCooler/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.CoolerController",
+    "Method": "GetAllCoolers",
+    "RelativePath": "api/Cooler/GetAllCoolers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.CoolerController",
+    "Method": "GetCoolerById",
+    "RelativePath": "api/Cooler/GetCooler/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.CoolerController",
+    "Method": "UpdateCooler",
+    "RelativePath": "api/Cooler/UpdateCooler/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedCooler",
+        "Type": "backend.Entities.Cooler",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.MotherBoardController",
+    "Method": "CreateMotherBoard",
+    "RelativePath": "api/MotherBoard/CreateMotherBoard",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "motherBoard",
+        "Type": "backend.Entities.MotherBoard",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.MotherBoardController",
+    "Method": "DeleteMotherBoard",
+    "RelativePath": "api/MotherBoard/DeleteMotherBoard/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.MotherBoardController",
+    "Method": "GetAllMotherBoards",
+    "RelativePath": "api/MotherBoard/GetAllMotherBoards",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.MotherBoardController",
+    "Method": "GetComputerCaseById",
+    "RelativePath": "api/MotherBoard/GetMotherBoard/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.MotherBoardController",
+    "Method": "UpdateMotherBoard",
+    "RelativePath": "api/MotherBoard/UpdateMotherBoard/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedMotherBoard",
+        "Type": "backend.Entities.MotherBoard",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.PowerUnitController",
+    "Method": "CreatePowerUnit",
+    "RelativePath": "api/PowerUnit/CreatePowerUnit",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "powerunit",
+        "Type": "backend.Entities.PowerUnit",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.PowerUnitController",
+    "Method": "DeletePowerUnit",
+    "RelativePath": "api/PowerUnit/DeletePowerUnit/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.PowerUnitController",
+    "Method": "GetAllPowerUnits",
+    "RelativePath": "api/PowerUnit/GetAllPowerUnits",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.PowerUnitController",
+    "Method": "GetPowerUnitById",
+    "RelativePath": "api/PowerUnit/GetPowerUnit/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.PowerUnitController",
+    "Method": "UpdatePowerUnit",
+    "RelativePath": "api/PowerUnit/UpdatePowerUnit/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedPowerUnit",
+        "Type": "backend.Entities.PowerUnit",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.ProcessorController",
+    "Method": "CreateProcessor",
+    "RelativePath": "api/Processor/CreateProcessor",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "processor",
+        "Type": "backend.Entities.Processor",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.ProcessorController",
+    "Method": "DeleteComputerCase",
+    "RelativePath": "api/Processor/DeleteProcessor/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.ProcessorController",
+    "Method": "GetAllprocessors",
+    "RelativePath": "api/Processor/GetAllProcessors",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.ProcessorController",
+    "Method": "GetProcessorById",
+    "RelativePath": "api/Processor/GetProcessor/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.ProcessorController",
+    "Method": "UpdateProcessor",
+    "RelativePath": "api/Processor/UpdateProcessor/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedProcessor",
+        "Type": "backend.Entities.Processor",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.SsdController",
+    "Method": "DeleteSsd",
+    "RelativePath": "api/Ssd/DeleteSsd/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.SsdController",
+    "Method": "GetAllSsd",
+    "RelativePath": "api/Ssd/GetAllSsd",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.SsdController",
+    "Method": "GetSsdById",
+    "RelativePath": "api/Ssd/GetSsd/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.SsdController",
+    "Method": "UpdateSsd",
+    "RelativePath": "api/Ssd/UpdateSsd/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedSsd",
+        "Type": "backend.Entities.SSD",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.SsdController",
+    "Method": "CreateSsd",
+    "RelativePath": "api/Ssd/createSsd",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ssd",
+        "Type": "backend.Entities.SSD",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.VideoCardController",
+    "Method": "DeleteVideoCard",
+    "RelativePath": "api/VideoCard/DeleteVideoCard/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.VideoCardController",
+    "Method": "GetAllComputerCases",
+    "RelativePath": "api/VideoCard/GetAllVideoCards",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.VideoCardController",
+    "Method": "GetVideoCardById",
+    "RelativePath": "api/VideoCard/GetVideoCard/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.VideoCardController",
+    "Method": "UpdateVideoCard",
+    "RelativePath": "api/VideoCard/UpdateVideoCard/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedVideoCard",
+        "Type": "backend.Entities.VideoCard",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.VideoCardController",
+    "Method": "CreateVideoCard",
+    "RelativePath": "api/VideoCard/createVideoCard",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "videoCard",
+        "Type": "backend.Entities.VideoCard",
         "IsRequired": true
       }
     ],
