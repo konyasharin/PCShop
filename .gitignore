@@ -28,5 +28,7 @@
 /backend/backend/*.env
 
 /backend/*.vs
+/backend/backend/bin
+/backend/backend/obj
 
 
