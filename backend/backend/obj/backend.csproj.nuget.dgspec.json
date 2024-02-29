@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\C# Web\\PCshop\\PCShop\\backend\\backend\\backend.csproj": {}
+    "C:\\Users\\kolec\\WebstormProjects\\pcshop\\backend\\backend\\backend.csproj": {}
   },
   "projects": {
-    "C:\\C# Web\\PCshop\\PCShop\\backend\\backend\\backend.csproj": {
+    "C:\\Users\\kolec\\WebstormProjects\\pcshop\\backend\\backend\\backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\C# Web\\PCshop\\PCShop\\backend\\backend\\backend.csproj",
+        "projectUniqueName": "C:\\Users\\kolec\\WebstormProjects\\pcshop\\backend\\backend\\backend.csproj",
         "projectName": "backend",
-        "projectPath": "C:\\C# Web\\PCshop\\PCShop\\backend\\backend\\backend.csproj",
-        "packagesPath": "C:\\Users\\sagop\\.nuget\\packages\\",
-        "outputPath": "C:\\C# Web\\PCshop\\PCShop\\backend\\backend\\obj\\",
+        "projectPath": "C:\\Users\\kolec\\WebstormProjects\\pcshop\\backend\\backend\\backend.csproj",
+        "packagesPath": "C:\\Users\\kolec\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kolec\\WebstormProjects\\pcshop\\backend\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\sagop\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kolec\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

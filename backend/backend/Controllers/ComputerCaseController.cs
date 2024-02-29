@@ -20,11 +20,15 @@ namespace backend.Controllers
         }
 
         [HttpPost("createComputerCase")]
-        public async Task<IActionResult> CreateCreateCase(ComputerCase computerCase)
+        public async Task<IActionResult> CreateCreateCase([FromForm] ComputerCase computerCase)
         {
 
             try
             {
+                using (var fileStream = new FileStream(Path.Combine(@"./backup", computerCase.Image.FileName), FileMode.Create))
+                {
+                    computerCase.Image.CopyTo(fileStream);
+                }
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
