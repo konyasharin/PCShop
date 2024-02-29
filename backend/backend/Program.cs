@@ -17,6 +17,17 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 
 DotNetEnv.Env.Load();
 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
@@ -36,7 +47,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
+app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.MapControllers();

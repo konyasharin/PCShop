@@ -48,7 +48,7 @@ namespace backend.Entities
 
         [Column("image")]
         [Required]
-        public byte[] Image { get; set; }
+        public IFormFile Image { get; set; }
 
       
        
