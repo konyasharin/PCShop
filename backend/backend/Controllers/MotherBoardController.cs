@@ -75,7 +75,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetMotherBoard/{id}")]
+        [HttpGet("getMotherBoard/{id}")]
         public async Task<IActionResult> GetComputerCaseById(int id)
         {
             try
@@ -112,7 +112,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpPut("UpdateMotherBoard/{id}")]
+        [HttpPut("updateMotherBoard/{id}")]
         public async Task<IActionResult> UpdateMotherBoard(int id, MotherBoard updatedMotherBoard)
         {
             try
@@ -166,7 +166,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpDelete("DeleteMotherBoard/{id}")]
+        [HttpDelete("deleteMotherBoard/{id}")]
         public async Task<IActionResult> DeleteMotherBoard(int id)
         {
             try
@@ -194,7 +194,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetAllMotherBoards")]
+        [HttpGet("getAllMotherBoards")]
         public async Task<IActionResult> GetAllMotherBoards()
         {
             logger.LogInformation("Get method has started");

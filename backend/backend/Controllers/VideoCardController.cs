@@ -73,7 +73,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetVideoCard/{id}")]
+        [HttpGet("getVideoCard/{id}")]
         public async Task<IActionResult> GetVideoCardById(int id)
         {
             try
@@ -110,7 +110,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpPut("UpdateVideoCard/{id}")]
+        [HttpPut("updateVideoCard/{id}")]
         public async Task<IActionResult> UpdateVideoCard(int id, VideoCard updatedVideoCard)
         {
             try
@@ -164,7 +164,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpDelete("DeleteVideoCard/{id}")]
+        [HttpDelete("deleteVideoCard/{id}")]
         public async Task<IActionResult> DeleteVideoCard(int id)
         {
             try
@@ -192,7 +192,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetAllVideoCards")]
+        [HttpGet("getAllVideoCards")]
         public async Task<IActionResult> GetAllComputerCases()
         {
             logger.LogInformation("Get method has started");

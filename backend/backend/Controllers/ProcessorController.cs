@@ -1,6 +1,7 @@
 ﻿using backend.Entities;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Npgsql;
 using System.Diagnostics;
 
@@ -28,6 +29,8 @@ namespace backend.Controllers
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
                 
+                
+
                 if (processor.Price < 0)
                 {
                     return BadRequest("Price must be less than 0");
@@ -50,7 +53,7 @@ namespace backend.Controllers
                     return BadRequest("Cores most be between 0 and 8");
                 }
 
-                if (processor.Heat_dissipation < 0 || processor > 10000)
+                if (processor.Heat_dissipation < 0 || processor.Heat_dissipation > 10000)
                 {
                     return BadRequest("Heat_dissipation must be between 0 and 10000");
                 }
@@ -91,11 +94,11 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Processor data did not save in database. Exeption: {ex}");
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
         }
 
-        [HttpGet("GetProcessor/{id}")]
+        [HttpGet("getProcessor/{id}")]
         public async Task<IActionResult> GetProcessorById(int id)
         {
             try
@@ -132,7 +135,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpPut("UpdateProcessor/{id}")]
+        [HttpPut("updateProcessor/{id}")]
         public async Task<IActionResult> UpdateProcessor(int id, Processor updatedProcessor)
         {
             try
@@ -204,7 +207,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpDelete("DeleteProcessor/{id}")]
+        [HttpDelete("deleteProcessor/{id}")]
         public async Task<IActionResult> DeleteComputerCase(int id)
         {
             try
@@ -232,7 +235,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetAllProcessors")]
+        [HttpGet("getAllProcessors")]
         public async Task<IActionResult> GetAllprocessors()
         {
             logger.LogInformation("Get method has started");

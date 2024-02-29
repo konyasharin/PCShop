@@ -335,7 +335,7 @@
 
 ### Везде выдаёт ошибку если price < 0 и все численные значения должны быть больше 0, но некоторые со своими особенностями
 
-1) https://localhost:7202/api/ComputerCase/GetComputerCase/1
+1) https://localhost:7202/api/ComputerCase/getComputerCase/1
 
 ```json
 {
@@ -368,19 +368,19 @@
     }
 ```
 
-https://localhost:7202/ComputerCase/UpdateComputerCase/1
+https://localhost:7202/ComputerCase/updateComputerCase/1
 
-https://localhost:7202/ComputerCase/DeleteComputerCase/1
+https://localhost:7202/ComputerCase/deleteComputerCase/1
 
 ### Get All 
 
-https://localhost:7202/api/ComputerCase/GetAllComputerCases
+https://localhost:7202/api/ComputerCase/getAllComputerCases
 
 ## Ошибки
 
 ### width, height и depth не могут быть больше 100, 150 и 150 соответственно
 
-2) https://localhost:7202/api/Processor/GetProcessor/1
+2) https://localhost:7202/api/Processor/getProcessor/1
 
 ```json
 {
@@ -412,18 +412,18 @@ https://localhost:7202/api/ComputerCase/GetAllComputerCases
     }
 ```
 
-https://localhost:7202/ComputerCase/Updateprocessor/1
+https://localhost:7202/ComputerCase/updateprocessor/1
 
-https://localhost:7202/ComputerCase/DeleteProcessor/1
+https://localhost:7202/ComputerCase/deleteProcessor/1
 
 ### Get All 
 
-https://localhost:7202/api/Processor/GetAllProcessors
+https://localhost:7202/api/Processor/getAllProcessors
 
 ## Ошибки
 ### clock_frequency должен быть от 0 до 50000 и меньше турбоfrequency
 
-3) https://localhost:7202/api/MotherBoard/GetMotherBoard/1
+3) https://localhost:7202/api/MotherBoard/getMotherBoard/1
 
 ```json
 {
@@ -455,17 +455,17 @@ https://localhost:7202/api/Processor/GetAllProcessors
     }
 ```
 
-https://localhost:7202/ComputerCase/UpdateMotherBoard/1
+https://localhost:7202/ComputerCase/updateMotherBoard/1
 
-https://localhost:7202/ComputerCase/DeleteMotherBoard/1
+https://localhost:7202/ComputerCase/deleteMotherBoard/1
 
 ### Get All 
 
-https://localhost:7202/api/MotherBoard/GetAllMotherBoards
+https://localhost:7202/api/MotherBoard/getAllMotherBoards
 
 
 
-4) https://localhost:7202/api/SSD/GetSsd/1
+4) https://localhost:7202/api/SSD/getSsd/1
 
 ```json
 {
@@ -495,15 +495,15 @@ https://localhost:7202/api/MotherBoard/GetAllMotherBoards
     }
 ```
 
-https://localhost:7202/Ssd/UpdateSsd/1
+https://localhost:7202/Ssd/updateSsd/1
 
-https://localhost:7202/Ssd/DeleteSsd/1
+https://localhost:7202/Ssd/deleteSsd/1
 
 ### Get All 
 
-https://localhost:7202/api/Ssd/GetAllSsd
+https://localhost:7202/api/Ssd/getAllSsd
 
-5) https://localhost:7202/api/RAM/GetRam/1
+5) https://localhost:7202/api/RAM/getRam/1
 
 ```json
 {
@@ -536,13 +536,13 @@ https://localhost:7202/api/Ssd/GetAllSsd
     }
 ```
 
-https://localhost:7202/Ram/UpdateRam/1
+https://localhost:7202/Ram/updateRam/1
 
-https://localhost:7202/Ram/DeleteRam/1
+https://localhost:7202/Ram/deleteRam/1
 
 ### Get All 
 
-https://localhost:7202/api/Ram/GetAllRam
+https://localhost:7202/api/Ram/getAllRam
 
 6) https://localhost:7202/api/PowerUnit/GetPowerUnit/1
 
@@ -576,15 +576,15 @@ https://localhost:7202/api/Ram/GetAllRam
     }
 ```
 
-https://localhost:7202/PowerUnit/UpdatePowerUnit/1
+https://localhost:7202/PowerUnit/updatePowerUnit/1
 
-https://localhost:7202/PowerUnit/DeletePowerUnit/1
+https://localhost:7202/PowerUnit/deletePowerUnit/1
 
 ### Get All 
 
-https://localhost:7202/api/PowerUnit/GetAllPowerUnits
+https://localhost:7202/api/PowerUnit/getAllPowerUnits
 
-7) https://localhost:7202/api/VideoCard/GetVideoCard/1
+7) https://localhost:7202/api/VideoCard/getVideoCard/1
 
 ```json
 {
@@ -617,15 +617,15 @@ https://localhost:7202/api/PowerUnit/GetAllPowerUnits
     }
 ```
 
-https://localhost:7202/VideoCard/UpdateVideoCard/1
+https://localhost:7202/VideoCard/updateVideoCard/1
 
-https://localhost:7202/VideoCard/DeleteVideCard/1
+https://localhost:7202/VideoCard/deleteVideCard/1
 
 ### Get All 
 
-https://localhost:7202/api/VideoCard/GetAllVideoCards
+https://localhost:7202/api/VideoCard/getAllVideoCards
 
-8) https://localhost:7202/api/Cooler/GetCooler/1
+8) https://localhost:7202/api/Cooler/getCooler/1
 
 ```json
 {
@@ -657,13 +657,13 @@ https://localhost:7202/api/VideoCard/GetAllVideoCards
     }
 ```
 
-https://localhost:7202/Cooler/UpdateCooler/1
+https://localhost:7202/Cooler/updateCooler/1
 
-https://localhost:7202/Cooler/DeleteCooler/1
+https://localhost:7202/Cooler/deleteCooler/1
 
 ### Get All 
 
-https://localhost:7202/api/Cooler/GetAllCoolers
+https://localhost:7202/api/Cooler/getAllCoolers
 
 9) https://localhost:7202/api/Assembly/getAssembly/1
 

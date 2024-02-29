@@ -110,7 +110,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpPut("UpdateSsd/{id}")]
+        [HttpPut("updateSsd/{id}")]
         public async Task<IActionResult> UpdateSsd(int id, SSD updatedSsd)
         {
             try
@@ -162,7 +162,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpDelete("DeleteSsd/{id}")]
+        [HttpDelete("deleteSsd/{id}")]
         public async Task<IActionResult> DeleteSsd(int id)
         {
             try
@@ -191,7 +191,7 @@ namespace backend.Controllers
         }
 
 
-        [HttpGet("GetAllSsd")]
+        [HttpGet("getAllSsd")]
         public async Task<IActionResult> GetAllSsd()
         {
             logger.LogInformation("Get method has started");

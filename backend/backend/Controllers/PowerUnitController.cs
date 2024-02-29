@@ -20,7 +20,7 @@ namespace backend.Controllers
 
         }
 
-        [HttpPost("CreatePowerUnit")]
+        [HttpPost("createPowerUnit")]
         public async Task<IActionResult> CreatePowerUnit(PowerUnit powerunit)
         {
 
@@ -74,7 +74,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetPowerUnit/{id}")]
+        [HttpGet("getPowerUnit/{id}")]
         public async Task<IActionResult> GetPowerUnitById(int id)
         {
             try
@@ -111,7 +111,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpPut("UpdatePowerUnit/{id}")]
+        [HttpPut("updatePowerUnit/{id}")]
         public async Task<IActionResult> UpdatePowerUnit(int id, PowerUnit updatedPowerUnit)
         {
             try
@@ -165,7 +165,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpDelete("DeletePowerUnit/{id}")]
+        [HttpDelete("deletePowerUnit/{id}")]
         public async Task<IActionResult> DeletePowerUnit(int id)
         {
             try
@@ -193,7 +193,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetAllPowerUnits")]
+        [HttpGet("getAllPowerUnits")]
         public async Task<IActionResult> GetAllPowerUnits()
         {
             logger.LogInformation("Get method has started");

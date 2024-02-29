@@ -119,7 +119,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetComputerCase/{id}")]
+        [HttpGet("getComputerCase/{id}")]
         public async Task<IActionResult> GetComputerCaseById (int id)
         {
             try
@@ -156,7 +156,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpPut("UpdateComputerCase/{id}")]
+        [HttpPut("updateComputerCase/{id}")]
         public async Task<IActionResult> UpdateComputerCase(int id, ComputerCase updatedComputerCase)
         {
             try
@@ -220,7 +220,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpDelete("DeleteComputerCase/{id}")]
+        [HttpDelete("deleteComputerCase/{id}")]
         public async Task<IActionResult> DeleteComputerCase(int id)
         {
             try

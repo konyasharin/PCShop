@@ -83,7 +83,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetRam/{id}")]
+        [HttpGet("getRam/{id}")]
         public async Task<IActionResult> GetRamById(int id)
         {
             try
@@ -120,7 +120,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpPut("UpdateRam/{id}")]
+        [HttpPut("updateRam/{id}")]
         public async Task<IActionResult> UpdateRam(int id, RAM updatedRam)
         {
             try
@@ -184,7 +184,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpDelete("DeleteRam/{id}")]
+        [HttpDelete("deleteRam/{id}")]
         public async Task<IActionResult> DeleteRam(int id)
         {
             try
@@ -212,7 +212,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetAllRam")]
+        [HttpGet("getAllRam")]
         public async Task<IActionResult> GetAllRams()
         {
             logger.LogInformation("Get method has started");

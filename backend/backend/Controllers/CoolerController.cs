@@ -18,7 +18,7 @@ namespace backend.Controllers
 
         }
 
-        [HttpPost("CreateCooler")]
+        [HttpPost("createCooler")]
         public async Task<IActionResult> CreateCooler(Cooler cooler)
         {
 
@@ -76,7 +76,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetCooler/{id}")]
+        [HttpGet("getCooler/{id}")]
         public async Task<IActionResult> GetCoolerById(int id)
         {
             try
@@ -113,7 +113,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpPut("UpdateCooler/{id}")]
+        [HttpPut("updateCooler/{id}")]
         public async Task<IActionResult> UpdateCooler(int id, Cooler updatedCooler)
         {
             try
@@ -171,7 +171,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpDelete("DeleteCooler/{id}")]
+        [HttpDelete("deleteCooler/{id}")]
         public async Task<IActionResult> DeleteCooler(int id)
         {
             try
@@ -199,7 +199,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("GetAllCoolers")]
+        [HttpGet("getAllCoolers")]
         public async Task<IActionResult> GetAllCoolers()
         {
             logger.LogInformation("Get method has started");
