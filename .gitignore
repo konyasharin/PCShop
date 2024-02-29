@@ -23,3 +23,10 @@
 /frontend/*.njsproj
 /frontend/*.sln
 /frontend/*.sw?
+
+#env
+/backend/backend/*.env
+
+/backend/*.vs
+
+
