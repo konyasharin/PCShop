@@ -1,5 +1,6 @@
 ﻿using backend.Data;
 using backend.Entities;
+using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +26,8 @@ namespace backend.Controllers
 
             try
             {
-                using (var fileStream = new FileStream(Path.Combine(@"./backup", computerCase.Image.FileName), FileMode.Create))
-                {
-                    computerCase.Image.CopyTo(fileStream);
-                }
+                string imagePath = BackupWriter.Write(computerCase.Image.FileName, computerCase.Image);
+
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
@@ -59,7 +58,6 @@ namespace backend.Controllers
                 {
                     var parameters = new
                     {
-                        id = computerCase.Id,
                         brand = computerCase.Brand,
                         model = computerCase.Model,
                         country = computerCase.Country,
@@ -69,15 +67,14 @@ namespace backend.Controllers
                         depth = computerCase.Depth,
                         price = computerCase.Price,
                         description = computerCase.Description,
-                        image = computerCase.Image,
-
+                        image = imagePath,
                     };
 
                     connection.Open();
                     logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.computer_case (Id, Brand, Model, Country, Material, Width, Height, Depth," +
-                        "Price, Description, Image)" +
-                        "VALUES (@Id, @Brand, @Model, @Country, @Material, @Width, @Height, @Depth, @Price, @Description, @Image)", computerCase);
+                    connection.Execute("INSERT INTO public.computer_case (brand, model, country, material, width, height, depth," +
+                        "price, description, image)" +
+                        "VALUES (@brand, @model, @country, @material, @width, @height, @depth, @price, @description, @image)", parameters);
 
                     logger.LogInformation("ComputerCase data saved to database");
 
