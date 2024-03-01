@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,55 +16,48 @@ namespace backend.Controllers
         public VideoCardController(ILogger<VideoCardController> logger)
         {
             this.logger = logger;
-
-
         }
 
         [HttpPost("createVideoCard")]
         public async Task<IActionResult> CreateVideoCard(VideoCard videoCard)
         {
-
             try
             {
+                string imagePath = BackupWriter.Write(videoCard.Image);
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 if (videoCard.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 if (videoCard.Memory_db < 0 || videoCard.Memory_db > 10000)
                 {
-                    return BadRequest("Memory_db must be between 0 and 10000");
+                    return BadRequest(new { error = "Memory_db must be between 0 and 10000" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
                         id = videoCard.Id,
                         brand = videoCard.Brand,
-                        model =videoCard.Model,
+                        model = videoCard.Model,
                         country = videoCard.Country,
                         memory_db = videoCard.Memory_db,
                         memory_type = videoCard.Memory_type,
-                        price =videoCard.Price,
+                        price = videoCard.Price,
                         description = videoCard.Description,
-                        image = videoCard.Image,
-
+                        image = imagePath,
                     };
 
                     connection.Open();
-                    logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.video_card (Id, Brand, Model, Country, Memory_db, Memory_type," +
-                        "Price, Description, Image)" +
-                        "VALUES (@Id, @Brand, @Model, @Country, @Memory_db, @Memory_type, @Price, @Description, @Image)", videoCard);
-
-                    logger.LogInformation("VideoCard data saved to database");
-
-                    String result = "VideoCard data saved to database";
-                    return Ok(result);
+                    int id = connection.QuerySingleOrDefault<int>("INSERT INTO public.video_card (brand, model, country, memory_db, memory_type," +
+                        "price, description, image)" +
+                        "VALUES (@brand, @model, @country, @memory_db, @memory_type, @price, @description, @image) RETURNING id", data);
+                    logger.LogInformation("VideoCard data saved to database");;
+                    return Ok(new { id = id, data });
                 }
             }
             catch (Exception ex)

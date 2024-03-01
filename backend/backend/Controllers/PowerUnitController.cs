@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,24 +27,24 @@ namespace backend.Controllers
 
             try
             {
+                string imagePath = BackupWriter.Write(powerunit.Image);
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 if (powerunit.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 if (powerunit.Voltage < 0 || powerunit.Voltage > 50000)
                 {
-                    return BadRequest("Voltage must be between 0 and 50000");
+                    return BadRequest(new { error = "Voltage must be between 0 and 50000" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
-                        id = powerunit.Id,
                         brand = powerunit.Brand,
                         model = powerunit.Model,
                         country = powerunit.Country,
@@ -51,20 +52,17 @@ namespace backend.Controllers
                         voltage = powerunit.Voltage,
                         price = powerunit.Price,
                         description = powerunit.Description,
-                        image = powerunit.Image,
+                        image = imagePath,
 
                     };
 
                     connection.Open();
-                    logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.power_unit (Id, Brand, Model, Country, Battery, Voltage," +
-                        "Price, Description, Image)" +
-                        "VALUES (@Id, @Brand, @Model, @Country, @Battery, @Voltage, @Price, @Description, @Image)", powerunit);
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.power_unit (brand, model, country, battery, voltage," +
+                        "price, description, image)" +
+                        "VALUES (@brand, @model, @country, @battery, @voltage, @price, @description, @image) RETURNING id", data);
 
                     logger.LogInformation("powerUnit data saved to database");
-
-                    String result = "PowerUnit data saved to database";
-                    return Ok(result);
+                    return Ok(new { id = id, data });
                 }
             }
             catch (Exception ex)

@@ -5,6 +5,7 @@ using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using System.Security.Cryptography;
 
 namespace backend.Controllers
 {
@@ -26,37 +27,34 @@ namespace backend.Controllers
 
             try
             {
-                string imagePath = BackupWriter.Write(computerCase.Image.FileName, computerCase.Image);
+                string imagePath = BackupWriter.Write(computerCase.Image);
 
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 if (computerCase.Price < 0)
                 {
-                    string error = "Price must not be less than 0";
-                    return BadRequest(error);
+                    return BadRequest(new {error = "Price must not be less than 0" });
                 }
 
                 if (computerCase.Width < 10 || computerCase.Width > 100)
                 {
-                    string error = "Width must be between 10 and 100.";
-                    return BadRequest(error);
+                    return BadRequest(new { error = "Width must be between 10 and 100" });
                 }
 
                 if (computerCase.Height < 30 || computerCase.Height > 150)
                 {
-                    string error = "Height must be between 30 and 150";
-                    return BadRequest(error);
+                    return BadRequest(new { error = "Height must be between 30 and 150" });
                 }
 
                 if (computerCase.Depth < 20 || computerCase.Depth > 100)
                 {
-                    return BadRequest("Depth must be between 20 and 100");
+                    return BadRequest(new { error = "Depth must be between 20 and 100" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
                         brand = computerCase.Brand,
                         model = computerCase.Model,
@@ -71,16 +69,13 @@ namespace backend.Controllers
                     };
 
                     connection.Open();
-                    logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.computer_case (brand, model, country, material, width, height, depth," +
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.computer_case (brand, model, country, material, width, height, depth," +
                         "price, description, image)" +
-                        "VALUES (@brand, @model, @country, @material, @width, @height, @depth, @price, @description, @image)", parameters);
+                        "VALUES (@brand, @model, @country, @material, @width, @height, @depth, @price, @description, @image) RETURNING id", data);
 
-                    logger.LogInformation("ComputerCase data saved to database");
+                    logger.LogInformation($"ComputerCase data saved to database with id {id}");
 
-                    String result = "ComputerCase data saved to database";
-
-                    return Ok(result);
+                    return Ok(new { id = id, data });
                 }
             }
             catch(Exception ex)
