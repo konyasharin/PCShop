@@ -7,6 +7,8 @@ import Loading from './components/Loading/Loading.tsx';
 import Footer from './components/Footer/Footer.tsx';
 import { createComputerCase } from 'api/components/createComponents/createComputerCase.ts';
 import React from 'react';
+import LoginPage from './pages/AughPage/LoginPage/LoginPage.tsx';
+import RegistrationPage from './pages/AughPage/RegistrationPage/RegistrationPage.tsx';
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
       <Routes>
         <Route path={'/'} element={<MainPage />} />
         <Route path={'/PCBuild'} element={<PCBuildPage />} />
+        <Route path={'/Login'} element={<LoginPage />} />
+        <Route path={'/Registration'} element={<RegistrationPage />} />
       </Routes>
       <Footer />
     </>
