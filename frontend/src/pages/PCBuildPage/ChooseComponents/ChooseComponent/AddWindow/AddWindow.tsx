@@ -12,7 +12,7 @@ import styles from './AddWindow.module.css';
 import Input from 'components/Input/Input.tsx';
 import ChooseComponentCard from 'components/cards/ChooseComponentCard/ChooseComponentCard.tsx';
 import videoCardImg from 'assets/videocard.jpg';
-import Btn from 'components/Btn/Btn.tsx';
+import ShowMoreBtn from 'components/btns/ShowMoreBtn/ShowMoreBtn.tsx';
 
 type AddWindowProps = {
   type: EComponentTypes;
@@ -78,7 +78,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
         inputsBlocks={inputsBlocks}
       />
       <div className={styles.rightBlock}>
-        <h2>{props.searchTitle}</h2>
+        <h2 className={styles.title}>{props.searchTitle}</h2>
         <Input
           value={searchString}
           onChange={newSearchString => setSearchString(newSearchString)}
@@ -111,7 +111,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
           img={videoCardImg}
           className={styles.card}
         />
-        <Btn className={styles.button}>Показать еще...</Btn>
+        <ShowMoreBtn className={styles.btn}>Показать еще...</ShowMoreBtn>
       </div>
     </div>
   );

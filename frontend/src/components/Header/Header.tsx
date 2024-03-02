@@ -2,7 +2,7 @@ import Container from '../Container/Container.tsx';
 import logo from '../../assets/logo.png';
 import { NavLink } from 'react-router-dom';
 import Search from './Search/Search.tsx';
-import MainBtn from '../MainBtn/MainBtn.tsx';
+import MainBtn from 'components/btns/MainBtn/MainBtn.tsx';
 import styles from './Header.module.css';
 import SearchWindow from './Search/SearchWindow/SearchWindow.tsx';
 

@@ -6,7 +6,7 @@ import PowerOfBuild from './PowerOfBuild/PowerOfBuild.tsx';
 import ChooseComponents from './ChooseComponents/ChooseComponents.tsx';
 import Input from 'components/Input/Input.tsx';
 import styles from './PCBuildPage.module.css';
-import Btn from 'components/Btn/Btn.tsx';
+import Btn from 'components/btns/Btn/Btn.tsx';
 
 function PCBuildPage() {
   const [scalePercents] = useState(40);

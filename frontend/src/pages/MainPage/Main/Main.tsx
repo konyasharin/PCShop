@@ -2,7 +2,7 @@ import styles from './Main.module.css';
 import Rectangle from 'assets/Rectangle .png';
 import Container from 'components/Container/Container.tsx';
 import PC from 'assets/PC.png';
-import Btn from 'components/Btn/Btn.tsx';
+import Btn from 'components/btns/Btn/Btn.tsx';
 
 function Main() {
   return (

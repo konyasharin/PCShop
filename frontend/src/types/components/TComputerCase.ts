@@ -1,15 +1,10 @@
-type TComputerCase = {
-  id: number;
-  brand: string;
-  model: string;
-  country: string;
+import TComponent from 'types/components/TComponent.ts';
+
+type TComputerCase = TComponent & {
   material: string;
   width: number;
   height: number;
   depth: number;
-  price: number;
-  description: string;
-  image: File;
 };
 
 export default TComputerCase;
