@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,55 +16,47 @@ namespace backend.Controllers
         public SsdController(ILogger<SsdController> logger)
         {
             this.logger = logger;
-
-
         }
 
         [HttpPost("createSsd")]
         public async Task<IActionResult> CreateSsd(SSD ssd)
         {
-
-
             try
             {
+                string imagePath = BackupWriter.Write(ssd.Image);
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 if (ssd.Capacity < 0 || ssd.Capacity > 10000)
                 {
-                    return BadRequest("Capacity must be between 0 and 10000");
+                    return BadRequest(new { error = "Capacity must be between 0 and 10000" });
                 }
 
                 if (ssd.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
-                        id = ssd.Id,
                         brand = ssd.Brand,
                         model = ssd.Model,
                         country = ssd.Country,
                         capacity = ssd.Capacity,
                         price = ssd.Price,
                         description = ssd.Description,
-                        image = ssd.Image,
-
+                        image = imagePath,
                     };
 
                     connection.Open();
-                    logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.ssd (Id, Brand, Model, Country, Capacity," +
-                        "Price, Description, Image)" +
-                        "VALUES (@Id, @Brand, @Model, @Country, @Capacity, @Price, @Description, @Image)", ssd);
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.ssd (brand, model, country, capacity," +
+                        "price, description, image)" +
+                        "VALUES (@brand, @model, @country, @capacity, @price, @description, @image) RETURNING id", data);
 
                     logger.LogInformation("SSD data saved to database");
-
-                    String result = "Ssd data saved to database";
-                    return Ok(result);
+                    return Ok(new { id = id, data });
                 }
             }
             catch (Exception ex)

@@ -1,7 +1,7 @@
 import React from 'react';
 import EComponentTypes from 'enums/EComponentTypes.ts';
 import styles from './FiltersPanel.module.css';
-import MainBtn from 'components/MainBtn/MainBtn.tsx';
+import MainBtn from 'components/btns/MainBtn/MainBtn.tsx';
 
 type FiltersPanelProps = {
   type: EComponentTypes;

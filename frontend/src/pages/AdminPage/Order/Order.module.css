@@ -1,0 +1,27 @@
+.orderInfo{
+    background-color: #809FFF;
+    width: 270px;
+    border-radius: 10px;
+    padding: 20px;
+    height: fit-content;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.status{
+    display: flex;
+    margin-top: 10px;
+}
+
+.statusText{
+    margin-left: 5px;
+}
+
+.btn{
+    width: 100%;
+    margin-top: 10px;
+}
+
+.order{
+    width: 850px;
+}

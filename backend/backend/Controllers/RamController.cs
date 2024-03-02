@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
@@ -24,34 +25,34 @@ namespace backend.Controllers
 
             try
             {
+                string imagePath = BackupWriter.Write(ram.Image);
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 if (ram.Frequency < 0 || ram.Frequency > 100000)
                 {
-                    return BadRequest("Frequency must be between 0 and 100000");
+                    return BadRequest(new { error = "Frequency must be between 0 and 100000" });
                 }
 
                 if (ram.Timings < 0 || ram.Timings > 10000)
                 {
-                    return BadRequest("Timings must be between 0 and 10000");
+                    return BadRequest(new { error = "Timings must be between 0 and 10000" });
                 }
 
                 if (ram.Capacity_db < 0 || ram.Capacity_db > 10000)
                 {
-                    return BadRequest("Capacity_db must be between 0 and 10000");
+                    return BadRequest(new { error = "Capacity_db must be between 0 and 10000" });
                 }
 
                 if (ram.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
-                        id = ram.Id,
                         brand = ram.Brand,
                         model = ram.Model,
                         country = ram.Country,
@@ -60,20 +61,17 @@ namespace backend.Controllers
                         capacity_db = ram.Capacity_db,
                         price = ram.Price,
                         description = ram.Description,
-                        image = ram.Image,
+                        image = imagePath,
 
                     };
 
                     connection.Open();
-                    logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.ram (id, brand, model, country, frequency, timings, capacity_db," +
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.ram (id, brand, model, country, frequency, timings, capacity_db," +
                         "price, description, image)" +
-                        "VALUES (@Id, @Brand, @Model, @Country, @Frequency, @Timings, @Capacity_db, @Price, @Description, @Image)", ram);
+                        "VALUES (@brand, @model, @country, @frequency, @timings, @capacity_db, @price, @description, @image) RETURNING id", data);
 
                     logger.LogInformation("Ram data saved to database");
-
-                    String result = "Ram data saved to database";
-                    return Ok(result);
+                    return Ok(new { id = id, data });
                 }
             }
             catch (Exception ex)

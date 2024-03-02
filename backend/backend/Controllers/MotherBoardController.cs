@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,24 +26,24 @@ namespace backend.Controllers
         {
             if (motherBoard.Frequency < 0 || motherBoard.Frequency > 100000)
             {
-                return BadRequest("Frequency must be between 0 and 100000");
+                return BadRequest(new { error = "Frequency must be between 0 and 100000" });
             }
 
             if (motherBoard.Price < 0)
             {
-                return BadRequest("Price must not be less than 0");
+                return BadRequest(new { error = "Price must not be less than 0" });
             }
 
             try
             {
+                string imagePath = BackupWriter.Write(motherBoard.Image);
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
-                        id = motherBoard.Id,
                         brand = motherBoard.Brand,
                         model = motherBoard.Model,
                         country = motherBoard.Country,
@@ -51,20 +52,16 @@ namespace backend.Controllers
                         chipset = motherBoard.Chipset,
                         price = motherBoard.Price,
                         description = motherBoard.Description,
-                        image = motherBoard.Image,
-
+                        image = imagePath,
                     };
 
                     connection.Open();
-                    logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.mother_board (Id, Brand, Model, Country, Frequency, Socket, Chipset," +
-                        "Price, Description, Image)" +
-                        "VALUES (@Id, @Brand, @Model, @Country, @Frequency, @Socket, @Chipset, @Price, @Description, @Image)", motherBoard);
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.mother_board (brand, model, country, frequency, socket, chipset," +
+                        "price, description, image)" +
+                        "VALUES (@brand, @model, @country, @frequency, @socket, @chipset, @price, @description, @image) RETURNING id", data);
 
                     logger.LogInformation("MotherBoard data saved to database");
-
-                    String result = "MotherBoard data saved to database";
-                    return Ok(result);
+                    return Ok(new { id =  id, data});
                 }
             }
             catch (Exception ex)

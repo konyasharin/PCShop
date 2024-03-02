@@ -1,0 +1,17 @@
+.title{
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.admin{
+    margin-top: 90px;
+}
+
+.blocks{
+    display: flex;
+}
+
+.panel{
+    margin-right: 20px;
+}
+

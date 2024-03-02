@@ -14,11 +14,9 @@ namespace backend.Controllers
     {
         private readonly ILogger<AssemblyController> logger;
 
-
         public AssemblyController(ILogger<AssemblyController> logger)
         {
             this.logger = logger;
-
         }
 
         [HttpPost("createAssembly")]
@@ -29,12 +27,9 @@ namespace backend.Controllers
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
-
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
-
-                    logger.LogInformation("Database connected");
 
                     var computerCasePrice = await connection
                         .ExecuteScalarAsync<int>("SELECT price FROM computer_case WHERE Id = @Id", new { Id = assembly.ComputerCaseId });
@@ -66,11 +61,10 @@ namespace backend.Controllers
                     assembly.Price = assembly_price;
                     assembly.Likes = 0;
 
-                    assembly.Creation_time = DateTime.Now;
+                    assembly.CreationTime = DateTime.Now;
 
-                    var parameters = new
+                    var data = new
                     {
-                        id = assembly.Id,
                         name = assembly.Name,
                         price = assembly.Price,
                         computerCaseId = assembly.ComputerCaseId,
@@ -82,20 +76,15 @@ namespace backend.Controllers
                         videoCardId = assembly.VideoCardId,
                         powerUnitId = assembly.PowerUnitId,
                         likes = assembly.Likes,
-                        creation_time = assembly.Creation_time,
+                        creationTime = assembly.CreationTime,
                     };
 
-                    
-                    logger.LogInformation("Database connected");
-
-                    await connection.ExecuteAsync("INSERT INTO assembly (id, name, price, computercaseid, coolerid," +
-                        " motherboardid, processorid, ramid, ssdid, videocardid, powerunitid, likes, creation_time) " +
-                                      "VALUES (@id, @name, @price, @computercaseid, @coolerid, @motherboardid," +
-                                      " @processorid, @ramid, @ssdid, @videocardid, @powerunitid, @likes, @creation_time)", assembly);
-
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO assembly (name, price, computercase_id, cooler_id," +
+                        " motherboard_id, processor_id, ram_id, ssd_id, videocard_id, powerunit_id, likes, creation_time) " +
+                                      "VALUES (@name, @price, @computerCaseId, @coolerId, @motherBoardId," +
+                                      " @processorId, @ramId, @ssdId, @videocardId, @powerunitId, @likes, @creationTime) RETURN id", data);
                     logger.LogInformation("Assembly data saved to database");
-
-                    return Ok("Assembly data saved successfully");
+                    return Ok(new { id = id, data });
                 }
             }
 
@@ -201,7 +190,7 @@ namespace backend.Controllers
                         ssdId = updatedAssembly.SsdId,
                         videoCardId = updatedAssembly.VideoCardId,
                         powerUnitId = updatedAssembly.PowerUnitId,
-                        creation_time = updatedAssembly.Creation_time,
+                        creation_time = updatedAssembly.CreationTime,
 
                     };
 

@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -26,43 +27,41 @@ namespace backend.Controllers
 
             try
             {
+                string imagePath = BackupWriter.Write(processor.Image);
                 DotNetEnv.Env.Load();
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
                 
-                
-
                 if (processor.Price < 0)
                 {
-                    return BadRequest("Price must be less than 0");
+                    return BadRequest(new { error = "Price must be less than 0" });
                 }
 
                 if ((processor.Clock_frequency < 0 || processor.Clock_frequency >= 50000)
                     && (processor.Clock_frequency > processor.Turbo_frequency))
                 {
-                    return BadRequest("Clock_frequency must be between 0 and 50000 and less than turbo_frequency");
+                    return BadRequest(new { error = "Clock_frequency must be between 0 and 50000 and less than turbo_frequency" });
                 }
 
                 if ((processor.Turbo_frequency < processor.Clock_frequency)
                     && (processor.Turbo_frequency >= 100000 || processor.Turbo_frequency < 0))
                 {
-                    return BadRequest("Turbo_frequency must be bigger than clock_frequency and 100000 and less than 0");
+                    return BadRequest(new { error = "Turbo_frequency must be bigger than clock_frequency and 100000 and less than 0" });
                 }
 
                 if (processor.Cores < 0 || processor.Cores >= 8)
                 {
-                    return BadRequest("Cores most be between 0 and 8");
+                    return BadRequest(new { error = "Cores most be between 0 and 8" });
                 }
 
                 if (processor.Heat_dissipation < 0 || processor.Heat_dissipation > 10000)
                 {
-                    return BadRequest("Heat_dissipation must be between 0 and 10000");
+                    return BadRequest(new { error = "Heat_dissipation must be between 0 and 10000" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
-                        id = processor.Id,
                         brand = processor.Brand,
                         model = processor.Model,
                         cores = processor.Cores,
@@ -72,23 +71,18 @@ namespace backend.Controllers
                         heat_dissipation = processor.Heat_dissipation,
                         price = processor.Price,
                         description = processor.Description,
-                        image = processor.Image,
-
+                        image = imagePath,
                     };
 
                     connection.Open();
-                    logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.processor (Id, Brand, Model, Country, Cores, Clock_frequency, Turbo_frequency," +
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.processor (Id, Brand, Model, Country, Cores, Clock_frequency, Turbo_frequency," +
                         " Heat_dissipation," +
                         "Price, Description, Image)" +
                         "VALUES (@Id, @Brand, @Model, @Country, @Cores, @Clock_frequency, @Turbo_frequency, @Heat_dissipation, @Price," +
-                        " @Description, @Image)", processor);
+                        " @Description, @Image) RETURNING id", data);
 
                     logger.LogInformation("Processor data saved to database");
-
-                    String result = "Processor data saved to database";
-
-                    return Ok(result);
+                    return Ok(new { id = id, data });
                 }
             }
             catch (Exception ex)

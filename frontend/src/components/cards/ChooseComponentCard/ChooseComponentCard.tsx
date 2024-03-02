@@ -1,7 +1,7 @@
 import React from 'react';
+import Card from 'components/cards/Card/Card.tsx';
+import MainBtn from 'components/btns/MainBtn/MainBtn.tsx';
 import styles from './ChooseComponentCard.module.css';
-import MainBtn from 'components/MainBtn/MainBtn.tsx';
-import createClassNames from 'utils/createClassNames.ts';
 
 type ChooseComponentCard = {
   name: string;
@@ -13,17 +13,14 @@ type ChooseComponentCard = {
 
 const ChooseComponentCard: React.FC<ChooseComponentCard> = props => {
   return (
-    <div className={createClassNames([styles.card, props.className])}>
-      <img src={props.img} alt={props.name} />
-      <div className={styles.middleBlock}>
-        <div className={styles.description}>
-          <h5>{props.name}</h5>
-          <span>{props.text}</span>
-        </div>
-        <MainBtn className={styles.btn}>{'Добавить'}</MainBtn>
-      </div>
-      <h2>{props.price}$</h2>
-    </div>
+    <Card
+      img={props.img}
+      className={props.className}
+      name={props.name}
+      text={props.text}
+      bottomBlock={<MainBtn className={styles.btn}>Добавить</MainBtn>}
+      rightBlock={<h2 className={styles.price}>{props.price}$</h2>}
+    />
   );
 };
 
