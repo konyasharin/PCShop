@@ -8,24 +8,21 @@ namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CoolerController : ControllerBase
+    public class CoolerController : ComponentController
     {
         private readonly ILogger<CoolerController> logger;
 
-        public CoolerController(ILogger<CoolerController> logger)
-        {
-            this.logger = logger;
-
-
+        public CoolerController(ILogger<CoolerController> logger):base(logger)
+        { 
         }
 
         [HttpPost("createCooler")]
-        public async Task<IActionResult> CreateCooler(Cooler cooler)
+        public async Task<IActionResult> CreateCooler(Cooler<IFormFile> cooler)
         {
             try
             {
                 string imagePath = BackupWriter.Write(cooler.Image);
-                DotNetEnv.Env.Load();
+
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 if (cooler.Speed <= 0 || cooler.Speed > 10000)
@@ -69,7 +66,7 @@ namespace backend.Controllers
             }catch(Exception ex)
             {
                 logger.LogError("Cooler data did not save in database");
-                return BadRequest(ex.Message);
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -78,8 +75,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+                
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -87,50 +83,48 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
 
-                    var cooler = connection.QueryFirstOrDefault<Cooler>("SELECT * FROM public.cooler WHERE Id = @Id",
+                    var cooler = connection.QueryFirstOrDefault<Cooler<string>>("SELECT * FROM public.cooler WHERE Id = @Id",
                         new { Id = id });
 
                     if (cooler != null)
                     {
                         logger.LogInformation($"Retrieved Cooler with Id {id} from the database");
-                        return Ok(cooler);
+                        return Ok(new { id = id, cooler });
 
                     }
                     else
                     {
                         logger.LogInformation($"Cooler with Id {id} not found in the database");
-                        return NotFound();
+                        return NotFound(new {error = $"Cooler Not Found with {id}"});
                     }
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to retrieve Cooler data from the database. \nException {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = ex.Message});
             }
         }
 
         [HttpPut("updateCooler/{id}")]
-        public async Task<IActionResult> UpdateCooler(int id, Cooler updatedCooler)
+        public async Task<IActionResult> UpdateCooler(int id, Cooler<IFormFile> updatedCooler)
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 if (updatedCooler.Speed > 0 || updatedCooler.Speed < 10000)
                 {
-                    return BadRequest("Speed must be between 0 and 10000");
+                    return BadRequest(new { error = "Speed must be between 0 and 10000" });
                 }
                 
                 if (updatedCooler.Power > 0 || updatedCooler.Power < 10000)
                 {
-                    return BadRequest("Speed must be between 0 and 10000");
+                    return BadRequest(new { error = "Speed must be between 0 and 10000" });
                 }
 
                 if (updatedCooler.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -164,7 +158,7 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Failed to update Cooler data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
@@ -173,8 +167,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+             
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -185,14 +178,14 @@ namespace backend.Controllers
 
                     logger.LogInformation("Cooler data deleted from the database");
 
-                    return Ok("Cooler data deleted successfully");
+                    return Ok(new {id = id});
                 }
 
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to delete Cooler data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = "Internal server error" });
             }
         }
 
@@ -202,19 +195,18 @@ namespace backend.Controllers
             logger.LogInformation("Get method has started");
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+               
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var coolers = connection.Query<Cooler>("SELECT * FROM public.cooler");
+                    var coolers = connection.Query<Cooler<string>>("SELECT * FROM public.cooler");
 
                     logger.LogInformation("Retrieved all Cooler data from the database");
 
-                    return Ok(coolers);
+                    return Ok(new { data = coolers });
                 }
 
 
@@ -222,7 +214,7 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Cooler data did not get gtom database. Exception: {ex}");
-                return NotFound();
+                return NotFound(new {error = ex.Message});
             }
         }
     }

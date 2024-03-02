@@ -1,25 +1,5 @@
 [
   {
-    "ContainingType": "backend.Controllers.WeatherForecastController",
-    "Method": "Get",
-    "RelativePath": "WeatherForecast",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[backend.WeatherForecast, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
     "ContainingType": "backend.Controllers.AssemblyController",
     "Method": "CreateAssembly",
     "RelativePath": "api/Assembly/createAssembly",
@@ -153,6 +133,26 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Material",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Width",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Height",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Depth",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
@@ -175,26 +175,6 @@
       {
         "Name": "Country",
         "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Material",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Width",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Height",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Depth",
-        "Type": "System.Int32",
         "IsRequired": false
       },
       {
@@ -261,6 +241,26 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Material",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Width",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Height",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Depth",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": true
@@ -286,26 +286,6 @@
         "IsRequired": false
       },
       {
-        "Name": "Material",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Width",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Height",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Depth",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
         "Name": "Description",
         "Type": "System.String",
         "IsRequired": false
@@ -326,6 +306,16 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [
+      {
+        "Name": "Speed",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Power",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
       {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
@@ -349,16 +339,6 @@
       {
         "Name": "Country",
         "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Speed",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Power",
-        "Type": "System.Int32",
         "IsRequired": false
       },
       {
@@ -425,6 +405,16 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Speed",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Power",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": true
@@ -450,16 +440,6 @@
         "IsRequired": false
       },
       {
-        "Name": "Speed",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Power",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
         "Name": "Description",
         "Type": "System.String",
         "IsRequired": false
@@ -480,6 +460,21 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [
+      {
+        "Name": "Frequency",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Socket",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Chipset",
+        "Type": "System.String",
+        "IsRequired": false
+      },
       {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
@@ -502,21 +497,6 @@
       },
       {
         "Name": "Country",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Frequency",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Socket",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Chipset",
         "Type": "System.String",
         "IsRequired": false
       },
@@ -584,6 +564,21 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Frequency",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Socket",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Chipset",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": true
@@ -609,21 +604,6 @@
         "IsRequired": false
       },
       {
-        "Name": "Frequency",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Socket",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Chipset",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
         "Name": "Description",
         "Type": "System.String",
         "IsRequired": false
@@ -644,6 +624,16 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [
+      {
+        "Name": "Battery",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Voltage",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
       {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
@@ -667,16 +657,6 @@
       {
         "Name": "Country",
         "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Battery",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Voltage",
-        "Type": "System.Int32",
         "IsRequired": false
       },
       {
@@ -743,6 +723,16 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Battery",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Voltage",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": true
@@ -768,16 +758,6 @@
         "IsRequired": false
       },
       {
-        "Name": "Battery",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Voltage",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
         "Name": "Description",
         "Type": "System.String",
         "IsRequired": false
@@ -799,6 +779,26 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Cores",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Clock_frequency",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Turbo_frequency",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Heat_dissipation",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
@@ -819,28 +819,8 @@
         "IsRequired": false
       },
       {
-        "Name": "Cores",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
         "Name": "Country",
         "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Clock_frequency",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Turbo_frequency",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Heat_dissipation",
-        "Type": "System.Int32",
         "IsRequired": false
       },
       {
@@ -907,6 +887,26 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Cores",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Clock_frequency",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Turbo_frequency",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Heat_dissipation",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": true
@@ -927,28 +927,8 @@
         "IsRequired": false
       },
       {
-        "Name": "Cores",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
         "Name": "Country",
         "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Clock_frequency",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Turbo_frequency",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Heat_dissipation",
-        "Type": "System.Int32",
         "IsRequired": false
       },
       {
@@ -973,6 +953,21 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Frequency",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Timings",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Capacity_db",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
@@ -995,21 +990,6 @@
       {
         "Name": "Country",
         "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Frequency",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Timings",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Capacity_db",
-        "Type": "System.Int32",
         "IsRequired": false
       },
       {
@@ -1076,6 +1056,21 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Frequency",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Timings",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Capacity_db",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": true
@@ -1101,21 +1096,6 @@
         "IsRequired": false
       },
       {
-        "Name": "Frequency",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Timings",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Capacity_db",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
         "Name": "Description",
         "Type": "System.String",
         "IsRequired": false
@@ -1136,6 +1116,11 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [
+      {
+        "Name": "Capacity",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
       {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
@@ -1159,11 +1144,6 @@
       {
         "Name": "Country",
         "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Capacity",
-        "Type": "System.Int32",
         "IsRequired": false
       },
       {
@@ -1230,6 +1210,11 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Capacity",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": true
@@ -1255,11 +1240,6 @@
         "IsRequired": false
       },
       {
-        "Name": "Capacity",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
         "Name": "Description",
         "Type": "System.String",
         "IsRequired": false
@@ -1280,6 +1260,16 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [
+      {
+        "Name": "Memory_db",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Memory_type",
+        "Type": "System.String",
+        "IsRequired": false
+      },
       {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
@@ -1302,16 +1292,6 @@
       },
       {
         "Name": "Country",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Memory_db",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Memory_type",
         "Type": "System.String",
         "IsRequired": false
       },
@@ -1379,6 +1359,16 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Memory_db",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Memory_type",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
         "Name": "Id",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": true
@@ -1400,16 +1390,6 @@
       },
       {
         "Name": "Country",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Memory_db",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "Memory_type",
         "Type": "System.String",
         "IsRequired": false
       },
