@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 import Orders from './Orders/Orders.tsx';
 import Order from './Order/Order.tsx';
 import Roles from './Roles/Roles.tsx';
+import Edit from './Edit/Edit.tsx';
 
 function AdminPage() {
   return (
@@ -17,6 +18,7 @@ function AdminPage() {
             <Route path={'/orders'} element={<Orders />} />
             <Route path={'/orders/:orderNumber'} element={<Order />} />
             <Route path={'/roles'} element={<Roles />} />
+            <Route path={'/edit/*'} element={<Edit />} />
           </Routes>
         </div>
       </Container>
