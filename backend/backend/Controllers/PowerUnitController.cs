@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
@@ -103,7 +104,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updatePowerUnit/{id}")]
-        public async Task<IActionResult> UpdatePowerUnit(int id, PowerUnit<IFormFile> updatedPowerUnit)
+        public async Task<IActionResult> UpdatePowerUnit(int id, [FromForm] UpdatedPowerUnit updatedPowerUnit)
         {
             try
             {
@@ -118,9 +119,23 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Voltage must be between 0 and 50000" });
                 }
                 
+                string imagePath = string.Empty;
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.power_unit WHERE Id = @id");
+
+                    if (updatedPowerUnit.updated)
+                    {
+
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedPowerUnit.Image);
+                    }
+                    else
+                    {
+                        imagePath = filePath;
+                    }
+
                     var data = new
                     {
                         id = id,
@@ -131,8 +146,19 @@ namespace backend.Controllers
                         voltage = updatedPowerUnit.Voltage,
                         price = updatedPowerUnit.Price,
                         description = updatedPowerUnit.Description,
-                        image = updatedPowerUnit.Image
+                        image = imagePath,
                     };
+
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.power_unit SET Brand = @brand, Model = @model, Country = @country, Battery = @battery," +
+                        " Voltage = @voltage," +
+                        " Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+
+                    logger.LogInformation("PowerUnit data updated in the database");
+
+                    return Ok(new { id = id, data });
 
                 }
 
@@ -150,7 +176,7 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Failed to update PowerUnit data in database. \nException: {ex}");
-                return StatusCode(500, new { error = "Internal server error" });
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
@@ -159,10 +185,14 @@ namespace backend.Controllers
         {
             try
             {
+                string filePath;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.power_unit WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.power_unit WHERE Id = @id", new { id });
 
@@ -195,7 +225,7 @@ namespace backend.Controllers
 
                     logger.LogInformation("Retrieved all PowerUnit data from the database");
 
-                    return Ok(new { data = powerUnits });
+                    return Ok(new { powerUnits });
                 }
 
 

@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
@@ -105,7 +106,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updateMotherBoard/{id}")]
-        public async Task<IActionResult> UpdateMotherBoard(int id, MotherBoard<IFormFile> updatedMotherBoard)
+        public async Task<IActionResult> UpdateMotherBoard(int id, [FromForm] UpdatedMotherBoard updatedMotherBoard)
         {
             try
             {
@@ -120,9 +121,23 @@ namespace backend.Controllers
                 {
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
-                
+                string imagePath = string.Empty;
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.mother_board WHERE Id = @id");
+
+                    if (updatedMotherBoard.updated)
+                    {
+
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedMotherBoard.Image);
+                    }
+                    else
+                    {
+                        imagePath = filePath;
+                    }
+
                     var data = new
                     {
                         id = id,
@@ -134,21 +149,23 @@ namespace backend.Controllers
                         chipset = updatedMotherBoard.Chipset,
                         price = updatedMotherBoard.Price,
                         description = updatedMotherBoard.Description,
-                        image = updatedMotherBoard.Image
+                        image = imagePath,
                     };
+
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.mother_board SET Brand = @brand, Model = @model, Country = @country, Frequency = @frequency," +
+                        " Socket = @socket, Chipset = @chipset," +
+                        " Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+
+                    logger.LogInformation("MotherBoard data updated in the database");
+
+                    return Ok(new { id = id, data});
 
                 }
 
-                connection.Open();
-                logger.LogInformation("Connection started");
-
-                connection.Execute("UPDATE public.mother_board SET Brand = @brand, Model = @model, Country = @country, Frequency = @frequency," +
-                    " Socket = @socket, Chipset = @chipset," +
-                    " Price = @price, Description = @description, Image = @image WHERE Id = @id", updatedMotherBoard);
-
-                logger.LogInformation("MotherBoard data updated in the database");
-
-                return Ok(new {id=id, updatedMotherBoard});
+                
             }
             catch (Exception ex)
             {
@@ -162,11 +179,14 @@ namespace backend.Controllers
         {
             try
             {
-               
+                string filePath;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.mother_board WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.mother_board WHERE Id = @id", new { id });
 
@@ -201,7 +221,7 @@ namespace backend.Controllers
 
                     logger.LogInformation("Retrieved all MotherBoard data from the database");
 
-                    return Ok(new { data = motherboards });
+                    return Ok(new { motherboards });
                 }
 
 

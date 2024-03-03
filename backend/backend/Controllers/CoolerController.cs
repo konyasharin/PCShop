@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -106,7 +107,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updateCooler/{id}")]
-        public async Task<IActionResult> UpdateCooler(int id, Cooler<IFormFile> updatedCooler)
+        public async Task<IActionResult> UpdateCooler(int id, [FromForm] UpdatedCooler updatedCooler)
         {
             try
             {
@@ -126,9 +127,24 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
+                string imagePath = string.Empty;
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.cooler WHERE Id = @id");
+
+                    if (updatedCooler.updated)
+                    {
+
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedCooler.Image);
+                    }
+                    else
+                    {
+                        imagePath = filePath;
+                    }
+
+                    var data = new
                     {
                         id = id,
                         brand = updatedCooler.Brand,
@@ -138,21 +154,23 @@ namespace backend.Controllers
                         power = updatedCooler.Power,
                         price = updatedCooler.Price,
                         description = updatedCooler.Description,
-                        image = updatedCooler.Image
+                        image = imagePath
                     };
+
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.cooler SET Brand = @brand, Model = @model, Country = @country, Speed = @speed," +
+                        " Power = @power," +
+                        " Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+
+                    logger.LogInformation("Cooler data updated in the database");
+
+                    return Ok(new {id = id, data});
 
                 }
 
-                connection.Open();
-                logger.LogInformation("Connection started");
-
-                connection.Execute("UPDATE public.cooler SET Brand = @brand, Model = @model, Country = @country, Speed = @speed," +
-                    " Power = @power," +
-                    " Price = @price, Description = @description, Image = @image WHERE Id = @id", updatedCooler);
-
-                logger.LogInformation("Cooler data updated in the database");
-
-                return Ok("Cooler data updated successfully");
+                
             }
             catch (Exception ex)
             {
@@ -166,12 +184,16 @@ namespace backend.Controllers
         {
             try
             {
-             
+
+                string filePath;
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.cooler WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.cooler WHERE Id = @id", new { id });
 
@@ -205,7 +227,7 @@ namespace backend.Controllers
 
                     logger.LogInformation("Retrieved all Cooler data from the database");
 
-                    return Ok(new { data = coolers });
+                    return Ok(new { coolers });
                 }
 
 

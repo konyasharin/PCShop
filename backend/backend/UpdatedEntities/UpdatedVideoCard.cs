@@ -4,6 +4,6 @@ namespace backend.UpdatedEntities
 {
     public class UpdatedVideoCard : VideoCard<IFormFile>
     {
-        public bool status_update { get; set; }
+        public bool updated { get; set; }
     }
 }

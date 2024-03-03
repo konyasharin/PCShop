@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -112,7 +113,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updateRam/{id}")]
-        public async Task<IActionResult> UpdateRam(int id, RAM<IFormFile> updatedRam)
+        public async Task<IActionResult> UpdateRam(int id, [FromForm] UpdatedRam updatedRam)
         {
             try
             {
@@ -137,8 +138,22 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
+                string imagePath = string.Empty;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.ram WHERE Id = @id");
+
+                    if (updatedRam.updated)
+                    {
+
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedRam.Image);
+                    }
+                    else
+                    {
+                        imagePath = filePath;
+                    }
+
                     var data = new
                     {
                         id = id,
@@ -150,21 +165,23 @@ namespace backend.Controllers
                         capacity_db = updatedRam.Capacity_db,
                         price = updatedRam.Price,
                         description = updatedRam.Description,
-                        image = updatedRam.Image
+                        image = imagePath
                     };
+
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.ram SET Brand = @brand, Model = @model, Country = @country, Frequency = @frequency," +
+                        " Timings = @timings, Capacity_db = @capacity_db," +
+                        " Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+
+                    logger.LogInformation("RAM data updated in the database");
+
+                    return Ok(new { id = id, data });
 
                 }
 
-                connection.Open();
-                logger.LogInformation("Connection started");
-
-                connection.Execute("UPDATE public.ram SET Brand = @brand, Model = @model, Country = @country, Frequency = @frequency," +
-                    " Timings = @timings, Capacity_db = @capacity_db," +
-                    " Price = @price, Description = @description, Image = @image WHERE Id = @id", updatedRam);
-
-                logger.LogInformation("RAM data updated in the database");
-
-                return Ok(new {id=id, updatedRam});
+                
             }
             catch (Exception ex)
             {
@@ -178,11 +195,14 @@ namespace backend.Controllers
         {
             try
             {
-                
+                string filePath;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.ram WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.ram WHERE Id = @id", new { id });
 

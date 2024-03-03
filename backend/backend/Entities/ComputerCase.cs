@@ -5,7 +5,6 @@ namespace backend.Entities
 {
     public class ComputerCase<T> : Component<T>
     {
-        
         public string Material { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }

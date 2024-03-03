@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
@@ -98,7 +99,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updateSsd/{id}")]
-        public async Task<IActionResult> UpdateSsd(int id, SSD<IFormFile> updatedSsd)
+        public async Task<IActionResult> UpdateSsd(int id, [FromForm] UpdatedSsd updatedSsd)
         {
             try
             {
@@ -113,9 +114,22 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
                 
-
+                string imagePath = string.Empty;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.ssd WHERE Id = @id");
+
+                    if (updatedSsd.updated)
+                    {
+
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedSsd.Image);
+                    }
+                    else
+                    {
+                        imagePath = filePath;
+                    }
+
                     var data = new
                     {
                         id = id,
@@ -125,20 +139,22 @@ namespace backend.Controllers
                         capacity = updatedSsd.Capacity,
                         price = updatedSsd.Price,
                         description = updatedSsd.Description,
-                        image = updatedSsd.Image
+                        image = imagePath,
                     };
+
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.ssd SET Brand = @brand, Model = @model, Country = @country, Capacity = @capacity," +
+                        " Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+
+                    logger.LogInformation("SSD data updated in the database");
+
+                    return Ok(new { id = id, data });
 
                 }
 
-                connection.Open();
-                logger.LogInformation("Connection started");
-
-                connection.Execute("UPDATE public.ssd SET Brand = @brand, Model = @model, Country = @country, Capacity = @capacity," +
-                    " Price = @price, Description = @description, Image = @image WHERE Id = @id", updatedSsd);
-
-                logger.LogInformation("SSD data updated in the database");
-
-                return Ok(new { id = id, updatedSsd });
+                
             }
             catch (Exception ex)
             {
@@ -152,11 +168,14 @@ namespace backend.Controllers
         {
             try
             {
-                
+                string filePath;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.ssd WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.ssd WHERE Id = @id", new { id });
 
