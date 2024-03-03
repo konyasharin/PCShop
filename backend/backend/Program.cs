@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using backend.Data;
 using backend.Controllers;
 using System.Text.Json;
 using Microsoft.IdentityModel.Tokens;
@@ -31,12 +30,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-DotNetEnv.Env.Load();
-var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-builder.Services.AddDbContext<DataContext>(options =>
-{
-    options.UseNpgsql(connectionString);
-});
 
 
 var app = builder.Build();

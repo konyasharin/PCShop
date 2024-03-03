@@ -8,27 +8,23 @@ namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RamController : ControllerBase
+    public class RamController : ComponentController
     {
         private readonly ILogger<RamController> logger;
 
-        public RamController(ILogger<RamController> logger)
+        public RamController(ILogger<RamController> logger):base(logger)
         {
-            this.logger = logger;
-
-
+           
         }
 
         [HttpPost("createRam")]
-        public async Task<IActionResult> CreateRam(RAM ram)
+        public async Task<IActionResult> CreateRam(RAM<IFormFile> ram)
         {
 
             try
             {
                 string imagePath = BackupWriter.Write(ram.Image);
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+               
                 if (ram.Frequency < 0 || ram.Frequency > 100000)
                 {
                     return BadRequest(new { error = "Frequency must be between 0 and 100000" });
@@ -77,7 +73,7 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Ram data did not save in database. Exception: {ex}");
-                return BadRequest(ex.Message);
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -86,69 +82,65 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+               
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
 
 
-                    var ram = connection.QueryFirstOrDefault<RAM>("SELECT * FROM public.ram WHERE Id = @Id",
+                    var ram = connection.QueryFirstOrDefault<RAM<string>>("SELECT * FROM public.ram WHERE Id = @Id",
                         new { Id = id });
 
                     if (ram != null)
                     {
                         logger.LogInformation($"Retrieved Ram with Id {id} from the database");
-                        return Ok(ram);
+                        return Ok(new { id = id, ram });
 
                     }
                     else
                     {
                         logger.LogInformation($"Ram with Id {id} not found in the database");
-                        return NotFound();
+                        return NotFound(new {error = $"Ram NotFound with {id}"});
                     }
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to retrieve Ram data from the database. \nException {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = "Internal server error" });
             }
         }
 
         [HttpPut("updateRam/{id}")]
-        public async Task<IActionResult> UpdateRam(int id, RAM updatedRam)
+        public async Task<IActionResult> UpdateRam(int id, RAM<IFormFile> updatedRam)
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+               
                 if (updatedRam.Frequency < 0 || updatedRam.Frequency > 100000)
                 {
-                    return BadRequest("Frequency must be between 0 and 100000");
+                    return BadRequest(new { error = "Frequency must be between 0 and 100000" });
                 }
 
                 if (updatedRam.Timings <0 || updatedRam.Timings > 10000)
                 {
-                    return BadRequest("Timings must be between 0 and 10000");
+                    return BadRequest(new { error = "Timings must be between 0 and 10000" });
                 }
 
                 if (updatedRam.Capacity_db < 0 || updatedRam.Capacity_db > 10000)
                 {
-                    return BadRequest("Capacity_db must be between 0 and 10000");
+                    return BadRequest(new { error = "Capacity_db must be between 0 and 10000" });
                 }
 
                 if (updatedRam.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
                         id = id,
                         brand = updatedRam.Brand,
@@ -173,12 +165,12 @@ namespace backend.Controllers
 
                 logger.LogInformation("RAM data updated in the database");
 
-                return Ok("RAM data updated successfully");
+                return Ok(new {id=id, updatedRam});
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to update RAM data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
@@ -187,9 +179,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
@@ -199,14 +189,14 @@ namespace backend.Controllers
 
                     logger.LogInformation("RAM data deleted from the database");
 
-                    return Ok("RAM data deleted successfully");
+                    return Ok(new {id=id});
                 }
 
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to delete RAM data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = "Internal server error" });
             }
         }
 
@@ -216,19 +206,16 @@ namespace backend.Controllers
             logger.LogInformation("Get method has started");
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var computerCases = connection.Query<RAM>("SELECT * FROM public.ram");
+                    var computerCases = connection.Query<RAM<string>>("SELECT * FROM public.ram");
 
                     logger.LogInformation("Retrieved all RAM data from the database");
 
-                    return Ok(computerCases);
+                    return Ok(new { data = computerCases });
                 }
 
 
@@ -236,7 +223,7 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"RAM data did not get ftom database. Exception: {ex}");
-                return NotFound();
+                return NotFound(new {error=ex.Message});
             }
         }
     }

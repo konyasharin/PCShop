@@ -1,36 +1,30 @@
-﻿using backend.Data;
+﻿
 using backend.Entities;
 using backend.Utils;
 using Dapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
-using System.Security.Cryptography;
+
 
 namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ComputerCaseController : ControllerBase
+    public class ComputerCaseController : ComponentController
     {
-        private readonly ILogger<ComputerCaseController> logger;
-      
-        public ComputerCaseController(ILogger<ComputerCaseController> logger)
+
+        public ComputerCaseController(ILogger<ComputerCaseController> logger):base(logger)
         {
-            this.logger = logger;
-    
         }
 
         [HttpPost("createComputerCase")]
-        public async Task<IActionResult> CreateCreateCase([FromForm] ComputerCase computerCase)
+        public async Task<IActionResult> CreateCreateCase([FromForm] ComputerCase<IFormFile> computerCase)
         {
 
             try
             {
                 string imagePath = BackupWriter.Write(computerCase.Image);
 
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 if (computerCase.Price < 0)
                 {
@@ -80,7 +74,7 @@ namespace backend.Controllers
             catch(Exception ex)
             {
                 logger.LogError($"ComputerCase data failed to save in database. Exception: {ex}");
-                return BadRequest(ex);
+                return BadRequest(new { error = ex .Message});
             }
         }
 
@@ -90,19 +84,17 @@ namespace backend.Controllers
             logger.LogInformation("Get method has started");
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var computerCases = connection.Query<ComputerCase>("SELECT * FROM public.computer_case");
+                    var computerCases = connection.Query<ComputerCase<string>>("SELECT * FROM public.computer_case");
 
                     logger.LogInformation("Retrieved all ComputerCase data from the database");
 
-                    return Ok(computerCases);
+                    return Ok(new { data = computerCases });
                 }
 
                
@@ -110,7 +102,7 @@ namespace backend.Controllers
             catch(Exception ex)
             {
                 logger.LogError($"ComputerCase data did not get gtom database. Exception: {ex}");
-                return NotFound();
+                return NotFound(new {error = ex.Message});
             }
         }
 
@@ -119,8 +111,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+                
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -128,60 +119,59 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
                     
-                    var computerCase = connection.QueryFirstOrDefault<ComputerCase>("SELECT * FROM public.computer_case WHERE Id = @Id",
+                    var computerCase = connection.QueryFirstOrDefault<ComputerCase<string>>("SELECT * FROM public.computer_case WHERE Id = @Id",
                         new { Id = id });
 
                     if (computerCase != null)
                     {
                         logger.LogInformation($"Retrieved ComputerCase with Id {id} from the database");
-                        return Ok(computerCase);
+                        return Ok(new { id = id, computerCase});
 
                     }
                     else
                     {
                         logger.LogInformation($"ComputerCase with Id {id} not found in the database");
-                        return NotFound();
+                        return NotFound(new {error = $"Not found ComputerCase with {id}"});
                     }
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to retrieve ComputerCase data from the database. \nException {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
         [HttpPut("updateComputerCase/{id}")]
-        public async Task<IActionResult> UpdateComputerCase(int id, ComputerCase updatedComputerCase)
+        public async Task<IActionResult> UpdateComputerCase(int id, ComputerCase<IFormFile> updatedComputerCase)
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 if (updatedComputerCase.Width < 10 || updatedComputerCase.Width > 100)
                 {
-                    return BadRequest("Width must be between 10 and 100.");
+                    return BadRequest(new { error = "Width must be between 10 and 100" });
                 }
 
                 if (updatedComputerCase.Height < 30 || updatedComputerCase.Height > 150)
                 {
-                    return BadRequest("Height must be between 30 and 150");
+                    return BadRequest(new { error = "Height must be between 30 and 150" });
                 }
 
                 if (updatedComputerCase.Depth < 20 || updatedComputerCase.Depth > 100)
                 {
-                    return BadRequest("Depth must be between 20 and 100");
+                    return BadRequest(new { error = "Depth must be between 20 and 100" });
                 }
 
                 if (updatedComputerCase.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
                         id = id,
                         brand = updatedComputerCase.Brand,
@@ -206,12 +196,12 @@ namespace backend.Controllers
 
                 logger.LogInformation("ComputerCase data updated in the database");
 
-                return Ok("ComputerCase data updated successfully");
+                return Ok(new { id = id, updatedComputerCase });
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to update ComputerCase data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
@@ -220,8 +210,6 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -232,14 +220,14 @@ namespace backend.Controllers
 
                     logger.LogInformation("ComputerCase data deleted from the database");
 
-                    return Ok("ComputerCase data deleted successfully");
+                    return Ok(new {id = id});
                 }
 
             }
             catch(Exception ex)
             {
                 logger.LogError($"Failed to delete ComputerCase data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = ex.Message });
             }
         }
     }

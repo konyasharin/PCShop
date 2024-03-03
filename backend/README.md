@@ -762,3 +762,83 @@ https://localhost:7202/api/Cooler/getAllCoolers
 17)  https://localhost:7202/api/Assembly/getPopularAssemblies
 
 Вывод популярных сборок
+
+```json
+{
+[HttpPut("updateComputerCase/{id}")]
+public async Task<IActionResult> UpdateComputerCase(int id, ComputerCase<IFormFile> updatedComputerCase)
+{
+    try
+    {
+        DotNetEnv.Env.Load();
+        var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+
+        if (updatedComputerCase.Width < 10 || updatedComputerCase.Width > 100)
+        {
+            return BadRequest("Width must be between 10 and 100.");
+        }
+
+        if (updatedComputerCase.Height < 30 || updatedComputerCase.Height > 150)
+        {
+            return BadRequest("Height must be between 30 and 150");
+        }
+
+        if (updatedComputerCase.Depth < 20 || updatedComputerCase.Depth > 100)
+        {
+            return BadRequest("Depth must be between 20 and 100");
+        }
+
+        if (updatedComputerCase.Price < 0)
+        {
+            return BadRequest("Price must not be less than 0");
+        }
+
+        await using var connection = new NpgsqlConnection(connectionString);
+        
+        // Проверяем наличие файла с таким же именем в папке backup
+        string existingFileName = Directory.GetFiles("./backup").FirstOrDefault(f => Path.GetFileName(f) == updatedComputerCase.Image.FileName);
+
+        if (existingFileName != null)
+        {
+            // Если файл существует, используем его имя
+            updatedComputerCase.Image = existingFileName;
+        }
+        else
+        {
+            // Если файла нет, создаем новый и сохраняем его
+            updatedComputerCase.Image = BackupWriter.Write(updatedComputerCase.Image);
+        }
+
+        var parameters = new
+        {
+            id = id,
+            brand = updatedComputerCase.Brand,
+            model = updatedComputerCase.Model,
+            country = updatedComputerCase.Country,
+            material = updatedComputerCase.Material,
+            width = updatedComputerCase.Width,
+            height = updatedComputerCase.Height,
+            depth = updatedComputerCase.Depth,
+            price = updatedComputerCase.Price,
+            description = updatedComputerCase.Description,
+            image = updatedComputerCase.Image
+        };
+
+        connection.Open();
+        logger.LogInformation("Connection started");
+
+        connection.Execute("UPDATE public.computer_case SET Brand = @brand, Model = @model, Country = @country, Material = @material, Width = @width, Height = @height," +
+            " Depth = @depth, Price = @price, Description = @description, Image = @image WHERE Id = @id", parameters);
+
+        logger.LogInformation("ComputerCase data updated in the database");
+
+        return Ok("ComputerCase data updated successfully");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError($"Failed to update ComputerCase data in database. \nException: {ex}");
+        return StatusCode(500, "Internal server error");
+    }
+}
+}
+```
