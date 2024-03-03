@@ -74,7 +74,6 @@ namespace backend.Controllers
                         "VALUES (@brand, @model, @country, @material, @width, @height, @depth, @price, @description, @image) RETURNING id", data);
 
                     logger.LogInformation($"ComputerCase data saved to database with id {id}");
-
                     return Ok(new { id = id, data });
                 }
             }
