@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,41 +10,36 @@ namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PowerUnitController : ControllerBase
+    public class PowerUnitController : ComponentController
     {
-        private readonly ILogger<PowerUnitController> logger;
-
-        public PowerUnitController(ILogger<PowerUnitController> logger)
+       
+        public PowerUnitController(ILogger<PowerUnitController> logger):base(logger)
         {
-            this.logger = logger;
-
-
         }
 
         [HttpPost("createPowerUnit")]
-        public async Task<IActionResult> CreatePowerUnit(PowerUnit powerunit)
+        public async Task<IActionResult> CreatePowerUnit([FromForm] PowerUnit<IFormFile> powerunit)
         {
 
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+                string imagePath = BackupWriter.Write(powerunit.Image);
+                
 
                 if (powerunit.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 if (powerunit.Voltage < 0 || powerunit.Voltage > 50000)
                 {
-                    return BadRequest("Voltage must be between 0 and 50000");
+                    return BadRequest(new { error = "Voltage must be between 0 and 50000" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
-                        id = powerunit.Id,
                         brand = powerunit.Brand,
                         model = powerunit.Model,
                         country = powerunit.Country,
@@ -51,26 +47,23 @@ namespace backend.Controllers
                         voltage = powerunit.Voltage,
                         price = powerunit.Price,
                         description = powerunit.Description,
-                        image = powerunit.Image,
+                        image = imagePath,
 
                     };
 
                     connection.Open();
-                    logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.power_unit (Id, Brand, Model, Country, Battery, Voltage," +
-                        "Price, Description, Image)" +
-                        "VALUES (@Id, @Brand, @Model, @Country, @Battery, @Voltage, @Price, @Description, @Image)", powerunit);
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.power_unit (brand, model, country, battery, voltage," +
+                        "price, description, image)" +
+                        "VALUES (@brand, @model, @country, @battery, @voltage, @price, @description, @image) RETURNING id", data);
 
                     logger.LogInformation("powerUnit data saved to database");
-
-                    String result = "PowerUnit data saved to database";
-                    return Ok(result);
+                    return Ok(new { id = id, data });
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError("PowerUnit data did not save in database");
-                return BadRequest(ex);
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -79,8 +72,6 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -88,51 +79,49 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
 
-                    var powerUnit = connection.QueryFirstOrDefault<PowerUnit>("SELECT * FROM public.power_unit WHERE Id = @Id",
+                    var powerUnit = connection.QueryFirstOrDefault<PowerUnit<string>>("SELECT * FROM public.power_unit WHERE Id = @Id",
                         new { Id = id });
 
                     if (powerUnit != null)
                     {
                         logger.LogInformation($"Retrieved PowerUnit with Id {id} from the database");
-                        return Ok(powerUnit);
+                        return Ok(new { id = id, powerUnit });
 
                     }
                     else
                     {
                         logger.LogInformation($"PowerUnit with Id {id} not found in the database");
-                        return NotFound();
+                        return NotFound(new {error = $"PowerUnit NotFound with {id}"});
                     }
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to retrieve PowerUnit data from the database. \nException {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = "Internal server error" });
             }
         }
 
         [HttpPut("updatePowerUnit/{id}")]
-        public async Task<IActionResult> UpdatePowerUnit(int id, PowerUnit updatedPowerUnit)
+        public async Task<IActionResult> UpdatePowerUnit(int id, PowerUnit<IFormFile> updatedPowerUnit)
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 if (updatedPowerUnit.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 if (updatedPowerUnit.Voltage < 0 || updatedPowerUnit.Voltage > 50000)
                 {
-                    return BadRequest("Voltage must be between 0 and 50000");
+                    return BadRequest(new { error = "Voltage must be between 0 and 50000" });
                 }
                 
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
                         id = id,
                         brand = updatedPowerUnit.Brand,
@@ -156,12 +145,12 @@ namespace backend.Controllers
 
                 logger.LogInformation("PowerUnit data updated in the database");
 
-                return Ok("PowerUnit data updated successfully");
+                return Ok(new {id=id, updatedPowerUnit});
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to update PowerUnit data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = "Internal server error" });
             }
         }
 
@@ -170,9 +159,6 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
@@ -182,14 +168,14 @@ namespace backend.Controllers
 
                     logger.LogInformation("PowerUnit data deleted from the database");
 
-                    return Ok("PowerUnit data deleted successfully");
+                    return Ok(new {id=id});
                 }
 
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to delete PowerUnit data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = "Internal server error" });
             }
         }
 
@@ -199,19 +185,17 @@ namespace backend.Controllers
             logger.LogInformation("Get method has started");
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var powerUnits = connection.Query<PowerUnit>("SELECT * FROM public.power_unit");
+                    var powerUnits = connection.Query<PowerUnit<string>>("SELECT * FROM public.power_unit");
 
                     logger.LogInformation("Retrieved all PowerUnit data from the database");
 
-                    return Ok(powerUnits);
+                    return Ok(new { data = powerUnits });
                 }
 
 
@@ -219,7 +203,7 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"PowerUnit data did not get gtom database. Exception: {ex}");
-                return NotFound();
+                return NotFound(new {error = ex.Message});
             }
         }
     }

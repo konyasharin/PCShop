@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +11,12 @@ namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AssemblyController : ControllerBase
+    public class AssemblyController : ComponentController
     {
         private readonly ILogger<AssemblyController> logger;
 
-
-        public AssemblyController(ILogger<AssemblyController> logger)
+        public AssemblyController(ILogger<AssemblyController> logger):base(logger)
         {
-            this.logger = logger;
-
         }
 
         [HttpPost("createAssembly")]
@@ -26,15 +24,10 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
-
-                    logger.LogInformation("Database connected");
 
                     var computerCasePrice = await connection
                         .ExecuteScalarAsync<int>("SELECT price FROM computer_case WHERE Id = @Id", new { Id = assembly.ComputerCaseId });
@@ -66,11 +59,10 @@ namespace backend.Controllers
                     assembly.Price = assembly_price;
                     assembly.Likes = 0;
 
-                    assembly.Creation_time = DateTime.Now;
+                    assembly.CreationTime = DateTime.Now;
 
-                    var parameters = new
+                    var data = new
                     {
-                        id = assembly.Id,
                         name = assembly.Name,
                         price = assembly.Price,
                         computerCaseId = assembly.ComputerCaseId,
@@ -82,27 +74,22 @@ namespace backend.Controllers
                         videoCardId = assembly.VideoCardId,
                         powerUnitId = assembly.PowerUnitId,
                         likes = assembly.Likes,
-                        creation_time = assembly.Creation_time,
+                        creationTime = assembly.CreationTime,
                     };
 
-                    
-                    logger.LogInformation("Database connected");
-
-                    await connection.ExecuteAsync("INSERT INTO assembly (id, name, price, computercaseid, coolerid," +
-                        " motherboardid, processorid, ramid, ssdid, videocardid, powerunitid, likes, creation_time) " +
-                                      "VALUES (@id, @name, @price, @computercaseid, @coolerid, @motherboardid," +
-                                      " @processorid, @ramid, @ssdid, @videocardid, @powerunitid, @likes, @creation_time)", assembly);
-
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO assembly (name, price, computercase_id, cooler_id," +
+                        " motherboard_id, processor_id, ram_id, ssd_id, videocard_id, powerunit_id, likes, creation_time) " +
+                                      "VALUES (@name, @price, @computerCaseId, @coolerId, @motherBoardId," +
+                                      " @processorId, @ramId, @ssdId, @videocardId, @powerunitId, @likes, @creationTime) RETURN id", data);
                     logger.LogInformation("Assembly data saved to database");
-
-                    return Ok("Assembly data saved successfully");
+                    return Ok(new { id = id, data });
                 }
             }
 
             catch (Exception ex)
             {
                 logger.LogError($"Assembly data failed to save in database. Exception: {ex}");
-                return BadRequest(ex.Message);
+                return BadRequest(new {error = ex.Message });
             }
         }
 
@@ -112,9 +99,7 @@ namespace backend.Controllers
            
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+               
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
@@ -124,7 +109,7 @@ namespace backend.Controllers
 
                     logger.LogInformation("Retrieved all Assembly data from the database");
 
-                    return Ok(assemblies);
+                    return Ok(new { data = assemblies });
                 }
 
 
@@ -132,7 +117,7 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Assembly data did not get gtom database. Exception: {ex}");
-                return NotFound();
+                return NotFound(new {error = ex.Message});
             }
         }
 
@@ -141,9 +126,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
@@ -156,7 +139,7 @@ namespace backend.Controllers
                     if (assembly != null)
                     {
                         logger.LogInformation($"Retrieved Assembly with Id {id} from the database");
-                        return Ok(assembly);
+                        return Ok(new { id = id, assembly });
 
                     }
                     else
@@ -169,7 +152,7 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Failed to retrieve Assembly data from the database. \nException {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = ex.Message});
             }
         }
 
@@ -178,17 +161,15 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 if (updatedAssembly.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
                         id = id,
                         name = updatedAssembly.Name,
@@ -201,7 +182,7 @@ namespace backend.Controllers
                         ssdId = updatedAssembly.SsdId,
                         videoCardId = updatedAssembly.VideoCardId,
                         powerUnitId = updatedAssembly.PowerUnitId,
-                        creation_time = updatedAssembly.Creation_time,
+                        creation_time = updatedAssembly.CreationTime,
 
                     };
 
@@ -222,7 +203,7 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Failed to update Assembly data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new {error = ex.Message});
             }
         }
 
@@ -231,9 +212,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
@@ -243,14 +222,14 @@ namespace backend.Controllers
 
                     logger.LogInformation("Assembly data deleted from the database");
 
-                    return Ok("Assembly data deleted successfully");
+                    return Ok(new {id = id});
                 }
 
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to delete Assembly data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = ex.Message});
             }
         }
 
@@ -259,9 +238,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
@@ -271,13 +248,13 @@ namespace backend.Controllers
 
                     logger.LogInformation("Retrieved all Assembly data from the database");
 
-                    return Ok(assemblies);
+                    return Ok(new { data = assemblies });
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Assembly data did not get from database. Exception: {ex}");
-                return NotFound();
+                return NotFound(new {error = ex.Message});
             }
         }
 
@@ -286,9 +263,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
@@ -298,13 +273,13 @@ namespace backend.Controllers
 
                     logger.LogInformation("Retrieved all Assembly data from the database");
 
-                    return Ok(assemblies);
+                    return Ok(new { data = assemblies });
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Assembly data did not get from database. Exception: {ex}");
-                return NotFound();
+                return NotFound(new {error = ex.Message});
             }
         }
 
@@ -313,9 +288,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
@@ -332,13 +305,14 @@ namespace backend.Controllers
 
                     logger.LogInformation($"Likes for Assembly with Id {id} was plused");
 
-                    return Ok($"Likes for Assembly with Id {id} was plused");
+                    // ИНдекс сборки, которой поставили лайк
+                    return Ok(new {id = id});
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to like Assembly with Id {id}. Exception: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new {error = ex.Message});
             }
         }
 
@@ -347,9 +321,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
@@ -359,13 +331,13 @@ namespace backend.Controllers
 
                     logger.LogInformation("Retrieved all Assembly data from the database");
 
-                    return Ok(assemblies);
+                    return Ok(new { data = assemblies });
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Assembly data did not get from database. Exception: {ex}");
-                return NotFound();
+                return NotFound(new {error = ex.Message});
             }
         }
 

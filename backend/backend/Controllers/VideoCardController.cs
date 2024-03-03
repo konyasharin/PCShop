@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,68 +9,57 @@ namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VideoCardController : ControllerBase
+    public class VideoCardController : ComponentController
     {
-        private readonly ILogger<VideoCardController> logger;
-
-        public VideoCardController(ILogger<VideoCardController> logger)
+        
+        public VideoCardController(ILogger<VideoCardController> logger) : base(logger)
         {
-            this.logger = logger;
-
-
         }
 
         [HttpPost("createVideoCard")]
-        public async Task<IActionResult> CreateVideoCard(VideoCard videoCard)
+        public async Task<IActionResult> CreateVideoCard([FromForm] VideoCard<IFormFile> videoCard)
         {
-
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                string imagePath = BackupWriter.Write(videoCard.Image);
+                
                 if (videoCard.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 if (videoCard.Memory_db < 0 || videoCard.Memory_db > 10000)
                 {
-                    return BadRequest("Memory_db must be between 0 and 10000");
+                    return BadRequest(new { error = "Memory_db must be between 0 and 10000" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
                         id = videoCard.Id,
                         brand = videoCard.Brand,
-                        model =videoCard.Model,
+                        model = videoCard.Model,
                         country = videoCard.Country,
                         memory_db = videoCard.Memory_db,
                         memory_type = videoCard.Memory_type,
-                        price =videoCard.Price,
+                        price = videoCard.Price,
                         description = videoCard.Description,
-                        image = videoCard.Image,
-
+                        image = imagePath,
                     };
 
                     connection.Open();
-                    logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.video_card (Id, Brand, Model, Country, Memory_db, Memory_type," +
-                        "Price, Description, Image)" +
-                        "VALUES (@Id, @Brand, @Model, @Country, @Memory_db, @Memory_type, @Price, @Description, @Image)", videoCard);
-
-                    logger.LogInformation("VideoCard data saved to database");
-
-                    String result = "VideoCard data saved to database";
-                    return Ok(result);
+                    int id = connection.QuerySingleOrDefault<int>("INSERT INTO public.video_card (brand, model, country, memory_db, memory_type," +
+                        "price, description, image)" +
+                        "VALUES (@brand, @model, @country, @memory_db, @memory_type, @price, @description, @image) RETURNING id", data);
+                    logger.LogInformation("VideoCard data saved to database");;
+                    return Ok(new { id = id, data });
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"VideoCard data did not save in database. \nException: {ex}");
-                return BadRequest(ex);
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -78,60 +68,56 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
 
 
-                    var videoCard = connection.QueryFirstOrDefault<VideoCard>("SELECT * FROM public.video_card WHERE Id = @Id",
+                    var videoCard = connection.QueryFirstOrDefault<VideoCard<string>>("SELECT * FROM public.video_card WHERE Id = @Id",
                         new { Id = id });
 
                     if (videoCard != null)
                     {
                         logger.LogInformation($"Retrieved VideoCard with Id {id} from the database");
-                        return Ok(videoCard);
+                        return Ok(new {id=id, videoCard});
 
                     }
                     else
                     {
                         logger.LogInformation($"VideoCard with Id {id} not found in the database");
-                        return NotFound();
+                        return NotFound(new {error = $"VideoCard NotFound with {id}"});
                     }
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to retrieve VideoCard data from the database. \nException {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = "Internal server error" });
             }
         }
 
         [HttpPut("updateVideoCard/{id}")]
-        public async Task<IActionResult> UpdateVideoCard(int id, VideoCard updatedVideoCard)
+        public async Task<IActionResult> UpdateVideoCard(int id, VideoCard<IFormFile> updatedVideoCard)
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 if (updatedVideoCard.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 if (updatedVideoCard.Memory_db < 0 || updatedVideoCard.Memory_db > 10000)
                 {
-                    return BadRequest("Memory_db must be between 0 and 10000");
+                    return BadRequest(new { error = "Memory_db must be between 0 and 10000" });
                 }
 
                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
                         id = id,
                         brand = updatedVideoCard.Brand,
@@ -155,12 +141,12 @@ namespace backend.Controllers
 
                 logger.LogInformation("VideoCard data updated in the database");
 
-                return Ok("VideoCard data updated successfully");
+                return Ok(new {id=id, updatedVideoCard});
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to update VideoCard data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
@@ -169,9 +155,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
@@ -181,14 +165,14 @@ namespace backend.Controllers
 
                     logger.LogInformation("VideoCard data deleted from the database");
 
-                    return Ok("VideoCard data deleted successfully");
+                    return Ok(new {id=id});
                 }
 
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to delete VideoCard data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
@@ -198,19 +182,17 @@ namespace backend.Controllers
             logger.LogInformation("Get method has started");
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var videoCards = connection.Query<VideoCard>("SELECT * FROM public.video_card");
+                    var videoCards = connection.Query<VideoCard<string>>("SELECT * FROM public.video_card");
 
                     logger.LogInformation("Retrieved all VideoCard data from the database");
 
-                    return Ok(videoCards);
+                    return Ok(new {data=videoCards});
                 }
 
 
@@ -218,7 +200,7 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"VideoCard data did not get ftom database. Exception: {ex}");
-                return NotFound();
+                return NotFound(new {error = ex.Message});
             }
         }
     }

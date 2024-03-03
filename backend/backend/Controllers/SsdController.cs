@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,68 +9,56 @@ namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SsdController : ControllerBase
+    public class SsdController : ComponentController
     {
-        private readonly ILogger<SsdController> logger;
-
-        public SsdController(ILogger<SsdController> logger)
+       
+        public SsdController(ILogger<SsdController> logger) : base(logger)
         {
-            this.logger = logger;
-
-
         }
 
         [HttpPost("createSsd")]
-        public async Task<IActionResult> CreateSsd(SSD ssd)
+        public async Task<IActionResult> CreateSsd([FromForm] SSD<IFormFile> ssd)
         {
-
-
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                string imagePath = BackupWriter.Write(ssd.Image);
+               
                 if (ssd.Capacity < 0 || ssd.Capacity > 10000)
                 {
-                    return BadRequest("Capacity must be between 0 and 10000");
+                    return BadRequest(new { error = "Capacity must be between 0 and 10000" });
                 }
 
                 if (ssd.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
-                        id = ssd.Id,
                         brand = ssd.Brand,
                         model = ssd.Model,
                         country = ssd.Country,
                         capacity = ssd.Capacity,
                         price = ssd.Price,
                         description = ssd.Description,
-                        image = ssd.Image,
-
+                        image = imagePath,
                     };
 
                     connection.Open();
-                    logger.LogInformation("Connection started");
-                    connection.Execute("INSERT INTO public.ssd (Id, Brand, Model, Country, Capacity," +
-                        "Price, Description, Image)" +
-                        "VALUES (@Id, @Brand, @Model, @Country, @Capacity, @Price, @Description, @Image)", ssd);
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.ssd (brand, model, country, capacity," +
+                        "price, description, image)" +
+                        "VALUES (@brand, @model, @country, @capacity, @price, @description, @image) RETURNING id", data);
 
                     logger.LogInformation("SSD data saved to database");
-
-                    String result = "Ssd data saved to database";
-                    return Ok(result);
+                    return Ok(new { id = id, data });
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"SSD data did not save in database. \nEsception: {ex}");
-                return BadRequest(ex);
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -78,60 +67,56 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+               
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
 
 
-                    var ssd = connection.QueryFirstOrDefault<SSD>("SELECT * FROM public.ssd WHERE Id = @Id",
+                    var ssd = connection.QueryFirstOrDefault<SSD<string>>("SELECT * FROM public.ssd WHERE Id = @Id",
                         new { Id = id });
 
                     if (ssd != null)
                     {
                         logger.LogInformation($"Retrieved SSD with Id {id} from the database");
-                        return Ok(ssd);
+                        return Ok(new {id=id, ssd});
 
                     }
                     else
                     {
                         logger.LogInformation($"SSD with Id {id} not found in the database");
-                        return NotFound();
+                        return NotFound(new {error = $"SSD NotFound with {id}"});
                     }
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to retrieve SSD data from the database. \nException {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = "Internal server error" });
             }
         }
 
         [HttpPut("updateSsd/{id}")]
-        public async Task<IActionResult> UpdateSsd(int id, SSD updatedSsd)
+        public async Task<IActionResult> UpdateSsd(int id, SSD<IFormFile> updatedSsd)
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+               
                 if (updatedSsd.Capacity < 0 || updatedSsd.Capacity > 10000)
                 {
-                    return BadRequest("Capacity must be between 0 and 10000");
+                    return BadRequest(new { error = "Capacity must be between 0 and 10000" });
                 }
 
                 if (updatedSsd.Price < 0)
                 {
-                    return BadRequest("Price must not be less than 0");
+                    return BadRequest(new { error = "Price must not be less than 0" });
                 }
                 
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var parameters = new
+                    var data = new
                     {
                         id = id,
                         brand = updatedSsd.Brand,
@@ -153,12 +138,12 @@ namespace backend.Controllers
 
                 logger.LogInformation("SSD data updated in the database");
 
-                return Ok("SSD data updated successfully");
+                return Ok(new { id = id, updatedSsd });
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to update SSD data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new { error = "Internal server error" });
             }
         }
 
@@ -167,9 +152,7 @@ namespace backend.Controllers
         {
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
@@ -179,14 +162,14 @@ namespace backend.Controllers
 
                     logger.LogInformation("SSD data deleted from the database");
 
-                    return Ok("SSD data deleted successfully");
+                    return Ok(new {id=id});
                 }
 
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to delete SSD data in database. \nException: {ex}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, new {error = ex.Message});
             }
         }
 
@@ -197,27 +180,25 @@ namespace backend.Controllers
             logger.LogInformation("Get method has started");
             try
             {
-                DotNetEnv.Env.Load();
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
+               
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var ssd = connection.Query<SSD>("SELECT * FROM public.ssd");
+                    var ssd = connection.Query<SSD<string>>("SELECT * FROM public.ssd");
 
                     logger.LogInformation("Retrieved all SSD data from the database");
 
-                    return Ok(ssd);
+                    return Ok(new {data = ssd});
                 }
 
 
             }
             catch (Exception ex)
             {
-                logger.LogError($"SSD data did not get gtom database. Exception: {ex}");
-                return NotFound();
+                logger.LogError($"SSD data did not get from database. Exception: {ex}");
+                return NotFound(new {error = ex.Message});
             }
         }
     }

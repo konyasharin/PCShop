@@ -9,31 +9,11 @@ import { createComputerCase } from 'api/components/createComponents/createComput
 import React from 'react';
 import LoginPage from './pages/AughPage/LoginPage/LoginPage.tsx';
 import RegistrationPage from './pages/AughPage/RegistrationPage/RegistrationPage.tsx';
+import AdminPage from './pages/AdminPage/AdminPage.tsx';
 
 function App() {
   return (
     <>
-      <input
-        type={'file'}
-        accept={'image/*, .png, .jpg'}
-        onChangeCapture={(e: React.ChangeEvent<HTMLInputElement>) => {
-          const formData = new FormData();
-          formData.append('file', e.target.files![0]);
-          console.log(e.target.files![0]);
-          createComputerCase({
-            brand: '123',
-            model: '12',
-            country: 'Russia',
-            material: 'plastic',
-            width: 32,
-            height: 34,
-            depth: 50,
-            price: 1000,
-            description: 'dfsfsdf',
-            image: e.target.files![0],
-          });
-        }}
-      />
       <div className={'ellipses'}>
         <div className={'ellipse'} id={'ellipse1'}></div>
         <div className={'ellipse'} id={'ellipse2'}></div>
@@ -45,6 +25,7 @@ function App() {
         <Route path={'/PCBuild'} element={<PCBuildPage />} />
         <Route path={'/login'} element={<LoginPage />} />
         <Route path={'/registration'} element={<RegistrationPage />} />
+        <Route path={'/admin/*'} element={<AdminPage />} />
       </Routes>
       <Footer />
     </>

@@ -1,0 +1,15 @@
+.block{
+    background-color: #809FFF;
+    border-radius: 10px;
+    width: 100%;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.link{
+    text-decoration: none;
+    color: #000000;
+}

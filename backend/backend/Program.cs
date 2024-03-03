@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using backend.Data;
 using backend.Controllers;
 using System.Text.Json;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.FileProviders;
+using DotNetEnv;
 
 
 
@@ -29,12 +30,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-DotNetEnv.Env.Load();
-var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-builder.Services.AddDbContext<DataContext>(options =>
-{
-    options.UseNpgsql(connectionString);
-});
 
 
 var app = builder.Build();
@@ -47,6 +42,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+DotNetEnv.Env.Load();
+var rootPath = Environment.GetEnvironmentVariable("RootPath");
+app.UseStaticFiles(new StaticFileOptions { 
+    FileProvider = new PhysicalFileProvider(Path.Combine(rootPath, "backup")),
+    RequestPath = "/backup"
+});
 app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();

@@ -1,0 +1,13 @@
+.panel{
+    background-color: #809FFF;
+    border-radius: 10px;
+    padding: 20px;
+    width: 270px;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.link{
+    margin-top: 15px;
+}

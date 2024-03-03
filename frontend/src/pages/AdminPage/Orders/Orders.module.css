@@ -1,0 +1,17 @@
+.orders{
+    width: 850px;
+}
+
+.filters{
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 25px;
+}
+
+.filter{
+    margin-right: 20px;
+}
+
+.order{
+    margin-bottom: 20px;
+}
