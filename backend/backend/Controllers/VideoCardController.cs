@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
@@ -99,7 +100,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updateVideoCard/{id}")]
-        public async Task<IActionResult> UpdateVideoCard(int id, VideoCard<IFormFile> updatedVideoCard)
+        public async Task<IActionResult> UpdateVideoCard(int id, [FromForm] UpdatedVideoCard updatedVideoCard)
         {
             try
             {
@@ -114,9 +115,23 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Memory_db must be between 0 and 10000" });
                 }
 
+                string imagePath = string.Empty;
                
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.video_card WHERE Id = @id");
+
+                    if (updatedVideoCard.updated)
+                    {
+
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedVideoCard.Image);
+                    }
+                    else
+                    {
+                        imagePath = filePath;
+                    }
+
                     var data = new
                     {
                         id = id,
@@ -127,21 +142,22 @@ namespace backend.Controllers
                         memory_type = updatedVideoCard.Memory_type,
                         price = updatedVideoCard.Price,
                         description = updatedVideoCard.Description,
-                        image = updatedVideoCard.Image
+                        image = imagePath,
                     };
 
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.video_card SET Brand = @brand, Model = @model, Country = @country, Memory_db = @memory_db," +
+                        " Memory_type = @memory_db," +
+                        " Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+
+                    logger.LogInformation("VideoCard data updated in the database");
+
+                    return Ok(new { id = id, data });
                 }
 
-                connection.Open();
-                logger.LogInformation("Connection started");
-
-                connection.Execute("UPDATE public.video_card SET Brand = @brand, Model = @model, Country = @country, Memory_db = @memory_db," +
-                    " Memory_type = @memory_db," +
-                    " Price = @price, Description = @description, Image = @image WHERE Id = @id", updatedVideoCard);
-
-                logger.LogInformation("VideoCard data updated in the database");
-
-                return Ok(new {id=id, updatedVideoCard});
+                
             }
             catch (Exception ex)
             {
@@ -155,11 +171,14 @@ namespace backend.Controllers
         {
             try
             {
-                
+                string filePath;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.video_card WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.video_card WHERE Id = @id", new { id });
 

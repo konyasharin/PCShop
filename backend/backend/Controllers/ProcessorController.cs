@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -123,7 +124,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updateProcessor/{id}")]
-        public async Task<IActionResult> UpdateProcessor(int id, Processor<IFormFile> updatedProcessor)
+        public async Task<IActionResult> UpdateProcessor(int id, [FromForm] UpdatedProcessor updatedProcessor)
         {
             try
             {
@@ -156,8 +157,23 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Heat_dissipation must be between 0 and 10000" });
                 }
 
+                string imagePath = string.Empty;
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.processor WHERE Id = @id");
+
+                    if (updatedProcessor.updated)
+                    {
+
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedProcessor.Image);
+                    }
+                    else
+                    {
+                        imagePath = filePath;
+                    }
+
                     var data = new
                     {
                         id = id,
@@ -170,21 +186,23 @@ namespace backend.Controllers
                         heat_dissipation = updatedProcessor.Heat_dissipation,
                         price = updatedProcessor.Price,
                         description = updatedProcessor.Description,
-                        image = updatedProcessor.Image
+                        image = imagePath,
                     };
+
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.processor SET Brand = @brand, Model = @model, Country = @country, Cores = @cores," +
+                        " Clock_frequency = @clock_frequency, Turbo_frequency = @turbo_frequency, Heat_dissipation = @heat_dissipation," +
+                        " Depth = @depth, Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+
+                    logger.LogInformation("Processor data updated in the database");
+
+                    return Ok(new { id = id, data});
 
                 }
 
-                connection.Open();
-                logger.LogInformation("Connection started");
-
-                connection.Execute("UPDATE public.processor SET Brand = @brand, Model = @model, Country = @country, Cores = @cores," +
-                    " Clock_frequency = @clock_frequency, Turbo_frequency = @turbo_frequency, Heat_dissipation = @heat_dissipation," +
-                    " Depth = @depth, Price = @price, Description = @description, Image = @image WHERE Id = @id", updatedProcessor);
-
-                logger.LogInformation("Processor data updated in the database");
-
-                return Ok(new {id=id, updatedProcessor});
+                
             }
             catch (Exception ex)
             {
@@ -198,11 +216,14 @@ namespace backend.Controllers
         {
             try
             {
-                
+                string filePath;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.processor WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.processor WHERE Id = @id", new { id });
 

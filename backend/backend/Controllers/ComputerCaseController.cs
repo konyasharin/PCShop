@@ -1,8 +1,10 @@
 ﻿
 using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 
 
@@ -95,14 +97,14 @@ namespace backend.Controllers
 
                     logger.LogInformation("Retrieved all ComputerCase data from the database");
 
-                    return Ok(new { data = computerCases });
+                    return Ok(new { computerCases });
                 }
 
                
             }
             catch(Exception ex)
             {
-                logger.LogError($"ComputerCase data did not get gtom database. Exception: {ex}");
+                logger.LogError($"ComputerCase data did not get from database. Exception: {ex}");
                 return NotFound(new {error = ex.Message});
             }
         }
@@ -144,7 +146,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updateComputerCase/{id}")]
-        public async Task<IActionResult> UpdateComputerCase(int id, ComputerCase<IFormFile> updatedComputerCase)
+        public async Task<IActionResult> UpdateComputerCase(int id, [FromForm] UpdatedComputerCase updatedComputerCase)
         {
             try
             {
@@ -169,9 +171,25 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
-                
+
+                string imagePath = string.Empty;
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
+
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.computer_case WHERE Id = @id");
+
+                    if (updatedComputerCase.updated)
+                    {
+                        
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedComputerCase.Image);
+                    }
+                    else 
+                    {
+                        imagePath = filePath;
+                    }
+
                     var data = new
                     {
                         id = id,
@@ -184,20 +202,22 @@ namespace backend.Controllers
                         depth = updatedComputerCase.Depth,
                         price = updatedComputerCase.Price,
                         description = updatedComputerCase.Description,
-                        image = updatedComputerCase.Image
+                        image = imagePath,
                     };
+
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.computer_case SET Brand = @brand, Model = @model, Country = @country, Material = @material, Width = @width, Height = @height," +
+                        " Depth = @depth, Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+
+                    logger.LogInformation("ComputerCase data updated in the database");
+
+                    return Ok(new { id = id, data });
 
                 }
 
-                connection.Open();
-                logger.LogInformation("Connection started");
-
-                connection.Execute("UPDATE public.computer_case SET Brand = @brand, Model = @model, Country = @country, Material = @material, Width = @width, Height = @height," +
-                    " Depth = @depth, Price = @price, Description = @description, Image = @image WHERE Id = @id", updatedComputerCase);
-
-                logger.LogInformation("ComputerCase data updated in the database");
-
-                return Ok(new { id = id, updatedComputerCase });
+                
             }
             catch (Exception ex)
             {
@@ -211,11 +231,15 @@ namespace backend.Controllers
         {
             try
             {
+                string filePath;
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.computer_case WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.computer_case WHERE Id = @id", new { id });
 

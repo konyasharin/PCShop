@@ -1,5 +1,6 @@
 ﻿using backend.Entities;
 using backend.UpdatedEntities;
+using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,6 @@ namespace backend.Controllers
     [ApiController]
     public class AssemblyController : ComponentController
     {
-        private readonly ILogger<AssemblyController> logger;
 
         public AssemblyController(ILogger<AssemblyController> logger):base(logger)
         {
