@@ -12,7 +12,6 @@ namespace backend.Controllers
     [ApiController]
     public class MotherBoardController : ComponentController
     {
-        private readonly ILogger<MotherBoardController> logger;
 
         public MotherBoardController(ILogger<MotherBoardController> logger):base(logger)
         {
@@ -20,7 +19,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("createMotherBoard")]
-        public async Task<IActionResult> CreateMotherBoard(MotherBoard<IFormFile> motherBoard)
+        public async Task<IActionResult> CreateMotherBoard([FromForm] MotherBoard<IFormFile> motherBoard)
         {
             if (motherBoard.Frequency < 0 || motherBoard.Frequency > 100000)
             {

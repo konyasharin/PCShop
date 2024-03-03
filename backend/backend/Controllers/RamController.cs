@@ -10,15 +10,14 @@ namespace backend.Controllers
     [ApiController]
     public class RamController : ComponentController
     {
-        private readonly ILogger<RamController> logger;
-
+        
         public RamController(ILogger<RamController> logger):base(logger)
         {
            
         }
 
         [HttpPost("createRam")]
-        public async Task<IActionResult> CreateRam(RAM<IFormFile> ram)
+        public async Task<IActionResult> CreateRam([FromForm] RAM<IFormFile> ram)
         {
 
             try

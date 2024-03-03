@@ -11,14 +11,13 @@ namespace backend.Controllers
     [ApiController]
     public class SsdController : ComponentController
     {
-        private readonly ILogger<SsdController> logger;
-
+       
         public SsdController(ILogger<SsdController> logger) : base(logger)
         {
         }
 
         [HttpPost("createSsd")]
-        public async Task<IActionResult> CreateSsd(SSD<IFormFile> ssd)
+        public async Task<IActionResult> CreateSsd([FromForm] SSD<IFormFile> ssd)
         {
             try
             {

@@ -11,15 +11,14 @@ namespace backend.Controllers
     [ApiController]
     public class ProcessorController : ComponentController
     {
-        private readonly ILogger<ProcessorController> logger;
-
+        
         public ProcessorController(ILogger<ProcessorController> logger):base(logger)
         {
            
         }
 
         [HttpPost("createProcessor")]
-        public async Task<IActionResult> CreateProcessor(Processor<IFormFile> processor)
+        public async Task<IActionResult> CreateProcessor([FromForm] Processor<IFormFile> processor)
         {
 
             try
