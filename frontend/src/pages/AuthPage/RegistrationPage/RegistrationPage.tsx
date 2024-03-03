@@ -1,7 +1,7 @@
 import styles from './RegistrationPage.module.css';
 import { useState } from 'react';
 import Input from 'components/Input/Input.tsx';
-import Btn from 'components/Btn/Btn.tsx';
+import Btn from 'components/btns/Btn/Btn.tsx';
 function RegistrationPage() {
   const [email, setEmail] = useState('');
   const [login, setLogin] = useState('');
