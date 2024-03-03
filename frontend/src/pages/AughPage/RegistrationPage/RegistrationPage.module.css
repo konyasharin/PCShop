@@ -1,0 +1,35 @@
+.text {
+    margin-top: 90px;
+    text-align: center;
+}
+
+.registrationBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.email {
+    width: 754px;
+}
+
+.login {
+    width: 754px;
+    margin-top: 20px;
+}
+
+.password {
+    width: 754px;
+    margin-top: 20px;
+}
+
+.repeatePassword {
+    width: 754px;
+    margin-top: 20px;
+}
+
+.button {
+    width: 350px;
+    margin-top: 20px;
+}
