@@ -1,0 +1,13 @@
+.roles{
+    width: 850px;
+}
+
+.radios{
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.radio{
+    margin-right: 20px;
+}
