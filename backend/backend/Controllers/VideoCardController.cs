@@ -11,14 +11,13 @@ namespace backend.Controllers
     [ApiController]
     public class VideoCardController : ComponentController
     {
-        private readonly ILogger<VideoCardController> logger;
-
+        
         public VideoCardController(ILogger<VideoCardController> logger) : base(logger)
         {
         }
 
         [HttpPost("createVideoCard")]
-        public async Task<IActionResult> CreateVideoCard(VideoCard<IFormFile> videoCard)
+        public async Task<IActionResult> CreateVideoCard([FromForm] VideoCard<IFormFile> videoCard)
         {
             try
             {

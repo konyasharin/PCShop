@@ -10,14 +10,13 @@ namespace backend.Controllers
     [ApiController]
     public class CoolerController : ComponentController
     {
-        private readonly ILogger<CoolerController> logger;
 
         public CoolerController(ILogger<CoolerController> logger):base(logger)
         { 
         }
 
         [HttpPost("createCooler")]
-        public async Task<IActionResult> CreateCooler(Cooler<IFormFile> cooler)
+        public async Task<IActionResult> CreateCooler([FromForm] Cooler<IFormFile> cooler)
         {
             try
             {
@@ -75,7 +74,7 @@ namespace backend.Controllers
         {
             try
             {
-                
+
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -95,14 +94,14 @@ namespace backend.Controllers
                     else
                     {
                         logger.LogInformation($"Cooler with Id {id} not found in the database");
-                        return NotFound(new {error = $"Cooler Not Found with {id}"});
+                        return NotFound(new { error = $"Not found Cooler with {id}" });
                     }
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to retrieve Cooler data from the database. \nException {ex}");
-                return StatusCode(500, new { error = ex.Message});
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
@@ -178,7 +177,7 @@ namespace backend.Controllers
 
                     logger.LogInformation("Cooler data deleted from the database");
 
-                    return Ok(new {id = id});
+                    return Ok(new {Id = id});
                 }
 
             }

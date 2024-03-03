@@ -12,14 +12,13 @@ namespace backend.Controllers
     [ApiController]
     public class PowerUnitController : ComponentController
     {
-        private readonly ILogger<PowerUnitController> logger;
-
+       
         public PowerUnitController(ILogger<PowerUnitController> logger):base(logger)
         {
         }
 
         [HttpPost("createPowerUnit")]
-        public async Task<IActionResult> CreatePowerUnit(PowerUnit<IFormFile> powerunit)
+        public async Task<IActionResult> CreatePowerUnit([FromForm] PowerUnit<IFormFile> powerunit)
         {
 
             try
