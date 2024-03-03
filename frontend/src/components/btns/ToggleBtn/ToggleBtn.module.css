@@ -1,0 +1,18 @@
+.btn{
+    background-color: #809FFF;
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 400;
+    color: #000000;
+    padding: 10px 30px;
+    cursor: pointer;
+}
+
+.link .btn{
+    background-color: #809FFF;
+}
+
+.linkActive .btn{
+    background-color: #6C6CFF;
+}
