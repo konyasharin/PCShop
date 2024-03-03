@@ -7,6 +7,7 @@ import EComponentTypes from 'enums/EComponentTypes.ts';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsActive } from 'store/slices/chooseComponentsSlice.ts';
 import { RootState } from 'store/store.ts';
+import TProduct from 'types/TProduct.ts';
 
 type ChooseComponentProps = {
   type: EComponentTypes;
@@ -16,6 +17,7 @@ type ChooseComponentProps = {
   errorType: 'Error' | 'Warning' | 'Success';
   className?: string;
   searchTitle: string;
+  products: TProduct[];
 };
 
 const ChooseComponent: React.FC<ChooseComponentProps> = props => {
@@ -48,6 +50,7 @@ const ChooseComponent: React.FC<ChooseComponentProps> = props => {
         type={props.type}
         searchTitle={props.searchTitle}
         isActive={isActive}
+        products={props.products}
       />
     </div>
   );

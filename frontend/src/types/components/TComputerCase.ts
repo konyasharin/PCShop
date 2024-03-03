@@ -1,6 +1,6 @@
 import TComponent from 'types/components/TComponent.ts';
 
-type TComputerCase = TComponent & {
+type TComputerCase<T extends File | string> = TComponent<T> & {
   material: string;
   width: number;
   height: number;

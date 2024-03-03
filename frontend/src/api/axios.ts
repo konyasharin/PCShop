@@ -1,9 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import axios, { AxiosInstance } from 'axios';
+import config from '../../config.ts';
 
 const instance: AxiosInstance = axios.create({
-  baseURL: 'https://localhost:7202/api',
+  baseURL: config.apiUrl,
 });
 
 export default instance;

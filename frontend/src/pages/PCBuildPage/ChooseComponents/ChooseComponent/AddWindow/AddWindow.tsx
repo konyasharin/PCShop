@@ -11,13 +11,15 @@ import FilterBlock from 'components/FiltersPanel/FilterBlock/FilterBlock.tsx';
 import styles from './AddWindow.module.css';
 import Input from 'components/Input/Input.tsx';
 import ChooseComponentCard from 'components/cards/ChooseComponentCard/ChooseComponentCard.tsx';
-import videoCardImg from 'assets/videocard.jpg';
 import ShowMoreBtn from 'components/btns/ShowMoreBtn/ShowMoreBtn.tsx';
+import TProduct from 'types/TProduct.ts';
+import config from '../../../../../../config.ts';
 
 type AddWindowProps = {
   type: EComponentTypes;
   searchTitle: string;
   isActive: boolean;
+  products: TProduct[];
 };
 
 const AddWindow: React.FC<AddWindowProps> = props => {
@@ -69,6 +71,18 @@ const AddWindow: React.FC<AddWindowProps> = props => {
       </FilterBlock>
     );
   });
+
+  const cards = props.products.map(product => {
+    return (
+      <ChooseComponentCard
+        name={product.name}
+        price={product.price}
+        img={`${config.backupUrl}/${product.img}`}
+        text={product.description}
+        className={styles.card}
+      />
+    );
+  });
   return (
     <div className={props.isActive ? styles.window : styles.windowDisable}>
       <FiltersPanel
@@ -84,33 +98,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
           onChange={newSearchString => setSearchString(newSearchString)}
           placeholder={'Поиск'}
         />
-        <ChooseComponentCard
-          name={'Gigabyte RTX 3080'}
-          text={
-            '8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак'
-          }
-          price={100}
-          img={videoCardImg}
-          className={styles.card}
-        />
-        <ChooseComponentCard
-          name={'Gigabyte RTX 3080'}
-          text={
-            '8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак'
-          }
-          price={100}
-          img={videoCardImg}
-          className={styles.card}
-        />
-        <ChooseComponentCard
-          name={'Gigabyte RTX 3080'}
-          text={
-            '8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак'
-          }
-          price={100}
-          img={videoCardImg}
-          className={styles.card}
-        />
+        {...cards}
         <ShowMoreBtn className={styles.btn}>Показать еще...</ShowMoreBtn>
       </div>
     </div>
