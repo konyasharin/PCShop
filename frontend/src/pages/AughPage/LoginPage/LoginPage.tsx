@@ -26,7 +26,7 @@ function LoginPage() {
           onChange={(newPassword: string) => setPassword(newPassword)}
         />
         <Btn className={styles.button}>войти</Btn>
-        <NavLink to={'/Registration'} className={styles.link}>
+        <NavLink to={'/registration'} className={styles.link}>
           У вас еще нет учетной записи? Зарегистрируйся сейчас!
         </NavLink>
       </div>

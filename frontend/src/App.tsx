@@ -43,8 +43,8 @@ function App() {
       <Routes>
         <Route path={'/'} element={<MainPage />} />
         <Route path={'/PCBuild'} element={<PCBuildPage />} />
-        <Route path={'/Login'} element={<LoginPage />} />
-        <Route path={'/Registration'} element={<RegistrationPage />} />
+        <Route path={'/login'} element={<LoginPage />} />
+        <Route path={'/registration'} element={<RegistrationPage />} />
       </Routes>
       <Footer />
     </>

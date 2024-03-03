@@ -26,7 +26,7 @@ function Header() {
           </NavLink>
         </div>
         <Search />
-        <NavLink to={'/Login'}>
+        <NavLink to={'/login'} className={styles.linkBtn}>
           <MainBtn className={styles.btn}>авторизация</MainBtn>
         </NavLink>
         <SearchWindow />
