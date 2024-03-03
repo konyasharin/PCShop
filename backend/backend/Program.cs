@@ -4,6 +4,8 @@ using backend.Data;
 using backend.Controllers;
 using System.Text.Json;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.FileProviders;
+using DotNetEnv;
 
 
 
@@ -47,6 +49,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+DotNetEnv.Env.Load();
+var rootPath = Environment.GetEnvironmentVariable("RootPath");
+app.UseStaticFiles(new StaticFileOptions { 
+    FileProvider = new PhysicalFileProvider(Path.Combine(rootPath, "backup")),
+    RequestPath = "/backup"
+});
 app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
