@@ -194,7 +194,7 @@ namespace backend.Controllers
 
 
         [HttpGet("getAllSsd")]
-        public async Task<IActionResult> GetAllSsd()
+        public async Task<IActionResult> GetAllSsd(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -205,7 +205,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var ssd = connection.Query<SSD<string>>("SELECT * FROM public.ssd");
+                    var ssd = connection.Query<SSD<string>>("SELECT * FROM public.ssd LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all SSD data from the database");
 

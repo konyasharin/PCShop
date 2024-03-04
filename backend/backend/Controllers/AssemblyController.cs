@@ -94,7 +94,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllAssemblies")]
-        public async Task<IActionResult> GetAllAssemblieses()
+        public async Task<IActionResult> GetAllAssemblieses(int limit, int offset)
         {
            
             try
@@ -105,7 +105,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var assemblies = connection.Query<Entities.Assembly>("SELECT * FROM public.assembly");
+                    var assemblies = connection.Query<Entities.Assembly>("SELECT * FROM public.assembly LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all Assembly data from the database");
 
@@ -234,7 +235,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllAssemblies/desc")]
-        public async Task<IActionResult> GetAllByTimesDesc()
+        public async Task<IActionResult> GetAllByTimesDesc(int limit, int offset)
         {
             try
             {
@@ -244,7 +245,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var assemblies = await connection.QueryAsync<Entities.Assembly>("SELECT * FROM public.assembly ORDER BY creation_time DESC");
+                    var assemblies = await connection.QueryAsync<Entities.Assembly>("SELECT * FROM public.assembly ORDER BY creation_time DESC" +
+                        " LIMIT @Limit OFFSET @Offset", new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all Assembly data from the database");
 
@@ -259,7 +261,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllAssemblies/asc")]
-        public async Task<IActionResult> GetAllByTimeAsc()
+        public async Task<IActionResult> GetAllByTimeAsc(int limit, int offset)
         {
             try
             {
@@ -269,7 +271,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var assemblies = await connection.QueryAsync<Entities.Assembly>("SELECT * FROM public.assembly ORDER BY creation_time ASC");
+                    var assemblies = await connection.QueryAsync<Entities.Assembly>("SELECT * FROM public.assembly ORDER BY creation_time ASC" +
+                        " LIMIT @Limit OFFSET @Offset", new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all Assembly data from the database");
 

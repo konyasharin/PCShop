@@ -196,7 +196,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllVideoCards")]
-        public async Task<IActionResult> GetAllComputerCases()
+        public async Task<IActionResult> GetAllComputerCases(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -207,7 +207,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var videoCards = connection.Query<VideoCard<string>>("SELECT * FROM public.video_card");
+                    var videoCards = connection.Query<VideoCard<string>>("SELECT * FROM public.video_card LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all VideoCard data from the database");
 

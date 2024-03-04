@@ -220,7 +220,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllRam")]
-        public async Task<IActionResult> GetAllRams()
+        public async Task<IActionResult> GetAllRams(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -230,7 +230,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var computerCases = connection.Query<RAM<string>>("SELECT * FROM public.ram");
+                    var computerCases = connection.Query<RAM<string>>("SELECT * FROM public.ram LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all RAM data from the database");
 
@@ -241,7 +242,7 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError($"RAM data did not get ftom database. Exception: {ex}");
+                logger.LogError($"RAM data did not get from database. Exception: {ex}");
                 return NotFound(new {error=ex.Message});
             }
         }

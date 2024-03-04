@@ -241,7 +241,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllProcessors")]
-        public async Task<IActionResult> GetAllprocessors()
+        public async Task<IActionResult> GetAllprocessors(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -252,7 +252,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var processors = connection.Query<Processor<string>>("SELECT * FROM public.processor");
+                    var processors = connection.Query<Processor<string>>("SELECT * FROM public.processor LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all Processor data from the database");
 

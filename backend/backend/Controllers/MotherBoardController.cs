@@ -205,7 +205,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllMotherBoards")]
-        public async Task<IActionResult> GetAllMotherBoards()
+        public async Task<IActionResult> GetAllMotherBoards(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -217,7 +217,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var motherboards = connection.Query<MotherBoard<string>>("SELECT * FROM public.mother_board");
+                    var motherboards = connection.Query<MotherBoard<string>>("SELECT * FROM public.mother_board LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all MotherBoard data from the database");
 

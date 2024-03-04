@@ -210,7 +210,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllPowerUnits")]
-        public async Task<IActionResult> GetAllPowerUnits()
+        public async Task<IActionResult> GetAllPowerUnits(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -221,7 +221,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var powerUnits = connection.Query<PowerUnit<string>>("SELECT * FROM public.power_unit");
+                    var powerUnits = connection.Query<PowerUnit<string>>("SELECT * FROM public.power_unit LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all PowerUnit data from the database");
 

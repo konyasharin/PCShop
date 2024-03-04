@@ -82,7 +82,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllComputerCases")]
-        public async Task<IActionResult> GetAllComputerCases()
+        public async Task<IActionResult> GetAllComputerCases(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -93,7 +93,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var computerCases = connection.Query<ComputerCase<string>>("SELECT * FROM public.computer_case");
+                    var computerCases = connection.Query<ComputerCase<string>>("SELECT * FROM public.computer_case LIMIT @Limit OFFSET @Offset", 
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all ComputerCase data from the database");
 

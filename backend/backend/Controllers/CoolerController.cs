@@ -211,7 +211,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllCoolers")]
-        public async Task<IActionResult> GetAllCoolers()
+        public async Task<IActionResult> GetAllCoolers(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -223,7 +223,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var coolers = connection.Query<Cooler<string>>("SELECT * FROM public.cooler");
+                    var coolers = connection.Query<Cooler<string>>("SELECT * FROM public.cooler LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all Cooler data from the database");
 
