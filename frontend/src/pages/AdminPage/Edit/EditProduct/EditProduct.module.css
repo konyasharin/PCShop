@@ -1,0 +1,11 @@
+.checkBoxes{
+    display: flex;
+}
+
+.checkBox{
+    margin-right: 10px;
+}
+
+.title{
+    margin-bottom: 10px;
+}
