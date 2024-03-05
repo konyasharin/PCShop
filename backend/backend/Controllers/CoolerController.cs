@@ -239,5 +239,30 @@ namespace backend.Controllers
                 return NotFound(new {error = ex.Message});
             }
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchCooler(string keyword)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var coolers = connection.Query<Cooler<string>>(@"SELECT * FROM public.cooler " +
+                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
+                        "LIMIT 3", new { Keyword = "%" + keyword + "%" });
+
+                    return Ok(new { coolers });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with search");
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
     }
 }

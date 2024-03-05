@@ -344,5 +344,30 @@ namespace backend.Controllers
             }
         }
 
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchAssembly(string keyword)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var assemblies = connection.Query<Entities.Assembly>(@"SELECT * FROM public.assembly " +
+                        "WHERE name LIKE @Keyword " +
+                        "LIMIT 3", new { Keyword = "%" + keyword + "%" });
+
+                    return Ok(new { assemblies });
+
+                }
+            }
+            catch(Exception ex)
+            {
+                logger.LogError("Error with search");
+                return StatusCode(500, new { error = ex.Message});
+            }
+        }
+
     }
 }

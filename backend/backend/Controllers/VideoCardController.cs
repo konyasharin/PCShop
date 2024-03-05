@@ -223,5 +223,30 @@ namespace backend.Controllers
                 return NotFound(new {error = ex.Message});
             }
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchRam(string keyword)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var videoCard = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
+                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
+                        "LIMIT 3", new { Keyword = "%" + keyword + "%" });
+
+                    return Ok(new { videoCard });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with search");
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
     }
 }

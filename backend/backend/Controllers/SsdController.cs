@@ -221,5 +221,30 @@ namespace backend.Controllers
                 return NotFound(new {error = ex.Message});
             }
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchSsd(string keyword)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ssd = connection.Query<RAM<string>>(@"SELECT * FROM public.ssd " +
+                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
+                        "LIMIT 3", new { Keyword = "%" + keyword + "%" });
+
+                    return Ok(new { ssd });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with search");
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
     }
 }

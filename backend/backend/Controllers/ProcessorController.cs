@@ -268,5 +268,30 @@ namespace backend.Controllers
                 return NotFound(new {error=ex.Message});
             }
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchProcessor(string keyword)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var processors = connection.Query<Processor<string>>(@"SELECT * FROM public.processor " +
+                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
+                        "LIMIT 3", new { Keyword = "%" + keyword + "%" });
+
+                    return Ok(new { processors });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with search");
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
     }
 }
