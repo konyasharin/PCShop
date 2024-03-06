@@ -1,20 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TFilters } from 'store/slices/filtersSlice.ts';
 
 function useFilters(filtersState: TFilters) {
-  const [filters, setFilters] = useState<TFilters>(
-    filtersState.map(filter => {
-      return {
-        ...filter,
-        filters: filter.filters.map(filterElem => {
-          return {
-            text: filterElem.text,
-            isActive: false,
-          };
-        }),
-      };
-    }),
-  );
+  const [filters, setFilters] = useState<TFilters>([]);
+
+  useEffect(() => {
+    setFiltersHandle(filtersState);
+  }, []);
+
+  function setFiltersHandle(newFilters: TFilters) {
+    setFilters(
+      newFilters.map(filter => {
+        return {
+          ...filter,
+          filters: filter.filters.map(filterElem => {
+            return {
+              text: filterElem.text,
+              isActive: false,
+            };
+          }),
+        };
+      }),
+    );
+  }
 
   function setCheckBoxIsActive(
     nameBlock: string,
@@ -44,7 +52,7 @@ function useFilters(filtersState: TFilters) {
     );
   }
 
-  return { filters, setCheckBoxIsActive, setRadioIsActive };
+  return { filters, setCheckBoxIsActive, setRadioIsActive, setFiltersHandle };
 }
 
 export default useFilters;

@@ -6,6 +6,10 @@
     margin-bottom: 10px;
 }
 
+.filterBlockElementTitle{
+    font-weight: 700;
+}
+
 .window{
     display: flex;
 }
@@ -29,4 +33,12 @@
 
 .btn{
     margin-top: 20px;
+}
+
+.window .input{
+    border: none;
+    height: 25px;
+    border-radius: 2px;
+    font-size: 14px;
+    padding: 0 5px;
 }

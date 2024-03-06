@@ -1,0 +1,11 @@
+.filterElements{
+    display: flex;
+}
+
+.filterElement{
+    margin-right: 10px;
+}
+
+.filterBlock{
+    margin-bottom: 20px;
+}

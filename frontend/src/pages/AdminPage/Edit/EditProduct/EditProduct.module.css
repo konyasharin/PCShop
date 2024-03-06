@@ -4,8 +4,28 @@
 
 .checkBox{
     margin-right: 10px;
+    margin-bottom: 20px;
 }
 
 .title{
     margin-bottom: 10px;
+}
+
+.block{
+    width: 850px;
+}
+
+.input{
+    margin-bottom: 20px;
+}
+
+.priceInput{
+    width: 270px;
+    margin-bottom: 20px;
+}
+
+.block img{
+    width: 160px;
+    height: 133px;
+    border-radius: 8px;
 }

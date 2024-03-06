@@ -4,15 +4,15 @@ import EComponentTypes from 'enums/EComponentTypes.ts';
 import useFilters from 'hooks/useFilters.ts';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store/store.ts';
-import CheckBoxesBlock from 'components/CheckBoxexBlock/CheckBoxesBlock.tsx';
-import RadiosBlock from 'components/RadiosBlock/RadiosBlock.tsx';
-import FilterBlock from 'components/FiltersPanel/FilterBlock/FilterBlock.tsx';
 import styles from './AddWindow.module.css';
 import Input from 'components/Input/Input.tsx';
 import ChooseComponentCard from 'components/cards/ChooseComponentCard/ChooseComponentCard.tsx';
 import ShowMoreBtn from 'components/btns/ShowMoreBtn/ShowMoreBtn.tsx';
 import TProduct from 'types/TProduct.ts';
 import config from '../../../../../../config.ts';
+import CheckBox from 'components/CheckBox/CheckBox.tsx';
+import Radio from 'components/Radio/Radio.tsx';
+import createClassNames from 'utils/createClassNames.ts';
 
 type AddWindowProps = {
   type: EComponentTypes;
@@ -24,45 +24,97 @@ type AddWindowProps = {
 const AddWindow: React.FC<AddWindowProps> = props => {
   const [searchString, setSearchString] = useState('');
   const { filters, setCheckBoxIsActive, setRadioIsActive } = useFilters(
-    // Потом нужно добавить в редакс все типы компонентов
     useSelector((state: RootState) => state.filters[props.type]),
   );
+  const [priceFrom, setPriceFrom] = useState('');
+  const [priceTo, setPriceTo] = useState('');
   const checkBoxes: ReactNode[] = [];
   filters.forEach(filter => {
     if (filter.type === 'checkBox') {
-      checkBoxes.push(
-        <FilterBlock title={filter.name}>
-          <CheckBoxesBlock
-            title={filter.name}
-            checkBoxes={filter.filters}
-            checkBoxClassName={styles.filterBlockElement}
-            onChange={(nameBlock, index, newIsActive) => {
-              setCheckBoxIsActive(nameBlock, index, newIsActive);
+      const filtersBlocks = filter.filters.map((filterBlock, i) => {
+        return (
+          <CheckBox
+            text={filterBlock.text}
+            isActive={filterBlock.isActive}
+            onChange={() => {
+              setCheckBoxIsActive(filter.name, i, !filterBlock.isActive);
             }}
+            className={styles.filterBlockElement}
           />
-        </FilterBlock>,
+        );
+      });
+      checkBoxes.push(
+        <div>
+          <h6
+            className={createClassNames([
+              styles.filterBlockElement,
+              styles.filterBlockElementTitle,
+            ])}
+          >
+            {filter.name}
+          </h6>
+          {...filtersBlocks}
+        </div>,
       );
     }
   });
 
-  const radiosBlocks: ReactNode[] = [];
+  const radios: ReactNode[] = [];
   filters.forEach(filter => {
     if (filter.type === 'radio') {
-      radiosBlocks.push(
-        <FilterBlock title={filter.name}>
-          <RadiosBlock
-            title={filter.name}
-            radios={filter.filters}
-            onChange={(nameBlock, index) => {
-              setRadioIsActive(nameBlock, index);
+      const radiosBlocks = filter.filters.map((filterBlock, i) => {
+        return (
+          <Radio
+            text={filterBlock.text}
+            isActive={filterBlock.isActive}
+            onChange={() => {
+              setRadioIsActive(filter.name, i);
             }}
-            radioClassName={styles.filterBlockElement}
+            className={styles.filterBlockElement}
           />
-        </FilterBlock>,
+        );
+      });
+      radios.push(
+        <div>
+          <h6
+            className={createClassNames([
+              styles.filterBlockElement,
+              styles.filterBlockElementTitle,
+            ])}
+          >
+            {filter.name}
+          </h6>
+          {...radiosBlocks}
+        </div>,
       );
     }
   });
-
+  const inputs: ReactNode = (
+    <div>
+      <h6
+        className={createClassNames([
+          styles.filterBlockElement,
+          styles.filterBlockElementTitle,
+        ])}
+      >
+        Цена
+      </h6>
+      <Input
+        value={priceFrom}
+        placeholder={'От'}
+        onChange={newValue => setPriceFrom(newValue)}
+        className={createClassNames([styles.input, styles.filterBlockElement])}
+        type={'number'}
+      />
+      <Input
+        value={priceTo}
+        placeholder={'До'}
+        onChange={newValue => setPriceTo(newValue)}
+        className={createClassNames([styles.input, styles.filterBlockElement])}
+        type={'number'}
+      />
+    </div>
+  );
   // const inputsBlocks = filters.inputsBlocks.map(inputsBlock => {
   //   return (
   //     <FilterBlock title={inputsBlock.name}>
@@ -89,9 +141,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
     <div className={props.isActive ? styles.window : styles.windowDisable}>
       <FiltersPanel
         type={props.type}
-        checkBoxesBlocks={checkBoxes}
-        radiosBlocks={radiosBlocks}
-        inputsBlocks={[]}
+        blocks={[...checkBoxes, ...radios, inputs]}
       />
       <div className={styles.rightBlock}>
         <h2 className={styles.title}>{props.searchTitle}</h2>
