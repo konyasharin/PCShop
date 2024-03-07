@@ -1,0 +1,22 @@
+.card {
+    margin-bottom: 20px;
+}
+
+.block {
+    width: 850px;
+}
+
+.end {
+    display: flex;
+    margin-top: 49px;
+}
+
+.price {
+    margin-left: 10px;
+    color: #0000FF;
+}
+
+.button {
+    margin-top: 20px;
+    margin-bottom: 139px;
+}

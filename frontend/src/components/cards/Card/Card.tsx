@@ -14,7 +14,7 @@ type CardProps = {
 const Card: React.FC<CardProps> = props => {
   return (
     <div className={createClassNames([styles.card, props.className])}>
-      <img src={props.img} alt={props.name} />
+      <img src={props.img} alt={props.name} className={styles.mainImg}/>
       <div className={styles.middleBlock}>
         <div className={styles.description}>
           <h5>{props.name}</h5>

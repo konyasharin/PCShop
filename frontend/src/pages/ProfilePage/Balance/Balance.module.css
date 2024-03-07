@@ -1,0 +1,23 @@
+.block {
+    display: flex;
+}
+
+.end {
+    display: flex;
+    flex-direction: column;
+}
+
+.price {
+    margin-left: 10px;
+    color: #0000FF;
+}
+
+.button {
+    margin-top: 20px;
+    margin-bottom: 139px;
+}
+
+.input {
+    width: 270px;
+    margin-top: 30px;
+}

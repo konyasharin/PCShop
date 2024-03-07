@@ -7,7 +7,7 @@
     align-items: center;
 }
 
-.card img{
+.card .mainImg{
     width: 160px;
     height: 133px;
     object-fit: cover;

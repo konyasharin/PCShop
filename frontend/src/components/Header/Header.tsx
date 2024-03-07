@@ -5,8 +5,11 @@ import Search from './Search/Search.tsx';
 import MainBtn from 'components/btns/MainBtn/MainBtn.tsx';
 import styles from './Header.module.css';
 import SearchWindow from './Search/SearchWindow/SearchWindow.tsx';
+import { useSelector } from 'react-redux';
+import { RootState } from 'store/store.ts';
 
 function Header() {
+  const isAuth = useSelector((state: RootState) => state.profile.isAuth);
   return (
     <header className={styles.header}>
       <Container className={styles.container}>
@@ -26,8 +29,10 @@ function Header() {
           </NavLink>
         </div>
         <Search />
-        <NavLink to={'/login'} className={styles.linkBtn}>
-          <MainBtn className={styles.btn}>авторизация</MainBtn>
+        <NavLink to={isAuth ? '/profile' : '/login'} className={styles.linkBtn}>
+          <MainBtn className={styles.btn}>
+            {isAuth ? 'профиль' : 'авторизация'}
+          </MainBtn>
         </NavLink>
         <SearchWindow />
       </Container>

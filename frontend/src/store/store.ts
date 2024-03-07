@@ -3,6 +3,7 @@ import loadingReducer from './slices/loadingSlice.ts';
 import windowSearchReducer from './slices/windowSearchSlice.ts';
 import filterReducer from './slices/filtersSlice.ts';
 import chooseComponentsReducer from './slices/chooseComponentsSlice.ts';
+import profileReducer from './slices/profileSlice.ts';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     windowSearch: windowSearchReducer,
     filters: filterReducer,
     chooseComponents: chooseComponentsReducer,
+    profile: profileReducer,
   },
 });
 

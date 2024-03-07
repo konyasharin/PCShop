@@ -8,6 +8,7 @@ import Footer from './components/Footer/Footer.tsx';
 import LoginPage from './pages/AuthPage/LoginPage/LoginPage.tsx';
 import RegistrationPage from './pages/AuthPage/RegistrationPage/RegistrationPage.tsx';
 import AdminPage from './pages/AdminPage/AdminPage.tsx';
+import ProfilePage from './pages/ProfilePage/ProfilePage.tsx';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path={'/login'} element={<LoginPage />} />
         <Route path={'/registration'} element={<RegistrationPage />} />
         <Route path={'/admin/*'} element={<AdminPage />} />
+        <Route path={'/profile/*'} element={<ProfilePage />} />
       </Routes>
       <Footer />
     </>
