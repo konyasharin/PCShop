@@ -15,17 +15,12 @@
     width: 850px;
 }
 
+.delete{
+    color: #CD0000;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
 .input{
     margin-bottom: 20px;
-}
-
-.priceInput{
-    width: 270px;
-    margin-bottom: 20px;
-}
-
-.block img{
-    width: 160px;
-    height: 133px;
-    border-radius: 8px;
 }

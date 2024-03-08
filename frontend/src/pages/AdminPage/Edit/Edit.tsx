@@ -2,6 +2,8 @@ import ToggleBtn from 'components/btns/ToggleBtn/ToggleBtn.tsx';
 import styles from './Edit.module.css';
 import { Route, Routes } from 'react-router-dom';
 import EditProduct from './EditProduct/EditProduct.tsx';
+import EditAddBtn from './EditAddBtn/EditAddBtn.tsx';
+import AddProduct from './AddProduct/AddProduct.tsx';
 
 function Edit() {
   return (
@@ -13,10 +15,14 @@ function Edit() {
         <ToggleBtn className={styles.toggleBtn} to={'products'}>
           Товары
         </ToggleBtn>
+        <Routes>
+          <Route path={'products'} element={<EditAddBtn to={'addProduct'} />} />
+        </Routes>
       </div>
       <Routes>
         <Route path={'products'} element={<EditProduct />} />
         <Route path={'characteristics'} />
+        <Route path={'products/addProduct'} element={<AddProduct />} />
       </Routes>
     </div>
   );

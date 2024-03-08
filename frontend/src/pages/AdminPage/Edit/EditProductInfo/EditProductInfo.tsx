@@ -7,9 +7,15 @@ import CheckBox from 'components/CheckBox/CheckBox.tsx';
 import EditFilterBlock from '../EditFilterBlock/EditFilterBlock.tsx';
 import Radio from 'components/Radio/Radio.tsx';
 import styles from './EditProductInfo.module.css';
+import Input from 'components/Input/Input.tsx';
 
 type EditProductInfoProps = {
   type: EComponentTypes;
+  price: string;
+  setPrice: (newPrice: string) => void;
+  productName: string;
+  setProductName: (newProductName: string) => void;
+  img: string;
 };
 
 const EditProductInfo: React.FC<EditProductInfoProps> = props => {
@@ -69,7 +75,31 @@ const EditProductInfo: React.FC<EditProductInfoProps> = props => {
     }
   });
 
-  return <>{...filtersBlocks}</>;
+  return (
+    <>
+      <Input
+        value={props.productName}
+        placeholder={'Введите название товара'}
+        onChange={newValue => props.setProductName(newValue)}
+        className={styles.input}
+      />
+      <img src={props.img} alt="componentImg" className={styles.img} />
+      <EditFilterBlock
+        title={'Цена'}
+        filterBlock={
+          <Input
+            value={props.price}
+            placeholder={'Цена товара'}
+            onChange={newValue => props.setPrice(newValue)}
+            className={styles.priceInput}
+            type={'number'}
+          />
+        }
+        className={styles.filterBlock}
+      />
+      {...filtersBlocks}
+    </>
+  );
 };
 
 export default EditProductInfo;

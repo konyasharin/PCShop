@@ -3,13 +3,13 @@ import styles from './Search.module.css';
 import searchImg from '../../../assets/search.svg';
 import search from '../../../api/search.ts';
 import { useDispatch, useSelector } from 'react-redux';
-import { setIsLoading } from '../../../store/slices/loadingSlice.ts';
-import { RootState } from '../../../store/store.ts';
+import { setIsLoading } from 'store/slices/loadingSlice.ts';
+import { RootState } from 'store/store.ts';
 import {
   setActivateBlock,
   setBlocks,
   setSearchWindowIsActive,
-} from '../../../store/slices/windowSearchSlice.ts';
+} from 'store/slices/windowSearchSlice.ts';
 
 function Search() {
   const [searchString, setSearchString] = useState('');
