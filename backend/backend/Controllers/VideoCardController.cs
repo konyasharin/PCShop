@@ -225,7 +225,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchRam(string keyword)
+        public async Task<IActionResult> SearchRam(string keyword, int limit, int offset)
         {
             try
             {
@@ -236,7 +236,7 @@ namespace backend.Controllers
 
                     var videoCard = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
                         "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
-                        "LIMIT 3", new { Keyword = "%" + keyword + "%" });
+                        "LIMIT @Limit OFFSET @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset });
 
                     return Ok(new { videoCard });
 

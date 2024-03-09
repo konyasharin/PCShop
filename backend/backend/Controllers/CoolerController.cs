@@ -241,7 +241,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchCooler(string keyword)
+        public async Task<IActionResult> SearchCooler(string keyword, int limit, int offset)
         {
             try
             {
@@ -252,7 +252,7 @@ namespace backend.Controllers
 
                     var coolers = connection.Query<Cooler<string>>(@"SELECT * FROM public.cooler " +
                         "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
-                        "LIMIT 3", new { Keyword = "%" + keyword + "%" });
+                        "LIMIT @limit OFFST @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset});
 
                     return Ok(new { coolers });
 

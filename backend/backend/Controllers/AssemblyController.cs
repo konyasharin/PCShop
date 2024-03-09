@@ -5,6 +5,7 @@ using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using System.Collections.Generic;
 using System.Reflection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -345,7 +346,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchAssembly(string keyword)
+        public async Task<IActionResult> SearchAssembly(string keyword, int limit, int offset)
         {
             try
             {
@@ -355,8 +356,8 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
                     var assemblies = connection.Query<Entities.Assembly>(@"SELECT * FROM public.assembly " +
-                        "WHERE name LIKE @Keyword " +
-                        "LIMIT 3", new { Keyword = "%" + keyword + "%" });
+                    "WHERE name LIKE @Keyword " +
+                        "LIMIT @Limit OFFSET @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset });
 
                     return Ok(new { assemblies });
 

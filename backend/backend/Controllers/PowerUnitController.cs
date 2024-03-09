@@ -239,7 +239,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchPowerUnit(string keyword)
+        public async Task<IActionResult> SearchPowerUnit(string keyword, int limit, int offset)
         {
             try
             {
@@ -250,7 +250,7 @@ namespace backend.Controllers
 
                     var powerUnits = connection.Query<PowerUnit<string>>(@"SELECT * FROM public.power_unit " +
                         "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
-                        "LIMIT 3", new { Keyword = "%" + keyword + "%" });
+                        "LIMIT @Limit @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset });
 
                     return Ok(new { powerUnits });
 
