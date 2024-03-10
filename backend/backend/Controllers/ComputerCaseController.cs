@@ -4,9 +4,7 @@ using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-
 
 namespace backend.Controllers
 {
@@ -178,7 +176,8 @@ namespace backend.Controllers
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
 
-                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.computer_case WHERE Id = @id");
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.computer_case" +
+                        " WHERE Id = @id");
 
                     if (updatedComputerCase.updated)
                     {
@@ -209,7 +208,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    connection.Execute("UPDATE public.computer_case SET Brand = @brand, Model = @model, Country = @country, Material = @material, Width = @width, Height = @height," +
+                    connection.Execute("UPDATE public.computer_case SET Brand = @brand, Model = @model, Country = @country," +
+                        " Material = @material, Width = @width, Height = @height," +
                         " Depth = @depth, Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
 
                     logger.LogInformation("ComputerCase data updated in the database");
@@ -239,7 +239,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.computer_case WHERE Id = @id", new { Id = id });
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.computer_case WHERE Id = @id",
+                        new { Id = id });
                     BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.computer_case WHERE Id = @id", new { id });
@@ -281,6 +282,114 @@ namespace backend.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
+
+        [HttpGet("FilterByCountry")]
+        public async Task<IActionResult> FilterByCountry(string country, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var computerCases = connection.Query<ComputerCase<string>>(@"SELECT * FROM public.computer_case " +
+                    "WHERE country = @Country " +
+                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Limit = limit, Offset = offset });
+
+                    return Ok(new { computerCases });
+
+                }
+            }
+            catch(Exception ex)
+            {
+                logger.LogError("Error with country filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByBrand")]
+        public async Task<IActionResult> FilterByBrand(string brand, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var computerCases = connection.Query<ComputerCase<string>>(@"SELECT * FROM public.computer_case " +
+                    "WHERE brand = @Brand " +
+                    "LIMIT @Limit OFFSET @Offset", new { Brand = brand, Limit = limit, Offset = offset });
+
+                    return Ok(new { computerCases });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with brand filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
+        [HttpGet("FilterByModel")]
+        public async Task<IActionResult> FilterByModel(string model, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var computerCases = connection.Query<ComputerCase<string>>(@"SELECT * FROM public.computer_case " +
+                    "WHERE model = @Model " +
+                    "LIMIT @Limit OFFSET @Offset", new { Model = model, Limit = limit, Offset = offset });
+
+                    return Ok(new { computerCases });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with country filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByPrice")]
+        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
+        {
+            try
+            {
+                if (minPrice < 0 || maxPrice < 0)
+                {
+                    return BadRequest(new { error = "price must not be 0" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var computerCases = connection.Query<ComputerCase<string>>(@"SELECT * FROM public.computer_case " +
+                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
+                    "LIMIT @Limit OFFSET @Offset", new { MinPrice = minPrice, MaxPrice = maxPrice,
+                        Limit = limit, Offset = offset });
+
+                    return Ok(new { computerCases });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with price filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
     }
 }
 
