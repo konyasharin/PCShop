@@ -1,8 +1,4 @@
-﻿
-
-using System.ComponentModel.DataAnnotations;
-
-namespace backend.UserRoles
+﻿namespace backend.UserRoles
 {
 
  

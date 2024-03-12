@@ -46,6 +46,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Depth must be between 20 and 100" });
                 }
 
+                if (computerCase.Amount < 0)
+                {
+                    return BadRequest(new {error = "Amount must not be less than 0"});
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -60,12 +65,14 @@ namespace backend.Controllers
                         price = computerCase.Price,
                         description = computerCase.Description,
                         image = imagePath,
+                        amount = computerCase.Amount,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.computer_case (brand, model, country, material, width, height, depth," +
-                        "price, description, image)" +
-                        "VALUES (@brand, @model, @country, @material, @width, @height, @depth, @price, @description, @image) RETURNING id", data);
+                        "price, description, image, amount)" +
+                        "VALUES (@brand, @model, @country, @material, @width, @height, @depth, @price," +
+                        " @description, @image, @amount) RETURNING id", data);
 
                     logger.LogInformation($"ComputerCase data saved to database with id {id}");
 
@@ -170,6 +177,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
+                if (updatedComputerCase.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must not be less than 0" });
+                }
+
 
                 string imagePath = string.Empty;
 
@@ -203,6 +215,7 @@ namespace backend.Controllers
                         price = updatedComputerCase.Price,
                         description = updatedComputerCase.Description,
                         image = imagePath,
+                        amount = updatedComputerCase.Amount,
                     };
 
                     connection.Open();
@@ -210,7 +223,8 @@ namespace backend.Controllers
 
                     connection.Execute("UPDATE public.computer_case SET Brand = @brand, Model = @model, Country = @country," +
                         " Material = @material, Width = @width, Height = @height," +
-                        " Depth = @depth, Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+                        " Depth = @depth, Price = @price, Description = @description," +
+                        " Image = @image, Amount = @amount WHERE Id = @id", data);
 
                     logger.LogInformation("ComputerCase data updated in the database");
 
@@ -367,6 +381,11 @@ namespace backend.Controllers
                 if (minPrice < 0 || maxPrice < 0)
                 {
                     return BadRequest(new { error = "price must not be 0" });
+                }
+
+                if (maxPrice < minPrice)
+                {
+                    return BadRequest(new { error = "maxPrice could not be less than minPrice" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);

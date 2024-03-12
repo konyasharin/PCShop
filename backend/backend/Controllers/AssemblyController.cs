@@ -2,12 +2,9 @@
 using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
-using System.Collections.Generic;
-using System.Reflection;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace backend.Controllers
 {
@@ -62,6 +59,11 @@ namespace backend.Controllers
 
                     assembly.CreationTime = DateTime.Now;
 
+                    if (assembly.Amount < 0)
+                    {
+                        return BadRequest(new { error = "Amount must be less than 0" });
+                    }
+
                     var data = new
                     {
                         name = assembly.Name,
@@ -76,12 +78,14 @@ namespace backend.Controllers
                         powerUnitId = assembly.PowerUnitId,
                         likes = assembly.Likes,
                         creationTime = assembly.CreationTime,
+                        amount = assembly.Amount,
                     };
 
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO assembly (name, price, computercase_id, cooler_id," +
-                        " motherboard_id, processor_id, ram_id, ssd_id, videocard_id, powerunit_id, likes, creation_time) " +
+                        " motherboard_id, processor_id, ram_id, ssd_id, videocard_id, powerunit_id, likes, creation_time, amount) " +
                                       "VALUES (@name, @price, @computerCaseId, @coolerId, @motherBoardId," +
-                                      " @processorId, @ramId, @ssdId, @videocardId, @powerunitId, @likes, @creationTime) RETURN id", data);
+                                      " @processorId, @ramId, @ssdId, @videocardId, @powerunitId," +
+                                      " @likes, @creationTime, @amount) RETURN id", data);
                     logger.LogInformation("Assembly data saved to database");
                     return Ok(new { id = id, data });
                 }
@@ -169,6 +173,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
+                if (updatedAssembly.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must be less than 0" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -185,6 +194,7 @@ namespace backend.Controllers
                         videoCardId = updatedAssembly.VideoCardId,
                         powerUnitId = updatedAssembly.PowerUnitId,
                         creation_time = updatedAssembly.CreationTime,
+                        amount = updatedAssembly.Amount,
 
                     };
 
@@ -196,7 +206,7 @@ namespace backend.Controllers
                 connection.Execute("UPDATE public.assembly SET Name = @name, Price = @price, ComputerCaseId = @computerCaseId, " +
                     "CoolerId = @coolerId, MotherBoardId = @motherBoardId, ProcessorId = @processorId, RamId = @ramId," +
                     " SsdId = @ssdId, VideoCardId = @videoCardId, PowerUnitId = @powerUnitId," +
-                    " Creation_time = @creation_time WHERE Id = @id", updatedAssembly);
+                    " Creation_time = @creation_time, Amount = @amount WHERE Id = @id", updatedAssembly);
 
                 logger.LogInformation("Assembly data updated in the database");
 
@@ -367,6 +377,72 @@ namespace backend.Controllers
             {
                 logger.LogError("Error with search");
                 return StatusCode(500, new { error = ex.Message});
+            }
+        }
+
+        [HttpGet("FilterByName")]
+        public async Task<IActionResult> FilterByName(string name, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var assemblies = connection.Query<Entities.Assembly>(@"SELECT * FROM public.assembly " +
+                    "WHERE name = @Name " +
+                    "LIMIT @Limit OFFSET @Offset", new { Name = name, Limit = limit, Offset = offset });
+
+                    return Ok(new { assemblies });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with name filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByPrice")]
+        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
+        {
+            try
+            {
+                if (minPrice < 0 || maxPrice < 0)
+                {
+                    return BadRequest(new { error = "price must not be 0" });
+                }
+
+                if (maxPrice < minPrice)
+                {
+                    return BadRequest(new { error = "maxPrice could not be less than minPrice" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var assemblies = connection.Query<Entities.Assembly>(@"SELECT * FROM public.assembly " +
+                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinPrice = minPrice,
+                        MaxPrice = maxPrice,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { assemblies });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with price filter");
+                return BadRequest(new { error = ex.Message });
             }
         }
 

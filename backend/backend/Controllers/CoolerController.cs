@@ -4,6 +4,7 @@ using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using System.Drawing;
 
 namespace backend.Controllers
 {
@@ -40,6 +41,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less then 0" });
                 }
 
+                if(cooler.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must not be less than 0" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -52,12 +58,14 @@ namespace backend.Controllers
                         price = cooler.Price,
                         description = cooler.Description,
                         image = imagePath,
+                        amount = cooler.Amount,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.cooler (brand, model, country, speed, power," +
-                        "price, description, image)" +
-                        "VALUES (@brand, @model, @country, @speed, @power, @price, @description, @image) RETURNING id", data);
+                        "price, description, image, amount)" +
+                        "VALUES (@brand, @model, @country, @speed, @power, @price," +
+                        " @description, @image, @amount) RETURNING id", data);
 
                     logger.LogInformation("Cooler data saved to database");
 
@@ -127,6 +135,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
+                if (updatedCooler.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must not be less than 0" });
+                }
+
                 string imagePath = string.Empty;
 
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -154,7 +167,8 @@ namespace backend.Controllers
                         power = updatedCooler.Power,
                         price = updatedCooler.Price,
                         description = updatedCooler.Description,
-                        image = imagePath
+                        image = imagePath,
+                        amount = updatedCooler.Amount,
                     };
 
                     connection.Open();
@@ -162,7 +176,7 @@ namespace backend.Controllers
 
                     connection.Execute("UPDATE public.cooler SET Brand = @brand, Model = @model, Country = @country, Speed = @speed," +
                         " Power = @power," +
-                        " Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+                        " Price = @price, Description = @description, Image = @image, Amount = @amount WHERE Id = @id", data);
 
                     logger.LogInformation("Cooler data updated in the database");
 
@@ -192,7 +206,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.cooler WHERE Id = @id", new { Id = id });
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.cooler WHERE Id = @id",
+                        new { Id = id });
                     BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.cooler WHERE Id = @id", new { id });
@@ -262,6 +277,164 @@ namespace backend.Controllers
             {
                 logger.LogError("Error with search");
                 return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByCountry")]
+        public async Task<IActionResult> FilterByCountry(string country, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var coolers = connection.Query<Cooler<string>>(@"SELECT * FROM public.cooler " +
+                    "WHERE country = @Country " +
+                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Limit = limit, Offset = offset });
+
+                    return Ok(new { coolers });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with country filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByBrand")]
+        public async Task<IActionResult> FilterByBrand(string brand, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var coolers = connection.Query<Cooler<string>>(@"SELECT * FROM public.cooler " +
+                    "WHERE brand = @Brand " +
+                    "LIMIT @Limit OFFSET @Offset", new { Brand = brand, Limit = limit, Offset = offset });
+
+                    return Ok(new { coolers });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with brand filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
+        [HttpGet("FilterByModel")]
+        public async Task<IActionResult> FilterByModel(string model, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var coolers = connection.Query<Cooler<string>>(@"SELECT * FROM public.cooler " +
+                    "WHERE model = @Model " +
+                    "LIMIT @Limit OFFSET @Offset", new { Model = model, Limit = limit, Offset = offset });
+
+                    return Ok(new { coolers });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with country filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByPrice")]
+        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
+        {
+            try
+            {
+                if (minPrice < 0 || maxPrice < 0)
+                {
+                    return BadRequest(new { error = "price must not be 0" });
+                }
+
+                if (maxPrice < minPrice)
+                {
+                    return BadRequest(new { error = "maxPrice could not be less than minPrice" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var coolers = connection.Query<Cooler<string>>(@"SELECT * FROM public.cooler " +
+                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinPrice = minPrice,
+                        MaxPrice = maxPrice,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { coolers });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with price filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterBySpeed")]
+        public async Task<IActionResult> FilterBySpeed(int minSpeed, int maxSpeed, int limit, int offset)
+        {
+            try
+            {
+                if (minSpeed < 0 || maxSpeed < 0)
+                {
+                    return BadRequest(new { error = "speed must not be 0" });
+                }
+
+                if (maxSpeed < minSpeed)
+                {
+                    return BadRequest(new { error = "maxSpeed could not be less than minSpeed" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var coolers = connection.Query<Cooler<string>>(@"SELECT * FROM public.cooler " +
+                    "WHERE speed >=  @MinSpeed AND speed <= @MaxSpeed " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinSpeed = minSpeed,
+                        MaxSpeed = maxSpeed,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { coolers });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with speed filter");
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

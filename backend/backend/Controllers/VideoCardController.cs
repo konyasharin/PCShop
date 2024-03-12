@@ -2,7 +2,6 @@
 using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 
@@ -34,6 +33,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Memory_db must be between 0 and 10000" });
                 }
 
+                if(videoCard.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must not be less than 0" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -47,12 +51,14 @@ namespace backend.Controllers
                         price = videoCard.Price,
                         description = videoCard.Description,
                         image = imagePath,
+                        amount = videoCard.Amount,
                     };
 
                     connection.Open();
                     int id = connection.QuerySingleOrDefault<int>("INSERT INTO public.video_card (brand, model, country, memory_db, memory_type," +
-                        "price, description, image)" +
-                        "VALUES (@brand, @model, @country, @memory_db, @memory_type, @price, @description, @image) RETURNING id", data);
+                        "price, description, image, amount)" +
+                        "VALUES (@brand, @model, @country, @memory_db, @memory_type," +
+                        " @price, @description, @image, @amount) RETURNING id", data);
                     logger.LogInformation("VideoCard data saved to database");;
                     return Ok(new { id = id, data });
                 }
@@ -115,6 +121,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Memory_db must be between 0 and 10000" });
                 }
 
+                if (updatedVideoCard.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must not be less than 0" });
+                }
+
                 string imagePath = string.Empty;
                
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -143,14 +154,17 @@ namespace backend.Controllers
                         price = updatedVideoCard.Price,
                         description = updatedVideoCard.Description,
                         image = imagePath,
+                        amount = updatedVideoCard.Amount,
                     };
 
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    connection.Execute("UPDATE public.video_card SET Brand = @brand, Model = @model, Country = @country, Memory_db = @memory_db," +
+                    connection.Execute("UPDATE public.video_card SET Brand = @brand, Model = @model," +
+                        " Country = @country, Memory_db = @memory_db," +
                         " Memory_type = @memory_db," +
-                        " Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+                        " Price = @price, Description = @description," +
+                        " Image = @image, Amount = @amount WHERE Id = @id", data);
 
                     logger.LogInformation("VideoCard data updated in the database");
 
@@ -246,6 +260,164 @@ namespace backend.Controllers
             {
                 logger.LogError("Error with search");
                 return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByCountry")]
+        public async Task<IActionResult> FilterByCountry(string country, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var videoCards = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
+                    "WHERE country = @Country " +
+                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Limit = limit, Offset = offset });
+
+                    return Ok(new { videoCards });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with country filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByBrand")]
+        public async Task<IActionResult> FilterByBrand(string brand, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var videoCards = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
+                    "WHERE brand = @Brand " +
+                    "LIMIT @Limit OFFSET @Offset", new { Brand = brand, Limit = limit, Offset = offset });
+
+                    return Ok(new { videoCards });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with brand filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
+        [HttpGet("FilterByModel")]
+        public async Task<IActionResult> FilterByModel(string model, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var videoCards = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
+                    "WHERE model = @Model " +
+                    "LIMIT @Limit OFFSET @Offset", new { Model = model, Limit = limit, Offset = offset });
+
+                    return Ok(new { videoCards });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with model filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByPrice")]
+        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
+        {
+            try
+            {
+                if (minPrice < 0 || maxPrice < 0)
+                {
+                    return BadRequest(new { error = "price must not be 0" });
+                }
+
+                if (maxPrice < minPrice)
+                {
+                    return BadRequest(new { error = "maxPrice could not be less than minPrice" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var videoCards = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
+                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinPrice = minPrice,
+                        MaxPrice = maxPrice,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { videoCards });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with price filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByMemory")]
+        public async Task<IActionResult> FilterByCapacity(int minMemory, int maxMemory, int limit, int offset)
+        {
+            try
+            {
+                if (minMemory < 0 || maxMemory < 0)
+                {
+                    return BadRequest(new { error = "memory_db must not be 0" });
+                }
+
+                if (maxMemory < minMemory)
+                {
+                    return BadRequest(new { error = "maxMemory could not be less than minMemory" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var videoCards = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
+                    "WHERE memory_db >=  @MinCapacity AND memory_db <= @MaxCapacity " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinMemory = minMemory,
+                        MaxMemory = maxMemory,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { videoCards });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with memory_db filter");
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

@@ -32,6 +32,11 @@ namespace backend.Controllers
                 return BadRequest(new { error = "Price must not be less than 0" });
             }
 
+            if(motherBoard.Amount < 0)
+            {
+                return BadRequest(new { error = "Amount must be less than 0" });
+            }
+
             try
             {
                 string imagePath = BackupWriter.Write(motherBoard.Image);
@@ -49,12 +54,14 @@ namespace backend.Controllers
                         price = motherBoard.Price,
                         description = motherBoard.Description,
                         image = imagePath,
+                        amount = motherBoard.Amount,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.mother_board (brand, model, country, frequency, socket, chipset," +
-                        "price, description, image)" +
-                        "VALUES (@brand, @model, @country, @frequency, @socket, @chipset, @price, @description, @image) RETURNING id", data);
+                        "price, description, image, amount)" +
+                        "VALUES (@brand, @model, @country, @frequency, @socket, @chipset," +
+                        " @price, @description, @image, @amount) RETURNING id", data);
 
                     logger.LogInformation("MotherBoard data saved to database");
                     return Ok(new { id =  id, data});
@@ -121,6 +128,12 @@ namespace backend.Controllers
                 {
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
+
+                if (updatedMotherBoard.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must be less than 0" });
+                }
+
                 string imagePath = string.Empty;
 
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -150,6 +163,7 @@ namespace backend.Controllers
                         price = updatedMotherBoard.Price,
                         description = updatedMotherBoard.Description,
                         image = imagePath,
+                        amount = updatedMotherBoard.Amount,
                     };
 
                     connection.Open();
@@ -157,7 +171,8 @@ namespace backend.Controllers
 
                     connection.Execute("UPDATE public.mother_board SET Brand = @brand, Model = @model, Country = @country, Frequency = @frequency," +
                         " Socket = @socket, Chipset = @chipset," +
-                        " Price = @price, Description = @description, Image = @image WHERE Id = @id", data);
+                        " Price = @price, Description = @description," +
+                        " Image = @image, Amount = @amount WHERE Id = @id", data);
 
                     logger.LogInformation("MotherBoard data updated in the database");
 
@@ -256,6 +271,164 @@ namespace backend.Controllers
             {
                 logger.LogError("Error with search");
                 return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByCountry")]
+        public async Task<IActionResult> FilterByCountry(string country, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var motherBoards = connection.Query<MotherBoard<string>>(@"SELECT * FROM public.mother_board " +
+                    "WHERE country = @Country " +
+                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Limit = limit, Offset = offset });
+
+                    return Ok(new { motherBoards });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with country filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByBrand")]
+        public async Task<IActionResult> FilterByBrand(string brand, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var motherBoards = connection.Query<MotherBoard<string>>(@"SELECT * FROM public.mother_board " +
+                    "WHERE brand = @Brand " +
+                    "LIMIT @Limit OFFSET @Offset", new { Brand = brand, Limit = limit, Offset = offset });
+
+                    return Ok(new { motherBoards });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with brand filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
+        [HttpGet("FilterByModel")]
+        public async Task<IActionResult> FilterByModel(string model, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var motherBoards = connection.Query<MotherBoard<string>>(@"SELECT * FROM public.mother_board " +
+                    "WHERE model = @Model " +
+                    "LIMIT @Limit OFFSET @Offset", new { Model = model, Limit = limit, Offset = offset });
+
+                    return Ok(new { motherBoards });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with model filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByPrice")]
+        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
+        {
+            try
+            {
+                if (minPrice < 0 || maxPrice < 0)
+                {
+                    return BadRequest(new { error = "price must not be 0" });
+                }
+
+                if (maxPrice < minPrice)
+                {
+                    return BadRequest(new { error = "maxPrice could not be less than minPrice" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var motherBoards = connection.Query<MotherBoard<string>>(@"SELECT * FROM public.mother_board " +
+                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinPrice = minPrice,
+                        MaxPrice = maxPrice,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { motherBoards });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with price filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByFrequency")]
+        public async Task<IActionResult> FilterByFrequency(int minFrequency, int maxFrequency, int limit, int offset)
+        {
+            try
+            {
+                if (minFrequency < 0 || maxFrequency < 0)
+                {
+                    return BadRequest(new { error = "frequency must not be 0" });
+                }
+
+                if (maxFrequency < minFrequency)
+                {
+                    return BadRequest(new { error = "maxFrequecny could not be less than minFrequency" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var motherBoards = connection.Query<MotherBoard<string>>(@"SELECT * FROM public.mother_board " +
+                    "WHERE frequency >=  @MinFrequency AND frequency <= @MaxFrequency " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinFrequency = minFrequency,
+                        MaxFrequency = maxFrequency,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { motherBoards });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with frequency filter");
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

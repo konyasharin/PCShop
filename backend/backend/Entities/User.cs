@@ -12,6 +12,7 @@ namespace backend.Entities
         public string Password { get; set; }
         [EnumDataType(typeof(UserRole))]
         public UserRole Role { get; set; }
+        public int Balance { get; set; }
 
 
     }
