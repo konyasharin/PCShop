@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
@@ -36,6 +37,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Voltage must be between 0 and 50000" });
                 }
 
+                if(powerunit.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must be less than 0" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -48,13 +54,15 @@ namespace backend.Controllers
                         price = powerunit.Price,
                         description = powerunit.Description,
                         image = imagePath,
+                        amount = powerunit.Amount,
 
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.power_unit (brand, model, country, battery, voltage," +
-                        "price, description, image)" +
-                        "VALUES (@brand, @model, @country, @battery, @voltage, @price, @description, @image) RETURNING id", data);
+                        "price, description, image, amount)" +
+                        "VALUES (@brand, @model, @country, @battery, @voltage, @price," +
+                        " @description, @image, @amount) RETURNING id", data);
 
                     logger.LogInformation("powerUnit data saved to database");
                     return Ok(new { id = id, data });
@@ -103,7 +111,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updatePowerUnit/{id}")]
-        public async Task<IActionResult> UpdatePowerUnit(int id, PowerUnit<IFormFile> updatedPowerUnit)
+        public async Task<IActionResult> UpdatePowerUnit(int id, [FromForm] UpdatedPowerUnit updatedPowerUnit)
         {
             try
             {
@@ -117,10 +125,29 @@ namespace backend.Controllers
                 {
                     return BadRequest(new { error = "Voltage must be between 0 and 50000" });
                 }
-                
+
+                if (updatedPowerUnit.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must be less than 0" });
+                }
+
+                string imagePath = string.Empty;
 
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.power_unit WHERE Id = @id");
+
+                    if (updatedPowerUnit.updated)
+                    {
+
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedPowerUnit.Image);
+                    }
+                    else
+                    {
+                        imagePath = filePath;
+                    }
+
                     var data = new
                     {
                         id = id,
@@ -131,26 +158,29 @@ namespace backend.Controllers
                         voltage = updatedPowerUnit.Voltage,
                         price = updatedPowerUnit.Price,
                         description = updatedPowerUnit.Description,
-                        image = updatedPowerUnit.Image
+                        image = imagePath,
+                        amount = updatedPowerUnit.Amount,
                     };
+
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.power_unit SET Brand = @brand, Model = @model, Country = @country, Battery = @battery," +
+                        " Voltage = @voltage," +
+                        " Price = @price, Description = @description, Image = @image, Amount = @amount WHERE Id = @id", data);
+
+                    logger.LogInformation("PowerUnit data updated in the database");
+
+                    return Ok(new { id = id, data });
 
                 }
 
-                connection.Open();
-                logger.LogInformation("Connection started");
-
-                connection.Execute("UPDATE public.power_unit SET Brand = @brand, Model = @model, Country = @country, Battery = @battery," +
-                    " Voltage = @voltage," +
-                    " Price = @price, Description = @description, Image = @image WHERE Id = @id", updatedPowerUnit);
-
-                logger.LogInformation("PowerUnit data updated in the database");
-
-                return Ok(new {id=id, updatedPowerUnit});
+  
             }
             catch (Exception ex)
             {
                 logger.LogError($"Failed to update PowerUnit data in database. \nException: {ex}");
-                return StatusCode(500, new { error = "Internal server error" });
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
@@ -159,10 +189,14 @@ namespace backend.Controllers
         {
             try
             {
+                string filePath;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.power_unit WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.power_unit WHERE Id = @id", new { id });
 
@@ -180,7 +214,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllPowerUnits")]
-        public async Task<IActionResult> GetAllPowerUnits()
+        public async Task<IActionResult> GetAllPowerUnits(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -191,11 +225,12 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var powerUnits = connection.Query<PowerUnit<string>>("SELECT * FROM public.power_unit");
+                    var powerUnits = connection.Query<PowerUnit<string>>("SELECT * FROM public.power_unit LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all PowerUnit data from the database");
 
-                    return Ok(new { data = powerUnits });
+                    return Ok(new { powerUnits });
                 }
 
 
@@ -204,6 +239,189 @@ namespace backend.Controllers
             {
                 logger.LogError($"PowerUnit data did not get gtom database. Exception: {ex}");
                 return NotFound(new {error = ex.Message});
+            }
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchPowerUnit(string keyword, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var powerUnits = connection.Query<PowerUnit<string>>(@"SELECT * FROM public.power_unit " +
+                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
+                        "LIMIT @Limit @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset });
+
+                    return Ok(new { powerUnits });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with search");
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByCountry")]
+        public async Task<IActionResult> FilterByCountry(string country, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var powerUnits = connection.Query<PowerUnit<string>>(@"SELECT * FROM public.power_unit " +
+                    "WHERE country = @Country " +
+                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Limit = limit, Offset = offset });
+
+                    return Ok(new { powerUnits });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with country filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByBrand")]
+        public async Task<IActionResult> FilterByBrand(string brand, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var powerUnits = connection.Query<PowerUnit<string>>(@"SELECT * FROM public.power_unit " +
+                    "WHERE brand = @Brand " +
+                    "LIMIT @Limit OFFSET @Offset", new { Brand = brand, Limit = limit, Offset = offset });
+
+                    return Ok(new { powerUnits });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with brand filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
+        [HttpGet("FilterByModel")]
+        public async Task<IActionResult> FilterByModel(string model, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var powerUnits = connection.Query<PowerUnit<string>>(@"SELECT * FROM public.power_unit " +
+                    "WHERE model = @Model " +
+                    "LIMIT @Limit OFFSET @Offset", new { Model = model, Limit = limit, Offset = offset });
+
+                    return Ok(new { powerUnits });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with model filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByPrice")]
+        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
+        {
+            try
+            {
+                if (minPrice < 0 || maxPrice < 0)
+                {
+                    return BadRequest(new { error = "price must not be 0" });
+                }
+
+                if (maxPrice < minPrice)
+                {
+                    return BadRequest(new { error = "maxPrice could not be less than minPrice" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var powerUnits = connection.Query<PowerUnit<string>>(@"SELECT * FROM public.power_unit " +
+                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinPrice = minPrice,
+                        MaxPrice = maxPrice,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { powerUnits });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with price filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByVoltage")]
+        public async Task<IActionResult> FilterByVoltage(int minVoltage, int maxVoltage, int limit, int offset)
+        {
+            try
+            {
+                if (minVoltage < 0 || maxVoltage < 0)
+                {
+                    return BadRequest(new { error = "voltage must not be 0" });
+                }
+
+                if (maxVoltage < minVoltage)
+                {
+                    return BadRequest(new { error = "maxVoltage could not be less than minVoltage" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var motherBoards = connection.Query<PowerUnit<string>>(@"SELECT * FROM public.power_unit " +
+                    "WHERE voltage >=  @MinVoltage AND voltage <= @MaxVoltage " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinVoltage = minVoltage,
+                        MaxVoltage = maxVoltage,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { motherBoards });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with voltage filter");
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

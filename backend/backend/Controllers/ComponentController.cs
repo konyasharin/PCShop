@@ -15,5 +15,7 @@ namespace backend.Controllers
             DotNetEnv.Env.Load();
             connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         }
+
+        
     }
 }

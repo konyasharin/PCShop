@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace backend.Entities
+﻿namespace backend.Entities
 {
     public class Cooler<T> : Component<T>
     {

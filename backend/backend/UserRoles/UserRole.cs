@@ -1,9 +1,12 @@
 ﻿namespace backend.UserRoles
 {
+
+ 
     public enum UserRole
     {
-        Admin,
-        User,
-        Employee
+        
+        Admin = 0,
+        User = 1,
+        Employee = 2
     }
 }

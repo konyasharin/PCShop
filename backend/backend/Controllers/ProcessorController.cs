@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -53,6 +54,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Heat_dissipation must be between 0 and 10000" });
                 }
 
+                if (processor.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must be less than 0" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -67,14 +73,16 @@ namespace backend.Controllers
                         price = processor.Price,
                         description = processor.Description,
                         image = imagePath,
+                        amount = processor.Amount,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.processor (Id, Brand, Model, Country, Cores, Clock_frequency, Turbo_frequency," +
                         " Heat_dissipation," +
-                        "Price, Description, Image)" +
-                        "VALUES (@Id, @Brand, @Model, @Country, @Cores, @Clock_frequency, @Turbo_frequency, @Heat_dissipation, @Price," +
-                        " @Description, @Image) RETURNING id", data);
+                        "Price, Description, Image, Amount)" +
+                        "VALUES (@Id, @Brand, @Model, @Country, @Cores, @Clock_frequency, @Turbo_frequency," +
+                        " @Heat_dissipation, @Price," +
+                        " @Description, @Image, @Amount) RETURNING id", data);
 
                     logger.LogInformation("Processor data saved to database");
                     return Ok(new { id = id, data });
@@ -123,7 +131,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updateProcessor/{id}")]
-        public async Task<IActionResult> UpdateProcessor(int id, Processor<IFormFile> updatedProcessor)
+        public async Task<IActionResult> UpdateProcessor(int id, [FromForm] UpdatedProcessor updatedProcessor)
         {
             try
             {
@@ -156,8 +164,28 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Heat_dissipation must be between 0 and 10000" });
                 }
 
+                if (updatedProcessor.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must be less than 0" });
+                }
+
+                string imagePath = string.Empty;
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.processor WHERE Id = @id");
+
+                    if (updatedProcessor.updated)
+                    {
+
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedProcessor.Image);
+                    }
+                    else
+                    {
+                        imagePath = filePath;
+                    }
+
                     var data = new
                     {
                         id = id,
@@ -170,21 +198,27 @@ namespace backend.Controllers
                         heat_dissipation = updatedProcessor.Heat_dissipation,
                         price = updatedProcessor.Price,
                         description = updatedProcessor.Description,
-                        image = updatedProcessor.Image
+                        image = imagePath,
+                        amount = updatedProcessor.Amount,
                     };
+
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.processor SET Brand = @brand, Model = @model, Country = @country," +
+                        " Cores = @cores," +
+                        " Clock_frequency = @clock_frequency, Turbo_frequency = @turbo_frequency," +
+                        " Heat_dissipation = @heat_dissipation," +
+                        " Depth = @depth, Price = @price, Description = @description," +
+                        " Image = @image, Amount = @amount WHERE Id = @id", data);
+
+                    logger.LogInformation("Processor data updated in the database");
+
+                    return Ok(new { id = id, data});
 
                 }
 
-                connection.Open();
-                logger.LogInformation("Connection started");
-
-                connection.Execute("UPDATE public.processor SET Brand = @brand, Model = @model, Country = @country, Cores = @cores," +
-                    " Clock_frequency = @clock_frequency, Turbo_frequency = @turbo_frequency, Heat_dissipation = @heat_dissipation," +
-                    " Depth = @depth, Price = @price, Description = @description, Image = @image WHERE Id = @id", updatedProcessor);
-
-                logger.LogInformation("Processor data updated in the database");
-
-                return Ok(new {id=id, updatedProcessor});
+                
             }
             catch (Exception ex)
             {
@@ -198,11 +232,14 @@ namespace backend.Controllers
         {
             try
             {
-                
+                string filePath;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.processor WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.processor WHERE Id = @id", new { id });
 
@@ -220,7 +257,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllProcessors")]
-        public async Task<IActionResult> GetAllprocessors()
+        public async Task<IActionResult> GetAllprocessors(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -231,7 +268,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var processors = connection.Query<Processor<string>>("SELECT * FROM public.processor");
+                    var processors = connection.Query<Processor<string>>("SELECT * FROM public.processor LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all Processor data from the database");
 
@@ -244,6 +282,189 @@ namespace backend.Controllers
             {
                 logger.LogError($"Processor data did not get from database. Exception: {ex}");
                 return NotFound(new {error=ex.Message});
+            }
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchProcessor(string keyword, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var processors = connection.Query<Processor<string>>(@"SELECT * FROM public.processor " +
+                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
+                        "LIMIT @Limit OFFSET @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset });
+
+                    return Ok(new { processors });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with search");
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByCountry")]
+        public async Task<IActionResult> FilterByCountry(string country, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var processors = connection.Query<Processor<string>>(@"SELECT * FROM public.processor " +
+                    "WHERE country = @Country " +
+                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Limit = limit, Offset = offset });
+
+                    return Ok(new { processors });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with country filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByBrand")]
+        public async Task<IActionResult> FilterByBrand(string brand, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var processors = connection.Query<Processor<string>>(@"SELECT * FROM public.processor " +
+                    "WHERE brand = @Brand " +
+                    "LIMIT @Limit OFFSET @Offset", new { Brand = brand, Limit = limit, Offset = offset });
+
+                    return Ok(new { processors });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with brand filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
+        [HttpGet("FilterByModel")]
+        public async Task<IActionResult> FilterByModel(string model, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var processors = connection.Query<Processor<string>>(@"SELECT * FROM public.processor " +
+                    "WHERE model = @Model " +
+                    "LIMIT @Limit OFFSET @Offset", new { Model = model, Limit = limit, Offset = offset });
+
+                    return Ok(new { processors });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with model filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByPrice")]
+        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
+        {
+            try
+            {
+                if (minPrice < 0 || maxPrice < 0)
+                {
+                    return BadRequest(new { error = "price must not be 0" });
+                }
+
+                if (maxPrice < minPrice)
+                {
+                    return BadRequest(new { error = "maxPrice could not be less than minPrice" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var processors = connection.Query<Processor<string>>(@"SELECT * FROM public.processor " +
+                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinPrice = minPrice,
+                        MaxPrice = maxPrice,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { processors });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with price filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByFrequency")]
+        public async Task<IActionResult> FilterByVoltage(int minClockFrequency, int maxClockFrequency, int limit, int offset)
+        {
+            try
+            {
+                if (minClockFrequency < 0 || maxClockFrequency < 0)
+                {
+                    return BadRequest(new { error = "ClockFrequency must not be 0" });
+                }
+
+                if (maxClockFrequency < minClockFrequency)
+                {
+                    return BadRequest(new { error = "maxClockFrequency could not be less than minClockFrequency" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var processors = connection.Query<Processor<string>>(@"SELECT * FROM public.processor " +
+                    "WHERE clock_frequency >=  @MinClockFrequency AND clock_frequency <= @MaxClockFrequency " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinClockFrequency = minClockFrequency,
+                        MaxClockFrequency = maxClockFrequency,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { processors });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with ClockFrequency filter");
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

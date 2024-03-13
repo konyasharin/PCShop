@@ -1,8 +1,10 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using System.Runtime.Intrinsics.Arm;
 
 namespace backend.Controllers
 {
@@ -44,6 +46,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
+                if (ram.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must be less than 0" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -57,13 +64,15 @@ namespace backend.Controllers
                         price = ram.Price,
                         description = ram.Description,
                         image = imagePath,
+                        amount = ram.Amount,
 
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.ram (id, brand, model, country, frequency, timings, capacity_db," +
-                        "price, description, image)" +
-                        "VALUES (@brand, @model, @country, @frequency, @timings, @capacity_db, @price, @description, @image) RETURNING id", data);
+                        "price, description, image, amount)" +
+                        "VALUES (@brand, @model, @country, @frequency, @timings, @capacity_db," +
+                        " @price, @description, @image, @amount) RETURNING id", data);
 
                     logger.LogInformation("Ram data saved to database");
                     return Ok(new { id = id, data });
@@ -112,7 +121,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updateRam/{id}")]
-        public async Task<IActionResult> UpdateRam(int id, RAM<IFormFile> updatedRam)
+        public async Task<IActionResult> UpdateRam(int id, [FromForm] UpdatedRam updatedRam)
         {
             try
             {
@@ -137,8 +146,27 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
+                if (updatedRam.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must be less than 0" });
+                }
+
+                string imagePath = string.Empty;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.ram WHERE Id = @id");
+
+                    if (updatedRam.updated)
+                    {
+
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedRam.Image);
+                    }
+                    else
+                    {
+                        imagePath = filePath;
+                    }
+
                     var data = new
                     {
                         id = id,
@@ -150,21 +178,24 @@ namespace backend.Controllers
                         capacity_db = updatedRam.Capacity_db,
                         price = updatedRam.Price,
                         description = updatedRam.Description,
-                        image = updatedRam.Image
+                        image = imagePath,
+                        amount = updatedRam.Amount,
                     };
+
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.ram SET Brand = @brand, Model = @model, Country = @country, Frequency = @frequency," +
+                        " Timings = @timings, Capacity_db = @capacity_db," +
+                        " Price = @price, Description = @description, Image = @image, Amount = @amount WHERE Id = @id", data);
+
+                    logger.LogInformation("RAM data updated in the database");
+
+                    return Ok(new { id = id, data });
 
                 }
 
-                connection.Open();
-                logger.LogInformation("Connection started");
-
-                connection.Execute("UPDATE public.ram SET Brand = @brand, Model = @model, Country = @country, Frequency = @frequency," +
-                    " Timings = @timings, Capacity_db = @capacity_db," +
-                    " Price = @price, Description = @description, Image = @image WHERE Id = @id", updatedRam);
-
-                logger.LogInformation("RAM data updated in the database");
-
-                return Ok(new {id=id, updatedRam});
+                
             }
             catch (Exception ex)
             {
@@ -178,11 +209,14 @@ namespace backend.Controllers
         {
             try
             {
-                
+                string filePath;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.ram WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.ram WHERE Id = @id", new { id });
 
@@ -200,7 +234,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("getAllRam")]
-        public async Task<IActionResult> GetAllRams()
+        public async Task<IActionResult> GetAllRams(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -210,7 +244,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var computerCases = connection.Query<RAM<string>>("SELECT * FROM public.ram");
+                    var computerCases = connection.Query<RAM<string>>("SELECT * FROM public.ram LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all RAM data from the database");
 
@@ -221,8 +256,232 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError($"RAM data did not get ftom database. Exception: {ex}");
+                logger.LogError($"RAM data did not get from database. Exception: {ex}");
                 return NotFound(new {error=ex.Message});
+            }
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchRam(string keyword, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ram = connection.Query<RAM<string>>(@"SELECT * FROM public.ram " +
+                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
+                        "LIMIT @Limit OFFSET @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset });
+
+                    return Ok(new { ram });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with search");
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByCountry")]
+        public async Task<IActionResult> FilterByCountry(string country, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ram = connection.Query<RAM<string>>(@"SELECT * FROM public.ram " +
+                    "WHERE country = @Country " +
+                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Limit = limit, Offset = offset });
+
+                    return Ok(new { ram });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with country filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByBrand")]
+        public async Task<IActionResult> FilterByBrand(string brand, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ram = connection.Query<RAM<string>>(@"SELECT * FROM public.ram " +
+                    "WHERE brand = @Brand " +
+                    "LIMIT @Limit OFFSET @Offset", new { Brand = brand, Limit = limit, Offset = offset });
+
+                    return Ok(new { ram });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with brand filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
+        [HttpGet("FilterByModel")]
+        public async Task<IActionResult> FilterByModel(string model, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ram = connection.Query<RAM<string>>(@"SELECT * FROM public.ram " +
+                    "WHERE model = @Model " +
+                    "LIMIT @Limit OFFSET @Offset", new { Model = model, Limit = limit, Offset = offset });
+
+                    return Ok(new { ram });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with model filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByPrice")]
+        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
+        {
+            try
+            {
+                if (minPrice < 0 || maxPrice < 0)
+                {
+                    return BadRequest(new { error = "price must not be 0" });
+                }
+
+                if (maxPrice < minPrice)
+                {
+                    return BadRequest(new { error = "maxPrice could not be less than minPrice" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ram = connection.Query<RAM<string>>(@"SELECT * FROM public.ram " +
+                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinPrice = minPrice,
+                        MaxPrice = maxPrice,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { ram });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with price filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByFrequency")]
+        public async Task<IActionResult> FilterByFrequency(int minFrequency, int maxFrequency, int limit, int offset)
+        {
+            try
+            {
+                if (minFrequency < 0 || maxFrequency < 0)
+                {
+                    return BadRequest(new { error = "frequency must not be 0" });
+                }
+
+                if (maxFrequency < minFrequency)
+                {
+                    return BadRequest(new { error = "maxFrequecny could not be less than minFrequency" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ram = connection.Query<RAM<string>>(@"SELECT * FROM public.ram " +
+                    "WHERE frequency >=  @MinFrequency AND frequency <= @MaxFrequency " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinFrequency = minFrequency,
+                        MaxFrequency = maxFrequency,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { ram });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with frequency filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByCapacity")]
+        public async Task<IActionResult> FilterByCapacity(int minCapacity, int maxCapacity, int limit, int offset)
+        {
+            try
+            {
+                if (minCapacity < 0 || maxCapacity < 0)
+                {
+                    return BadRequest(new { error = "capacity_db must not be 0" });
+                }
+
+                if (maxCapacity < minCapacity)
+                {
+                    return BadRequest(new { error = "maxCapacity could not be less than minCapacity" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ram = connection.Query<RAM<string>>(@"SELECT * FROM public.ram " +
+                    "WHERE capacity_db >=  @MinCapacity AND capacity_db <= @MaxCapacity " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinCapacity = minCapacity,
+                        MaxCapacity = maxCapacity,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { ram });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with capacity_db filter");
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

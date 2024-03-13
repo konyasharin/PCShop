@@ -13,5 +13,13 @@ namespace backend.Utils
             return currentTime + file.FileName;
         }
 
+        public static void Delete(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
+
     }
 }

@@ -1,9 +1,11 @@
 ﻿using backend.Entities;
+using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using System.Runtime.Intrinsics.X86;
 
 namespace backend.Controllers
 {
@@ -33,6 +35,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
+                if (ssd.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must be less than 0" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -44,12 +51,13 @@ namespace backend.Controllers
                         price = ssd.Price,
                         description = ssd.Description,
                         image = imagePath,
+                        amount = ssd.Amount,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.ssd (brand, model, country, capacity," +
-                        "price, description, image)" +
-                        "VALUES (@brand, @model, @country, @capacity, @price, @description, @image) RETURNING id", data);
+                        "price, description, image, amount)" +
+                        "VALUES (@brand, @model, @country, @capacity, @price, @description, @image, @amount) RETURNING id", data);
 
                     logger.LogInformation("SSD data saved to database");
                     return Ok(new { id = id, data });
@@ -98,7 +106,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("updateSsd/{id}")]
-        public async Task<IActionResult> UpdateSsd(int id, SSD<IFormFile> updatedSsd)
+        public async Task<IActionResult> UpdateSsd(int id, [FromForm] UpdatedSsd updatedSsd)
         {
             try
             {
@@ -112,10 +120,28 @@ namespace backend.Controllers
                 {
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
-                
 
+                if (updatedSsd.Amount < 0)
+                {
+                    return BadRequest(new { error = "Amount must be less than 0" });
+                }
+
+                string imagePath = string.Empty;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
+                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.ssd WHERE Id = @id");
+
+                    if (updatedSsd.updated)
+                    {
+
+                        BackupWriter.Delete(filePath);
+                        imagePath = BackupWriter.Write(updatedSsd.Image);
+                    }
+                    else
+                    {
+                        imagePath = filePath;
+                    }
+
                     var data = new
                     {
                         id = id,
@@ -125,20 +151,24 @@ namespace backend.Controllers
                         capacity = updatedSsd.Capacity,
                         price = updatedSsd.Price,
                         description = updatedSsd.Description,
-                        image = updatedSsd.Image
+                        image = imagePath,
+                        amount = updatedSsd.Amount,
                     };
+
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    connection.Execute("UPDATE public.ssd SET Brand = @brand, Model = @model," +
+                        " Country = @country, Capacity = @capacity," +
+                        " Price = @price, Description = @description, Image = @image, Amount = @amount WHERE Id = @id", data);
+
+                    logger.LogInformation("SSD data updated in the database");
+
+                    return Ok(new { id = id, data });
 
                 }
 
-                connection.Open();
-                logger.LogInformation("Connection started");
-
-                connection.Execute("UPDATE public.ssd SET Brand = @brand, Model = @model, Country = @country, Capacity = @capacity," +
-                    " Price = @price, Description = @description, Image = @image WHERE Id = @id", updatedSsd);
-
-                logger.LogInformation("SSD data updated in the database");
-
-                return Ok(new { id = id, updatedSsd });
+                
             }
             catch (Exception ex)
             {
@@ -152,11 +182,14 @@ namespace backend.Controllers
         {
             try
             {
-                
+                string filePath;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
                     logger.LogInformation("Connection started");
+
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.ssd WHERE Id = @id", new { Id = id });
+                    BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.ssd WHERE Id = @id", new { id });
 
@@ -175,7 +208,7 @@ namespace backend.Controllers
 
 
         [HttpGet("getAllSsd")]
-        public async Task<IActionResult> GetAllSsd()
+        public async Task<IActionResult> GetAllSsd(int limit, int offset)
         {
             logger.LogInformation("Get method has started");
             try
@@ -186,7 +219,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var ssd = connection.Query<SSD<string>>("SELECT * FROM public.ssd");
+                    var ssd = connection.Query<SSD<string>>("SELECT * FROM public.ssd LIMIT @Limit OFFSET @Offset",
+                        new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all SSD data from the database");
 
@@ -199,6 +233,189 @@ namespace backend.Controllers
             {
                 logger.LogError($"SSD data did not get from database. Exception: {ex}");
                 return NotFound(new {error = ex.Message});
+            }
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchSsd(string keyword, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ssd = connection.Query<RAM<string>>(@"SELECT * FROM public.ssd " +
+                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
+                        "LIMIT @Limit OFFSET @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset });
+
+                    return Ok(new { ssd });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with search");
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByCountry")]
+        public async Task<IActionResult> FilterByCountry(string country, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ssd = connection.Query<SSD<string>>(@"SELECT * FROM public.ssd " +
+                    "WHERE country = @Country " +
+                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Limit = limit, Offset = offset });
+
+                    return Ok(new { ssd });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with country filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByBrand")]
+        public async Task<IActionResult> FilterByBrand(string brand, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ssd = connection.Query<SSD<string>>(@"SELECT * FROM public.ssd " +
+                    "WHERE brand = @Brand " +
+                    "LIMIT @Limit OFFSET @Offset", new { Brand = brand, Limit = limit, Offset = offset });
+
+                    return Ok(new { ssd });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with brand filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+
+        [HttpGet("FilterByModel")]
+        public async Task<IActionResult> FilterByModel(string model, int limit, int offset)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ssd = connection.Query<SSD<string>>(@"SELECT * FROM public.ssd " +
+                    "WHERE model = @Model " +
+                    "LIMIT @Limit OFFSET @Offset", new { Model = model, Limit = limit, Offset = offset });
+
+                    return Ok(new { ssd });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with model filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByPrice")]
+        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
+        {
+            try
+            {
+                if (minPrice < 0 || maxPrice < 0)
+                {
+                    return BadRequest(new { error = "price must not be 0" });
+                }
+
+                if (maxPrice < minPrice)
+                {
+                    return BadRequest(new { error = "maxPrice could not be less than minPrice" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ram = connection.Query<SSD<string>>(@"SELECT * FROM public.ssd " +
+                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinPrice = minPrice,
+                        MaxPrice = maxPrice,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { ram });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with price filter");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("FilterByCapacity")]
+        public async Task<IActionResult> FilterByCapacity(int minCapacity, int maxCapacity, int limit, int offset)
+        {
+            try
+            {
+                if (minCapacity < 0 || maxCapacity < 0)
+                {
+                    return BadRequest(new { error = "capacity_db must not be 0" });
+                }
+
+                if (maxCapacity < minCapacity)
+                {
+                    return BadRequest(new { error = "maxCapacity could not be less than minCapacity" });
+                }
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var ssd = connection.Query<SSD<string>>(@"SELECT * FROM public.ssd " +
+                    "WHERE capacity >=  @MinCapacity AND capacity_db <= @MaxCapacity " +
+                    "LIMIT @Limit OFFSET @Offset", new
+                    {
+                        MinCapacity = minCapacity,
+                        MaxCapacity = maxCapacity,
+                        Limit = limit,
+                        Offset = offset
+                    });
+
+                    return Ok(new { ssd });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with capacity filter");
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

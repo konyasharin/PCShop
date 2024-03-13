@@ -10,6 +10,7 @@ namespace backend.Entities
         public int Price { get; set; }
         public int Likes { get; set; }
         public DateTime CreationTime { get; set; }
+        public int Amount { get; set; }
         public int ComputerCaseId { get; set; }
         public int CoolerId { get; set; }
         public int MotherBoardId { get; set; }
