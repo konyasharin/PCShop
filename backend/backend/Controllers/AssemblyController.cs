@@ -356,7 +356,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchAssembly(string keyword, int limit, int offset)
+        public async Task<IActionResult> SearchAssembly(string keyword, int limit = 1, int offset = 0)
         {
             try
             {
@@ -380,33 +380,9 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("FilterByName")]
-        public async Task<IActionResult> FilterByName(string name, int limit, int offset)
-        {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var assemblies = connection.Query<Entities.Assembly>(@"SELECT * FROM public.assembly " +
-                    "WHERE name = @Name " +
-                    "LIMIT @Limit OFFSET @Offset", new { Name = name, Limit = limit, Offset = offset });
-
-                    return Ok(new { assemblies });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with name filter");
-                return BadRequest(new { error = ex.Message });
-            }
-        }
-
-        [HttpGet("FilterByPrice")]
-        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
+        [HttpGet("Filter")]
+        public async Task<IActionResult> FilterAssembly(string name, int minPrice, 
+            int maxPrice, int limit = 1, int offset = 0)
         {
             try
             {
@@ -426,14 +402,9 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
                     var assemblies = connection.Query<Entities.Assembly>(@"SELECT * FROM public.assembly " +
-                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
-                    "LIMIT @Limit OFFSET @Offset", new
-                    {
-                        MinPrice = minPrice,
-                        MaxPrice = maxPrice,
-                        Limit = limit,
-                        Offset = offset
-                    });
+                    "WHERE name = @Name AND price >=  @MinPrice AND price <= @MaxPrice " +
+                    "LIMIT @Limit OFFSET @Offset", new { Name = name, MinPrice = minPrice, 
+                        MaxPrice = maxPrice, Limit = limit, Offset = offset });
 
                     return Ok(new { assemblies });
 
@@ -441,10 +412,11 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError("Error with price filter");
+                logger.LogError("Error with name filter");
                 return BadRequest(new { error = ex.Message });
             }
         }
+
 
     }
 }

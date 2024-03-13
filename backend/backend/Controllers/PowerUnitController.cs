@@ -87,7 +87,8 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
 
-                    var powerUnit = connection.QueryFirstOrDefault<PowerUnit<string>>("SELECT * FROM public.power_unit WHERE Id = @Id",
+                    var powerUnit = connection.QueryFirstOrDefault<PowerUnit<string>>("SELECT * FROM public.power_unit" +
+                        " WHERE Id = @Id",
                         new { Id = id });
 
                     if (powerUnit != null)
@@ -195,7 +196,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.power_unit WHERE Id = @id", new { Id = id });
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.power_unit WHERE Id = @id",
+                        new { Id = id });
                     BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.power_unit WHERE Id = @id", new { id });
@@ -243,7 +245,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchPowerUnit(string keyword, int limit, int offset)
+        public async Task<IActionResult> SearchPowerUnit(string keyword, int limit = 1, int offset = 0)
         {
             try
             {

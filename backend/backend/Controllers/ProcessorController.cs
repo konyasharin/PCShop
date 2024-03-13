@@ -286,7 +286,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchProcessor(string keyword, int limit, int offset)
+        public async Task<IActionResult> SearchProcessor(string keyword, int limit = 1, int offset = 0)
         {
             try
             {

@@ -272,7 +272,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchComputerCase(string keyword, int limit, int offset)
+        public async Task<IActionResult> SearchComputerCase(string keyword, int limit = 1, int offset = 0)
         {
             try
             {
@@ -296,8 +296,10 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("FilterByCountry")]
-        public async Task<IActionResult> FilterByCountry(string country, int limit, int offset)
+        [HttpGet("Filter")]
+        public async Task<IActionResult> FilterComputerCase(string country, string brand,
+            string model, int minPrice, int maxPrice,
+            int limit = 1, int offset = 0)
         {
             try
             {
@@ -307,8 +309,10 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
                     var computerCases = connection.Query<ComputerCase<string>>(@"SELECT * FROM public.computer_case " +
-                    "WHERE country = @Country " +
-                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Limit = limit, Offset = offset });
+                    "WHERE country = @Country AND brand = @Brand AND model = @Model " +
+                    "AND price >= @MinPrice AND price <= @MaxPrice " +
+                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Brand = brand, 
+                        Model = model, Limit = limit, MinPrice = minPrice, MaxPrice = maxPrice, Offset = offset });
 
                     return Ok(new { computerCases });
 
@@ -321,92 +325,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("FilterByBrand")]
-        public async Task<IActionResult> FilterByBrand(string brand, int limit, int offset)
-        {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var computerCases = connection.Query<ComputerCase<string>>(@"SELECT * FROM public.computer_case " +
-                    "WHERE brand = @Brand " +
-                    "LIMIT @Limit OFFSET @Offset", new { Brand = brand, Limit = limit, Offset = offset });
-
-                    return Ok(new { computerCases });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with brand filter");
-                return BadRequest(new { error = ex.Message });
-            }
-        }
-
-
-        [HttpGet("FilterByModel")]
-        public async Task<IActionResult> FilterByModel(string model, int limit, int offset)
-        {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var computerCases = connection.Query<ComputerCase<string>>(@"SELECT * FROM public.computer_case " +
-                    "WHERE model = @Model " +
-                    "LIMIT @Limit OFFSET @Offset", new { Model = model, Limit = limit, Offset = offset });
-
-                    return Ok(new { computerCases });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with country filter");
-                return BadRequest(new { error = ex.Message });
-            }
-        }
-
-        [HttpGet("FilterByPrice")]
-        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
-        {
-            try
-            {
-                if (minPrice < 0 || maxPrice < 0)
-                {
-                    return BadRequest(new { error = "price must not be 0" });
-                }
-
-                if (maxPrice < minPrice)
-                {
-                    return BadRequest(new { error = "maxPrice could not be less than minPrice" });
-                }
-
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var computerCases = connection.Query<ComputerCase<string>>(@"SELECT * FROM public.computer_case " +
-                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
-                    "LIMIT @Limit OFFSET @Offset", new { MinPrice = minPrice, MaxPrice = maxPrice,
-                        Limit = limit, Offset = offset });
-
-                    return Ok(new { computerCases });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with price filter");
-                return BadRequest(new { error = ex.Message });
-            }
-        }
+        
 
     }
 }

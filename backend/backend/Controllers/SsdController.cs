@@ -188,7 +188,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.ssd WHERE Id = @id", new { Id = id });
+                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.ssd WHERE Id = @id",
+                        new { Id = id });
                     BackupWriter.Delete(filePath);
 
                     connection.Execute("DELETE FROM public.ssd WHERE Id = @id", new { id });
@@ -237,7 +238,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchSsd(string keyword, int limit, int offset)
+        public async Task<IActionResult> SearchSsd(string keyword, int limit = 1, int offset = 0)
         {
             try
             {
