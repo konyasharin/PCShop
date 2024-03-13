@@ -7,13 +7,14 @@ type InputProps = {
   placeholder: string;
   onChange: (newValue: string) => void;
   className?: string;
+  type?: 'number' | 'text';
 };
 
 const Input: React.FC<InputProps> = props => {
   return (
     <input
-      className={createClassNames([props.className, styles.input])}
-      type="text"
+      className={createClassNames([styles.input, props.className])}
+      type={props.type ? props.type : 'text'}
       value={props.value}
       placeholder={props.placeholder}
       onChange={e => props.onChange(e.target.value)}

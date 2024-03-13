@@ -1,0 +1,9 @@
+.btn{
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    background-color: #809FFF;
+}

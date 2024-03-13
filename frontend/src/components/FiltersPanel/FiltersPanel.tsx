@@ -1,21 +1,17 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import EComponentTypes from 'enums/EComponentTypes.ts';
 import styles from './FiltersPanel.module.css';
 import MainBtn from 'components/btns/MainBtn/MainBtn.tsx';
 
 type FiltersPanelProps = {
   type: EComponentTypes;
-  checkBoxesBlocks: React.ReactNode[];
-  radiosBlocks: React.ReactNode[];
-  inputsBlocks: React.ReactNode[];
+  blocks: ReactNode[];
 };
 
 const FiltersPanel: React.FC<FiltersPanelProps> = props => {
   return (
     <div className={styles.panel}>
-      {...props.checkBoxesBlocks}
-      {...props.radiosBlocks}
-      {...props.inputsBlocks}
+      {...props.blocks}
       <MainBtn className={styles.btn}>Применить</MainBtn>
     </div>
   );

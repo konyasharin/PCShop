@@ -28,6 +28,7 @@ function Roles() {
         placeholder={'Введите id пользователя'}
         value={id}
         onChange={newId => setId(newId)}
+        type={'number'}
       />
       <div className={styles.radios}>{...radioBlocks}</div>
       <Btn>Выдать роль</Btn>

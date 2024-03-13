@@ -1,0 +1,26 @@
+.checkBoxes{
+    display: flex;
+}
+
+.checkBox{
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.title{
+    margin-bottom: 10px;
+}
+
+.block{
+    width: 850px;
+}
+
+.delete{
+    color: #CD0000;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.input{
+    margin-bottom: 20px;
+}

@@ -31,6 +31,7 @@ function Orders() {
         placeholder={'Поиск по id'}
         value={id}
         onChange={newValue => setId(newValue)}
+        type={'number'}
       />
       <div className={styles.filters}>{...checkBoxesBlock}</div>
       <OrderBlock

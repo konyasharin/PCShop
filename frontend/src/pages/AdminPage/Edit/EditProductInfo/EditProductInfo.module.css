@@ -1,0 +1,26 @@
+.filterElements{
+    display: flex;
+}
+
+.filterElement{
+    margin-right: 10px;
+}
+
+.filterBlock{
+    margin-bottom: 20px;
+}
+
+.input{
+    margin-bottom: 20px;
+}
+
+.priceInput{
+    width: 270px;
+    margin-bottom: 20px;
+}
+
+.img{
+    width: 160px;
+    height: 133px;
+    border-radius: 8px;
+}
