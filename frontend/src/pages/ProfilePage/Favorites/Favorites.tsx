@@ -7,7 +7,7 @@ function Favorites() {
     <div className={styles.block}>
       <ChooseFavoritesCard
         className={styles.card}
-        name={'Залупа моржа'}
+        name={'NVIDIA GeForce RTX 3070'}
         img={VideoCard}
         text={
           '8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак'
@@ -16,7 +16,7 @@ function Favorites() {
       ></ChooseFavoritesCard>
       <ChooseFavoritesCard
         className={styles.card}
-        name={'Залупа моржа'}
+        name={'NVIDIA GeForce RTX 3070'}
         img={VideoCard}
         text={
           '8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак'

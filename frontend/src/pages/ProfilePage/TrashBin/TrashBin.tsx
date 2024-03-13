@@ -8,7 +8,7 @@ function TrashBin() {
     <div className={styles.block}>
       <ChooseBinCard
         className={styles.card}
-        name={'Чурка'}
+        name={'NVIDIA GeForce RTX 3070'}
         img={VideoCard}
         text={
           '8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак'
@@ -17,7 +17,7 @@ function TrashBin() {
       ></ChooseBinCard>
       <ChooseBinCard
         className={styles.card}
-        name={'Чурка'}
+        name={'NVIDIA GeForce RTX 3070'}
         img={VideoCard}
         text={
           '8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак'
