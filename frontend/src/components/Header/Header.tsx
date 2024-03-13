@@ -21,10 +21,10 @@ function Header() {
           <NavLink to={'/PCBuild'} className={styles.link}>
             Новая сборка
           </NavLink>
-          <NavLink to={'/'} className={styles.link}>
+          <NavLink to={'/builds'} className={styles.link}>
             Сборки
           </NavLink>
-          <NavLink to={'/'} className={styles.link}>
+          <NavLink to={'/components'} className={styles.link}>
             Комплектующие
           </NavLink>
         </div>

@@ -9,6 +9,9 @@ import LoginPage from './pages/AuthPage/LoginPage/LoginPage.tsx';
 import RegistrationPage from './pages/AuthPage/RegistrationPage/RegistrationPage.tsx';
 import AdminPage from './pages/AdminPage/AdminPage.tsx';
 import ProfilePage from './pages/ProfilePage/ProfilePage.tsx';
+import PCComponents from './pages/PCComponents/PCComponents.tsx';
+import EComponentTypes from 'enums/EComponentTypes.ts';
+import BuildsPage from './pages/BuildsPage/BuildsPage.tsx';
 
 function App() {
   return (
@@ -26,6 +29,26 @@ function App() {
         <Route path={'/registration'} element={<RegistrationPage />} />
         <Route path={'/admin/*'} element={<AdminPage />} />
         <Route path={'/profile/*'} element={<ProfilePage />} />
+        <Route
+          path={'/components'}
+          element={
+            <PCComponents
+              type={EComponentTypes.videoCard}
+              searchTitle={'Выберите видеокарту'}
+              products={[]}
+            />
+          }
+        />
+        <Route
+          path={'/builds'}
+          element={
+            <BuildsPage
+              type={EComponentTypes.videoCard}
+              searchTitle={'Выберите видеокарту'}
+              products={[]}
+            />
+          }
+        />
       </Routes>
       <Footer />
     </>
