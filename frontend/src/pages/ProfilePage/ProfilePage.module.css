@@ -1,0 +1,14 @@
+.block {
+    display: flex;
+    margin-top: 50px;
+}
+
+.navigation {
+    margin-right: 20px;
+}
+
+.profile {
+    display: flex;
+    justify-content: center;
+    margin-top: 90px;
+}

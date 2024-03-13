@@ -1,0 +1,21 @@
+.price{
+    margin-left: auto;
+    color: #0000FF;
+}
+
+.block {
+    display: flex;
+    align-items: center;
+}
+
+.btn{
+    width: 173px;
+    margin-top: auto;
+}
+
+.bin {
+    width: 22px;
+    height: 25px;
+    margin-left: 10px;
+    cursor: pointer;
+}

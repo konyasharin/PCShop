@@ -1,0 +1,22 @@
+.panel{
+    background-color: #809FFF;
+    border-radius: 10px;
+    padding: 20px;
+    width: 270px;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.link{
+    margin-top: 15px;
+}
+
+.exit {
+    margin-top: 15px;
+    color: #CD0000;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    cursor: pointer;
+}
