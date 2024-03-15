@@ -1,0 +1,30 @@
+.btn{
+    width: 100%;
+    height: 44px;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 400;
+    transition: .5s all;
+}
+
+.btn img{
+    margin-left: auto;
+    transition: .5s all;
+}
+
+.btnActive{
+    background-color: #6C6CFF;
+}
+
+.btnActive img{
+    rotate: 180deg;
+}
+
+.btnDisable{
+    background-color: #809FFF;
+}

@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import EditProduct from './EditProduct/EditProduct.tsx';
 import EditAddBtn from './EditAddBtn/EditAddBtn.tsx';
 import AddProduct from './AddProduct/AddProduct.tsx';
+import ChooseCharacteristics from './ChooseCharacteristics/ChooseCharacteristics.tsx';
 
 function Edit() {
   return (
@@ -21,7 +22,7 @@ function Edit() {
       </div>
       <Routes>
         <Route path={'products'} element={<EditProduct />} />
-        <Route path={'characteristics'} />
+        <Route path={'characteristics'} element={<ChooseCharacteristics />} />
         <Route path={'products/addProduct'} element={<AddProduct />} />
       </Routes>
     </div>
