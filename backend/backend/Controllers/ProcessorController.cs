@@ -67,7 +67,7 @@ namespace backend.Controllers
                         model = processor.Model,
                         cores = processor.Cores,
                         country = processor.Country,
-                        clock_frquency = processor.Clock_frequency,
+                        clock_frequency = processor.Clock_frequency,
                         turbo_frequency = processor.Turbo_frequency,
                         heat_dissipation = processor.Heat_dissipation,
                         price = processor.Price,
@@ -77,12 +77,12 @@ namespace backend.Controllers
                     };
 
                     connection.Open();
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.processor (Id, Brand, Model, Country, Cores, Clock_frequency, Turbo_frequency," +
-                        " Heat_dissipation," +
-                        "Price, Description, Image, Amount)" +
-                        "VALUES (@Id, @Brand, @Model, @Country, @Cores, @Clock_frequency, @Turbo_frequency," +
-                        " @Heat_dissipation, @Price," +
-                        " @Description, @Image, @Amount) RETURNING id", data);
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.processor (brand, model, country, cores, clock_frequency, turbo_frequency," +
+                        " heat_dissipation," +
+                        "price, description, image, amount)" +
+                        "VALUES (@brand, @model, @country, @cores, @clock_frequency, @turbo_frequency," +
+                        " @heat_dissipation, @price," +
+                        " @description, @image, @amount) RETURNING id", data);
 
                     logger.LogInformation("Processor data saved to database");
                     return Ok(new { id = id, data });
@@ -205,12 +205,12 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    connection.Execute("UPDATE public.processor SET Brand = @brand, Model = @model, Country = @country," +
-                        " Cores = @cores," +
-                        " Clock_frequency = @clock_frequency, Turbo_frequency = @turbo_frequency," +
-                        " Heat_dissipation = @heat_dissipation," +
-                        " Depth = @depth, Price = @price, Description = @description," +
-                        " Image = @image, Amount = @amount WHERE Id = @id", data);
+                    connection.Execute("UPDATE public.processor SET brand = @brand, model = @model, country = @country," +
+                        " cores = @cores," +
+                        " clock_frequency = @clock_frequency, turbo_frequency = @turbo_frequency," +
+                        " heat_dissipation = @heat_dissipation," +
+                        " depth = @depth, price = @price, description = @description," +
+                        " image = @image, amount = @amount WHERE id = @id", data);
 
                     logger.LogInformation("Processor data updated in the database");
 

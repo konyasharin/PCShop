@@ -102,7 +102,7 @@ namespace backend.Controllers
 
                     logger.LogInformation("Retrieved all ComputerCase data from the database");
 
-                    return Ok(new { computerCases });
+                    return Ok(new { data=computerCases });
                 }
 
                

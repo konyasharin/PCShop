@@ -19,6 +19,7 @@ type AddWindowProps = {
   searchTitle: string;
   isActive: boolean;
   products: TProduct[];
+  onShowMore: () => void;
 };
 
 const AddWindow: React.FC<AddWindowProps> = props => {
@@ -151,7 +152,9 @@ const AddWindow: React.FC<AddWindowProps> = props => {
           placeholder={'Поиск'}
         />
         {...cards}
-        <ShowMoreBtn className={styles.btn}>Показать еще...</ShowMoreBtn>
+        <ShowMoreBtn className={styles.btn} onClick={props.onShowMore}>
+          Показать еще...
+        </ShowMoreBtn>
       </div>
     </div>
   );

@@ -18,6 +18,7 @@ type ChooseComponentProps = {
   className?: string;
   searchTitle: string;
   products: TProduct[];
+  onShowMore: () => void;
 };
 
 const ChooseComponent: React.FC<ChooseComponentProps> = props => {
@@ -51,6 +52,7 @@ const ChooseComponent: React.FC<ChooseComponentProps> = props => {
         searchTitle={props.searchTitle}
         isActive={isActive}
         products={props.products}
+        onShowMore={props.onShowMore}
       />
     </div>
   );
