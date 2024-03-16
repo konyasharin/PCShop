@@ -24,7 +24,7 @@
     margin-top: 20px;
 }
 
-.repeatePassword {
+.repeatPassword {
     width: 754px;
     margin-top: 20px;
 }
@@ -32,4 +32,10 @@
 .button {
     width: 350px;
     margin-top: 20px;
+}
+
+.error {
+    margin-top: 50px;
+    text-align: center;
+    color: #CD0000;
 }

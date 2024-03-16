@@ -1,4 +1,4 @@
-﻿using backend.Entities;
+﻿using backend.Entities.User;
 using backend.Password;
 using backend.UpdatedEntities;
 using backend.Utils;
@@ -25,12 +25,6 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Email does not contain @" });
                 }
 
-                if (user.Balance < 0)
-                {
-                    return BadRequest(new { error = "Balance must not be less than 0" });
-                }
-
-
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     string hashedPassword = PasswordHelper.HashPassword(user.Password);
@@ -40,8 +34,8 @@ namespace backend.Controllers
                         username = user.Username,
                         email = user.Email,
                         password = hashedPassword,
-                        role = user.Role,
-                        balance = user.Balance,
+                        role = UserRoles.UserRole.User,
+                        balance = 0,
                     };
 
                     connection.Open();
@@ -51,7 +45,15 @@ namespace backend.Controllers
 
                     logger.LogInformation($"User with {id} signed up");
 
-                    return Ok(new { id = id, data });
+                    var returnData = new
+                    {
+                        userName = data.username,
+                        email = data.email,
+                        role = data.role,
+                        balance = data.balance,
+                    };
+
+                    return Ok(new { id = id, data = returnData });
                 }
             }
 
@@ -62,28 +64,28 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("signIn")]
-        public async Task<IActionResult> SignInUser(string email, string password)
+        [HttpPost("signIn")]
+        public async Task<IActionResult> SignInUser(UserLogin requestData)
         {
             try
             {
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    var userData = await connection.QueryFirstOrDefaultAsync<User>("SELECT * FROM public.user WHERE email = @Email",
-                        new { Email = email });
+                    logger.LogInformation(requestData.Email);
+                    var userData = await connection.QueryFirstOrDefaultAsync<User>("SELECT * FROM public.user WHERE email = @email", new { requestData.Email });
 
                     if (userData == null)
                     {
                         return BadRequest(new { error = "User with this email not found" });
                     }
 
-                    if (!PasswordHelper.VerifyPassword(userData.Password, password))
+                    if (!PasswordHelper.VerifyPassword(userData.Password, requestData.Password))
                     {
                         return BadRequest(new { error = "Incorrect password" });
                     }
 
-                    logger.LogInformation($"User with email {email} signed in successfully");
-                    return Ok(new { userData });
+                    logger.LogInformation($"User with email {requestData.Email} signed in successfully");
+                    return Ok(new { data = userData });
                 }
             }
             catch(Exception ex)

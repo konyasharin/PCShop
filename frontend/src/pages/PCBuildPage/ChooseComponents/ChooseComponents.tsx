@@ -47,21 +47,21 @@ function ChooseComponents() {
   // }, []);
   const { components: videoCards, getComponents: getVideoCards } =
     useComponents<TVideoCard<string>>('/VideoCard/getAllVideoCards');
-  const { components: computerCases, getComponents: getComputerCases } =
-    useComponents<TComputerCase<string>>('/ComputerCase/getAllComputerCases');
   const { components: processors, getComponents: getProcessors } =
     useComponents<TProcessor<string>>('/Processor/getAllProcessors');
   const dispatch = useDispatch();
   const isLoaded = useRef(false);
 
   useEffect(() => {
+    async function getComponents() {
+      dispatch(setIsLoading(true));
+      await getVideoCards();
+      await getProcessors();
+      dispatch(setIsLoading(false));
+    }
     if (isLoaded.current) return;
+    void getComponents();
     isLoaded.current = true;
-    dispatch(setIsLoading(true));
-    getVideoCards();
-    getProcessors();
-    getComputerCases();
-    dispatch(setIsLoading(false));
   }, []);
   return (
     <section className={styles.blocks}>
@@ -73,7 +73,10 @@ function ChooseComponents() {
         errorType={'Success'}
         searchTitle={'Выберите видеокарту'}
         products={convertToTProduct(videoCards)}
-        onShowMore={() => getVideoCards()}
+        onShowMore={() => {
+          dispatch(setIsLoading(true));
+          getVideoCards().then(() => dispatch(setIsLoading(false)));
+        }}
       />
       <ChooseComponent
         img={processorIcon}
@@ -83,7 +86,10 @@ function ChooseComponents() {
         errorType={'Warning'}
         searchTitle={'Выберите процессор'}
         products={convertToTProduct(processors)}
-        onShowMore={() => getProcessors()}
+        onShowMore={() => {
+          dispatch(setIsLoading(true));
+          getProcessors().then(() => dispatch(setIsLoading(false)));
+        }}
       />
     </section>
   );

@@ -5,18 +5,15 @@ import silverPrizeImg from 'assets/sprize.png';
 import bronzePrizeImg from 'assets/bprize.png';
 import mainPrize from 'assets/mainPrize.png';
 import Container from 'components/Container/Container.tsx';
-import { useEffect, useState } from 'react';
+import React from 'react';
 import TBuildPreview from 'types/TBuildPreview.ts';
-import getTOPBuilds from 'api/TOPBuilds.ts';
 
-function TOPBuilds() {
-  const [TOPBuilds, setTOPBuilds] = useState<TBuildPreview[]>([]);
-  useEffect(() => {
-    getTOPBuilds().then(data => {
-      setTOPBuilds(data);
-    });
-  }, []);
-  const TOPBuildsBlocks = TOPBuilds.map((block, i) => {
+type TOPBuildsProps = {
+  TOPBuilds: TBuildPreview[];
+};
+
+const TOPBuilds: React.FC<TOPBuildsProps> = props => {
+  const TOPBuildsBlocks = props.TOPBuilds.map((block, i) => {
     let prizeImg = goldPrizeImg;
     switch (i) {
       case 0:
@@ -49,6 +46,6 @@ function TOPBuilds() {
       </Container>
     </section>
   );
-}
+};
 
 export default TOPBuilds;
