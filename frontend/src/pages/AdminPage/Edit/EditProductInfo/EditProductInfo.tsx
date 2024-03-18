@@ -16,6 +16,7 @@ type EditProductInfoProps = {
   productName: string;
   setProductName: (newProductName: string) => void;
   img: string;
+  onChangeImg: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const EditProductInfo: React.FC<EditProductInfoProps> = props => {
@@ -83,7 +84,16 @@ const EditProductInfo: React.FC<EditProductInfoProps> = props => {
         onChange={newValue => props.setProductName(newValue)}
         className={styles.input}
       />
-      <img src={props.img} alt="componentImg" className={styles.img} />
+      <input
+        type="file"
+        id={'editProductImg'}
+        className={styles.inputImg}
+        onChange={props.onChangeImg}
+        accept={'image/*'}
+      />
+      <label htmlFor="editProductImg">
+        <img src={props.img} alt="componentImg" className={styles.img} />
+      </label>
       <EditFilterBlock
         title={'Цена'}
         filterBlock={

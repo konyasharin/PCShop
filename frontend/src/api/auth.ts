@@ -14,7 +14,10 @@ async function auth<T extends TRegistrationData | TLoginData>(
 ): Promise<string | null> {
   dispatch(setIsLoading(true));
   try {
-    const response: AxiosResponse<TUser> = await axiosModify.post(url, data);
+    const response: AxiosResponse<{ data: TUser }> = await axiosModify.post(
+      url,
+      data,
+    );
     dispatch(setUserData(response.data));
     dispatch(setIsAuth(true));
   } catch (error) {
