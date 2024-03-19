@@ -1,4 +1,5 @@
 ﻿
+using backend.CommentEntities;
 using backend.Entities;
 using backend.UpdatedEntities;
 using backend.Utils;
@@ -327,6 +328,183 @@ namespace backend.Controllers
 
         
 
+        [HttpPost("addComment/{id}")]
+        public async Task<IActionResult> AddComment(int id, ComputerCaseComment computerCaseComment)
+        {
+            try
+            {
+
+                if (string.IsNullOrEmpty(computerCaseComment.content))
+                {
+                    return BadRequest(new { error = "Content cannot be empty" });
+                }
+
+                computerCaseComment.comment_date = DateTime.Now;
+
+                int insertedId;
+
+                await using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    var data = new
+                    {
+                        content = computerCaseComment.content,
+                        comment_date = computerCaseComment.comment_date,
+                        computerCaseId = id,
+                    };
+
+                    await connection.OpenAsync();
+
+                    logger.LogInformation("Connection started");
+
+                    insertedId = await connection.QueryFirstOrDefaultAsync<int>(
+                        "INSERT INTO public.computer_case_comment (content, comment_date, computercaseid) " +
+                        "VALUES (@content, @comment_date, @computerCaseId) RETURNING id", data);
+
+                    return Ok(new { id = insertedId, data });
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while adding comment");
+                return BadRequest(new { error = "An error occurred while adding comment" });
+            }
+        }
+
+        [HttpPut("{id}/updateComment/{comment_id}")]
+        public async Task<IActionResult> UpdateComment(int id, int comment_id, ComputerCaseComment computerCaseComment)
+        {
+            try
+            {
+
+                if (string.IsNullOrEmpty(computerCaseComment.content))
+                {
+                    return BadRequest(new { error = "Content cannot be empty" });
+                }
+
+                computerCaseComment.comment_date = DateTime.Now;
+
+                await using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    var data = new
+                    {
+                        id = comment_id,
+                        content = computerCaseComment.content,
+                        comment_date = computerCaseComment.comment_date,
+                        computercaseid = id,
+                    };
+
+                    await connection.OpenAsync();
+
+                    logger.LogInformation("Connection started");
+
+                    int updatedComment = await connection.ExecuteAsync(
+                        "UPDATE public.computer_case_comment " +
+                        "SET content = @content, comment_date = @comment_date " +
+                        "WHERE id = @id AND computercaseid = @computercaseid", data);
+
+                    if (updatedComment == 0)
+                    {
+                        return NotFound(new { error = "Comment not found" });
+                    }
+
+                    return Ok(new { id = comment_id, data });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while updating comment");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}/deleteComment/{comment_id}")]
+        public async Task<IActionResult> DeleteComment(int id, int comment_id)
+        {
+            try
+            {
+                await using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    logger.LogInformation("Connection started");
+
+                    int deletedComment = await connection.ExecuteAsync(
+                        "DELETE FROM public.computer_case_comment " +
+                        "WHERE id = @comment_id AND computercaseid = @id", new { id, comment_id });
+
+                    if (deletedComment == 0)
+                    {
+                        return NotFound(new { error = "Comment not found" });
+                    }
+                }
+
+                return Ok(new { id = id, comment_id = comment_id });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while deleting comment");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("GetAllComments")]
+        public async Task<IActionResult> GetAllComments(int limit = 1, int offset = 0)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var comments = connection.Query<ComputerCaseComment>("SELECT * FROM public.computer_case_comment " +
+                        "LIMIT @Limit OFFSET @Offset",
+                        new { Limit = limit, Offset = offset });
+
+                    logger.LogInformation("Retrieved all ComputerCase data from the database");
+
+                    return Ok(new { comments });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with get comments");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}/getComment/{comment_id}")]
+        public async Task<IActionResult> GetComment(int id, int comment_id)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var comment = await connection.QueryFirstOrDefaultAsync<ComputerCaseComment>(
+                        "SELECT * FROM public.computer_case_comment WHERE id = @id AND computercaseid = @computercaseid",
+                        new { id = comment_id, computercaseid = id });
+
+                    if (comment == null)
+                    {
+                        return NotFound(new { error = "Comment not found" });
+                    }
+
+
+                    return Ok(new { id = comment_id, comment });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error with retrieving comment by ID");
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 }
 
