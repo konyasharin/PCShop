@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import axios from 'api/axios.ts';
 
-async function createComponent<T>(
+async function createProduct<T>(
   url: string,
   data: Omit<T, 'id'>,
 ): Promise<AxiosResponse<T>> {
@@ -10,4 +10,4 @@ async function createComponent<T>(
   });
 }
 
-export default createComponent;
+export default createProduct;

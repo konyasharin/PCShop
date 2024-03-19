@@ -6,8 +6,8 @@ namespace backend.Entities
     public class VideoCard<T> : Component<T>
     {
        
-        public int Memory_db { get; set; }
-        public string Memory_type { get; set; }
+        public string MemoryDb { get; set; }
+        public string MemoryType { get; set; }
        
        
     }

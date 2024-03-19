@@ -26,6 +26,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
   const [searchString, setSearchString] = useState('');
   const { filters, setCheckBoxIsActive, setRadioIsActive } = useFilters(
     useSelector((state: RootState) => state.filters[props.type]),
+    'checkBox',
   );
   const [priceFrom, setPriceFrom] = useState('');
   const [priceTo, setPriceTo] = useState('');
@@ -52,7 +53,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
               styles.filterBlockElementTitle,
             ])}
           >
-            {filter.name}
+            {filter.text}
           </h6>
           {...filtersBlocks}
         </div>,
@@ -83,7 +84,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
               styles.filterBlockElementTitle,
             ])}
           >
-            {filter.name}
+            {filter.text}
           </h6>
           {...radiosBlocks}
         </div>,

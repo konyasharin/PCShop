@@ -1,27 +1,35 @@
-import { useEffect, useState } from 'react';
-import { TFilters } from 'store/slices/filtersSlice.ts';
+import { useRef, useState } from 'react';
+import { TFilter, TFilters } from 'store/slices/filtersSlice.ts';
 
-function useFilters(filtersState: TFilters) {
-  const [filters, setFilters] = useState<TFilters>([]);
+export type TFilterType = TFilter & {
+  type: 'radio' | 'checkBox';
+};
 
-  useEffect(() => {
-    setFiltersHandle(filtersState);
-  }, []);
+export type TFiltersType = TFilterType[];
+
+function useFilters(filtersState: TFilters, initialType: 'radio' | 'checkBox') {
+  const type = useRef(initialType);
+  const [filters, setFilters] = useState<TFiltersType>(
+    initFilters(filtersState),
+  );
+
+  function initFilters(newFilters: TFilters): TFiltersType {
+    return newFilters.map(filter => {
+      return {
+        ...filter,
+        type: type.current,
+        filters: filter.filters.map(filterElem => {
+          return {
+            text: filterElem.text,
+            isActive: false,
+          };
+        }),
+      };
+    });
+  }
 
   function setFiltersHandle(newFilters: TFilters) {
-    setFilters(
-      newFilters.map(filter => {
-        return {
-          ...filter,
-          filters: filter.filters.map(filterElem => {
-            return {
-              text: filterElem.text,
-              isActive: false,
-            };
-          }),
-        };
-      }),
-    );
+    setFilters(initFilters(newFilters));
   }
 
   function setCheckBoxIsActive(

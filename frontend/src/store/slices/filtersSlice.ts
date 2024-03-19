@@ -2,11 +2,13 @@ import { createSlice } from '@reduxjs/toolkit';
 import TCheckBox from 'types/TCheckBox.ts';
 import EComponentTypes from 'enums/EComponentTypes.ts';
 
-export type TFilters = {
-  type: 'checkBox' | 'radio';
+export type TFilter = {
   name: string;
+  text: string;
   filters: TCheckBox[];
-}[];
+};
+
+export type TFilters = TFilter[];
 
 type TFiltersState = {
   [componentType in EComponentTypes]: TFilters;
@@ -15,20 +17,34 @@ type TFiltersState = {
 const initialState: TFiltersState = {
   videoCard: [
     {
-      type: 'checkBox',
-      name: 'Производитель',
+      name: 'brand',
+      text: 'Производитель',
       filters: [{ text: 'Asrock' }, { text: 'ASUS' }, { text: 'Gigabyte' }],
     },
     {
-      type: 'radio',
-      name: 'Тест',
-      filters: [{ text: 'Тест1' }, { text: 'Тест2' }, { text: 'Тест3' }],
+      name: 'model',
+      text: 'Модель',
+      filters: [
+        { text: 'RTX 3090' },
+        { text: 'RTX 3080' },
+        { text: 'RTX 4060' },
+      ],
+    },
+    {
+      name: 'memoryType',
+      text: 'Тип видеопамяти',
+      filters: [{ text: 'DDR4' }, { text: 'DDR5' }],
+    },
+    {
+      name: 'memoryDb',
+      text: 'Количество видеопамяти',
+      filters: [{ text: '1GB' }, { text: '2GB' }],
     },
   ],
   processor: [
     {
-      type: 'checkBox',
-      name: 'Производитель',
+      name: 'brand',
+      text: 'Производитель',
       filters: [{ text: 'Intel' }, { text: 'AMD' }],
     },
   ],

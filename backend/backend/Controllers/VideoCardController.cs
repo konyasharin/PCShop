@@ -28,11 +28,6 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
-                if (videoCard.Memory_db < 0 || videoCard.Memory_db > 10000)
-                {
-                    return BadRequest(new { error = "Memory_db must be between 0 and 10000" });
-                }
-
                 if(videoCard.Amount < 0)
                 {
                     return BadRequest(new { error = "Amount must not be less than 0" });
@@ -46,8 +41,8 @@ namespace backend.Controllers
                         brand = videoCard.Brand,
                         model = videoCard.Model,
                         country = videoCard.Country,
-                        memory_db = videoCard.Memory_db,
-                        memory_type = videoCard.Memory_type,
+                        memory_db = videoCard.MemoryDb,
+                        memory_type = videoCard.MemoryType,
                         price = videoCard.Price,
                         description = videoCard.Description,
                         image = imagePath,
@@ -116,11 +111,6 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
 
-                if (updatedVideoCard.Memory_db < 0 || updatedVideoCard.Memory_db > 10000)
-                {
-                    return BadRequest(new { error = "Memory_db must be between 0 and 10000" });
-                }
-
                 if (updatedVideoCard.Amount < 0)
                 {
                     return BadRequest(new { error = "Amount must not be less than 0" });
@@ -149,8 +139,8 @@ namespace backend.Controllers
                         brand = updatedVideoCard.Brand,
                         model = updatedVideoCard.Model,
                         country = updatedVideoCard.Country,
-                        memory_db = updatedVideoCard.Memory_db,
-                        memory_type = updatedVideoCard.Memory_type,
+                        memory_db = updatedVideoCard.MemoryDb,
+                        memory_type = updatedVideoCard.MemoryType,
                         price = updatedVideoCard.Price,
                         description = updatedVideoCard.Description,
                         image = imagePath,

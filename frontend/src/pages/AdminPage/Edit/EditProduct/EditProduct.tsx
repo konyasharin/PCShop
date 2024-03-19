@@ -3,7 +3,7 @@ import styles from './EditProduct.module.css';
 import EComponentTypes from 'enums/EComponentTypes.ts';
 import Input from 'components/Input/Input.tsx';
 import { useState } from 'react';
-import videoCardImg from 'assets/videocard.jpg';
+import emptyImg from 'assets/empty-img.png';
 import EditProductInfo from '../EditProductInfo/EditProductInfo.tsx';
 import Btn from 'components/btns/Btn/Btn.tsx';
 import CategoriesBlocks from '../CategoriesBlocks/CategoriesBlocks.tsx';
@@ -20,6 +20,7 @@ function EditProduct() {
   const [activeCategory, setActiveCategory] = useState<EComponentTypes>(
     EComponentTypes.videoCard,
   );
+  const [img, setImg] = useState(emptyImg);
   return (
     <div className={styles.block}>
       <h5 className={styles.title}>Категория</h5>
@@ -42,7 +43,8 @@ function EditProduct() {
         setProductName={setProductName}
         price={price}
         setPrice={setPrice}
-        img={videoCardImg}
+        img={img}
+        setImg={setImg}
       />
       <Btn>Редактировать</Btn>
       <h5 className={styles.delete}>Удалить товар</h5>
