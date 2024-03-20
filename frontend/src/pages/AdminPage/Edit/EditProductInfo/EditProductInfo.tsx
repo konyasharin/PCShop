@@ -1,11 +1,10 @@
 import React, { ReactNode } from 'react';
-import { TFiltersType } from 'hooks/useFilters.ts';
 import EComponentTypes from 'enums/EComponentTypes.ts';
-import CheckBox from 'components/CheckBox/CheckBox.tsx';
 import EditFilterBlock from '../EditFilterBlock/EditFilterBlock.tsx';
 import Radio from 'components/Radio/Radio.tsx';
 import styles from './EditProductInfo.module.css';
 import Input from 'components/Input/Input.tsx';
+import TComponentFiltersKeys from 'types/components/TComponentFiltersKeys.ts';
 
 type EditProductInfoProps = {
   type: EComponentTypes;
@@ -20,64 +19,42 @@ type EditProductInfoProps = {
   description: string;
   setAmount: (newValue: number) => void;
   amount: number;
-  filters: TFiltersType;
-  setCheckBoxIsActive: (
-    nameBlock: string,
+  filters: TComponentFiltersKeys;
+  setRadioIsActive: (
+    nameBlock: keyof TComponentFiltersKeys,
     index: number,
-    newIsActive: boolean,
   ) => void;
-  setRadioIsActive: (nameBlock: string, index: number) => void;
 };
 
 const EditProductInfo: React.FC<EditProductInfoProps> = props => {
   const filtersBlocks: ReactNode[] = [];
-  props.filters.forEach(filter => {
-    if (filter.type === 'checkBox') {
-      const filterElements = filter.filters.map((filterElem, i) => {
-        return (
-          <CheckBox
-            text={filterElem.text}
-            isActive={filterElem.isActive}
-            onChange={() => {
-              props.setCheckBoxIsActive(filter.name, i, !filterElem.isActive);
-            }}
-            className={styles.filterElement}
-          />
-        );
-      });
-      filtersBlocks.push(
-        <EditFilterBlock
-          filterBlock={
-            <div className={styles.filterElements}>{...filterElements}</div>
-          }
-          title={filter.text}
-          className={styles.filterBlock}
-        />,
-      );
-    }
-    if (filter.type === 'radio') {
-      const filterElements = filter.filters.map((filterElem, i) => {
+  const filterKeys = Object.keys(
+    props.filters,
+  ) as (keyof typeof props.filters)[];
+  filterKeys.forEach(filterKey => {
+    const filterElements = props.filters[filterKey].filters.map(
+      (filterElem, i) => {
         return (
           <Radio
             text={filterElem.text}
             isActive={filterElem.isActive}
             onChange={() => {
-              props.setRadioIsActive(filter.name, i);
+              props.setRadioIsActive(filterKey, i);
             }}
             className={styles.filterElement}
           />
         );
-      });
-      filtersBlocks.push(
-        <EditFilterBlock
-          filterBlock={
-            <div className={styles.filterElements}>{...filterElements}</div>
-          }
-          title={filter.text}
-          className={styles.filterBlock}
-        />,
-      );
-    }
+      },
+    );
+    filtersBlocks.push(
+      <EditFilterBlock
+        filterBlock={
+          <div className={styles.filterElements}>{...filterElements}</div>
+        }
+        title={props.filters[filterKey].text}
+        className={styles.filterBlock}
+      />,
+    );
   });
 
   return (

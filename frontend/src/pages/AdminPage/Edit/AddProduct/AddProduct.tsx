@@ -7,31 +7,25 @@ import EditProductInfo from '../EditProductInfo/EditProductInfo.tsx';
 import emptyImg from 'assets/empty-img.png';
 import Btn from 'components/btns/Btn/Btn.tsx';
 import createProduct from 'api/components/createProduct.ts';
-import TVideoCard from 'types/components/TVideoCard.ts';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store/store.ts';
-import useFilters, { TFiltersType, TFilterType } from 'hooks/useFilters.ts';
+import useFilters from 'hooks/useFilters.ts';
 import TCheckBox from 'types/TCheckBox.ts';
+import { TFilter } from 'store/slices/filtersSlice.ts';
+import TVideoCard from 'types/components/TVideoCard.ts';
 
-function searchFilter(filters: TFiltersType, name: string): null | TFilterType {
-  let result: null | TFilterType = null;
-  filters.forEach(filter => {
-    if (filter.name === name) {
-      result = filter;
-    }
-  });
-  return result;
-}
-
-function searchActiveFromFilter(filter: TFilterType): TCheckBox | null {
+function searchActiveFromFilter(filter: TFilter): TCheckBox | null {
   let result: null | TCheckBox = null;
   filter.filters.forEach(filterElem => {
-    console.log(filter, filterElem);
     if (filterElem.isActive) {
       result = filterElem;
     }
   });
   return result;
+}
+
+function handleCreateProduct<T>(url: string, object: Omit<T, 'id'>) {
+  return createProduct<Omit<T, 'id'>>(url, object);
 }
 
 function AddProduct() {
@@ -50,10 +44,13 @@ function AddProduct() {
   const [amount, setAmount] = useState(0);
   const imgFile: React.MutableRefObject<null | File> = useRef(null);
   const allFiltersState = useSelector((state: RootState) => state.filters);
-  const { filters, setRadioIsActive, setCheckBoxIsActive, setFiltersHandle } =
-    useFilters([], 'radio');
+  const { filters, setRadioIsActive, setComponentTypeHandle } = useFilters(
+    allFiltersState,
+    'radio',
+    activeCategory,
+  );
   useEffect(() => {
-    setFiltersHandle(allFiltersState[activeCategory]);
+    setComponentTypeHandle(activeCategory);
   }, [activeCategory]);
 
   return (
@@ -77,40 +74,37 @@ function AddProduct() {
         amount={amount}
         setAmount={setAmount}
         filters={filters}
-        setCheckBoxIsActive={setCheckBoxIsActive}
         setRadioIsActive={setRadioIsActive}
         imgFileRef={imgFile}
       />
       <Btn
         onClick={() => {
-          const brandFilter = searchFilter(filters, 'brand');
-          const brand = brandFilter
-            ? searchActiveFromFilter(brandFilter)
-            : null;
-          const modelFilter = searchFilter(filters, 'model');
-          const model = modelFilter
-            ? searchActiveFromFilter(modelFilter)
-            : null;
-          const memoryDbFilter = searchFilter(filters, 'memoryDb');
-          const memoryDb = memoryDbFilter
-            ? searchActiveFromFilter(memoryDbFilter)
-            : null;
-          const memoryTypeFilter = searchFilter(filters, 'memoryType');
-          const memoryType = memoryTypeFilter
-            ? searchActiveFromFilter(memoryTypeFilter)
-            : null;
+          const filtersObject = Object.keys(filters).reduce(
+            (acc, key) => {
+              const active = searchActiveFromFilter(
+                filters[key as keyof typeof filters],
+              );
+              acc[key as keyof typeof filters] = active ? active.text : '';
+              return acc;
+            },
+            {} as { [key in keyof typeof filters]: string },
+          );
+          const requestData = {
+            ...filtersObject,
+            country: 'Russia',
+            price: price,
+            description: description,
+            image: imgFile.current,
+            amount: amount,
+          };
           if (imgFile.current != null) {
-            createProduct<TVideoCard<File>>('/VideoCard/createVideoCard', {
-              brand: brand ? brand.text : '',
-              model: model ? model.text : '',
-              country: 'Russia',
-              price: price,
-              description: description,
-              image: imgFile.current,
-              amount: amount,
-              memoryDb: memoryDb ? memoryDb.text : '',
-              memoryType: memoryType ? memoryType.text : '',
-            });
+            switch (activeCategory) {
+              case EComponentTypes.videoCard:
+                handleCreateProduct<TVideoCard<File>>(
+                  '/VideoCard/createVideoCard',
+                  requestData as TVideoCard<File>,
+                );
+            }
           }
         }}
       >

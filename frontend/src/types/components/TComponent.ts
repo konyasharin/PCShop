@@ -1,7 +1,7 @@
-type TComponent<T extends File | string> = {
+import TComponentFilters from 'types/components/TComponentFilters.ts';
+
+type TComponent<T extends File | string> = TComponentFilters & {
   id: number;
-  brand: string;
-  model: string;
   country: string;
   price: number;
   description: string;

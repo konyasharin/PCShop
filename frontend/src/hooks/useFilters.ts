@@ -1,66 +1,85 @@
 import { useRef, useState } from 'react';
-import { TFilter, TFilters } from 'store/slices/filtersSlice.ts';
+import { TFilters } from 'store/slices/filtersSlice.ts';
+import EComponentTypes from 'enums/EComponentTypes.ts';
+import TComponentFiltersKeys from 'types/components/TComponentFiltersKeys.ts';
 
-export type TFilterType = TFilter & {
-  type: 'radio' | 'checkBox';
-};
-
-export type TFiltersType = TFilterType[];
-
-function useFilters(filtersState: TFilters, initialType: 'radio' | 'checkBox') {
+function useFilters(
+  filtersState: TFilters,
+  initialType: 'radio' | 'checkBox',
+  initialComponentType: EComponentTypes,
+) {
   const type = useRef(initialType);
-  const [filters, setFilters] = useState<TFiltersType>(
-    initFilters(filtersState),
+  const componentType = useRef(initialComponentType);
+  const [filters, setFilters] = useState<TComponentFiltersKeys>(
+    initFilters(filtersState[componentType.current]),
   );
 
-  function initFilters(newFilters: TFilters): TFiltersType {
-    return newFilters.map(filter => {
-      return {
-        ...filter,
-        type: type.current,
-        filters: filter.filters.map(filterElem => {
-          return {
-            text: filterElem.text,
-            isActive: false,
-          };
-        }),
-      };
-    });
+  function setComponentTypeHandle(newComponentType: EComponentTypes) {
+    componentType.current = newComponentType;
+    setFilters(initFilters(filtersState[componentType.current]));
   }
 
-  function setFiltersHandle(newFilters: TFilters) {
-    setFilters(initFilters(newFilters));
+  function initFilters(initFilters: TComponentFiltersKeys) {
+    let k: keyof TComponentFiltersKeys;
+    const newFilters = JSON.parse(
+      JSON.stringify(initFilters),
+    ) as TComponentFiltersKeys; // Создание глубокой копии
+    for (k in initFilters) {
+      newFilters[k].filters = newFilters[k].filters.map(filter => {
+        return {
+          ...filter,
+          isActive: false,
+        };
+      });
+    }
+    return newFilters;
   }
 
   function setCheckBoxIsActive(
-    nameBlock: string,
+    nameBlock: keyof TComponentFiltersKeys,
     index: number,
     newIsActive: boolean,
   ) {
-    setFilters(
-      filters.map(filter => {
-        if (nameBlock === filter.name && filter.type === 'checkBox') {
-          filter.filters[index].isActive = newIsActive;
-        }
-        return filter;
-      }),
-    );
+    const newFilters = {
+      ...filters,
+      [nameBlock]: {
+        ...filters[nameBlock],
+        filters: filters[nameBlock].filters.map((filter, i) => {
+          if (i === index && type.current === 'checkBox') {
+            filter.isActive = newIsActive;
+          }
+          return filter;
+        }),
+      },
+    };
+    setFilters(newFilters);
   }
 
-  function setRadioIsActive(nameBlock: string, index: number) {
-    setFilters(
-      filters.map(filter => {
-        if (filter.name === nameBlock && filter.type === 'radio') {
-          filter.filters.forEach((filterElem, i) => {
-            filterElem.isActive = index === i;
-          });
-        }
-        return filter;
-      }),
-    );
+  function setRadioIsActive(
+    nameBlock: keyof TComponentFiltersKeys,
+    index: number,
+  ) {
+    const newFilters = {
+      ...filters,
+      [nameBlock]: {
+        ...filters[nameBlock],
+        filters: filters[nameBlock].filters.map((filter, i) => {
+          if (type.current === 'radio') {
+            filter.isActive = index === i;
+          }
+          return filter;
+        }),
+      },
+    };
+    setFilters(newFilters);
   }
 
-  return { filters, setCheckBoxIsActive, setRadioIsActive, setFiltersHandle };
+  return {
+    filters,
+    setCheckBoxIsActive,
+    setRadioIsActive,
+    setComponentTypeHandle,
+  };
 }
 
 export default useFilters;

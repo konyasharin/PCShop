@@ -2,11 +2,14 @@ import useRadios from 'hooks/useRadios.ts';
 import styles from './EditProduct.module.css';
 import EComponentTypes from 'enums/EComponentTypes.ts';
 import Input from 'components/Input/Input.tsx';
-import { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import emptyImg from 'assets/empty-img.png';
 import EditProductInfo from '../EditProductInfo/EditProductInfo.tsx';
 import Btn from 'components/btns/Btn/Btn.tsx';
 import CategoriesBlocks from '../CategoriesBlocks/CategoriesBlocks.tsx';
+import useFilters from 'hooks/useFilters.ts';
+import { useSelector } from 'react-redux';
+import { RootState } from 'store/store.ts';
 
 function EditProduct() {
   const { radios: categories, setRadioIsActive: setCategoryIsActive } =
@@ -16,11 +19,23 @@ function EditProduct() {
     ]);
   const [productId, setProductId] = useState('');
   const [productName, setProductName] = useState('');
-  const [price, setPrice] = useState('10000');
+  const [price, setPrice] = useState(0);
+  const imgFile: React.MutableRefObject<null | File> = useRef(null);
+  const [description, setDescription] = useState('');
+  const [amount, setAmount] = useState(0);
+  const allFiltersState = useSelector((state: RootState) => state.filters);
   const [activeCategory, setActiveCategory] = useState<EComponentTypes>(
     EComponentTypes.videoCard,
   );
   const [img, setImg] = useState(emptyImg);
+  const { filters, setRadioIsActive, setComponentTypeHandle } = useFilters(
+    allFiltersState,
+    'radio',
+    activeCategory,
+  );
+  useEffect(() => {
+    setComponentTypeHandle(activeCategory);
+  }, [activeCategory]);
   return (
     <div className={styles.block}>
       <h5 className={styles.title}>Категория</h5>
@@ -45,6 +60,13 @@ function EditProduct() {
         setPrice={setPrice}
         img={img}
         setImg={setImg}
+        imgFileRef={imgFile}
+        setDescription={setDescription}
+        description={description}
+        amount={amount}
+        setAmount={setAmount}
+        filters={filters}
+        setRadioIsActive={setRadioIsActive}
       />
       <Btn>Редактировать</Btn>
       <h5 className={styles.delete}>Удалить товар</h5>
