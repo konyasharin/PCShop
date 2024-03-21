@@ -5,6 +5,7 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using System.Drawing;
+using backend.Entities.CommentEntities;
 
 namespace backend.Controllers
 {
@@ -309,6 +310,34 @@ namespace backend.Controllers
             }
         }
 
+        [HttpPost("addComment")]
+        public async Task<IActionResult> AddComputerCaseComment(Comment computerCaseComment)
+        {
+            return await AddComment(computerCaseComment, "cooler_comment");
+        }
         
+        [HttpPut("updateComment")]
+        public async Task<IActionResult> UpdateComputerCaseComment(Comment computerCaseComment)
+        {
+            return await UpdateComment(computerCaseComment, "cooler_comment");
+        }
+        
+        [HttpDelete("{productId}/deleteComment/{commentId}")]
+        public async Task<IActionResult> DeleteComputerCaseComment(int productId, int commentId)
+        {
+            return await DeleteComment(productId, commentId, "cooler_comment");
+        }
+        
+        [HttpGet("GetAllComments")]
+        public async Task<IActionResult> GetComputerCaseAllComments(int limit = 1, int offset = 0)
+        {
+            return await GetAllComments(limit, offset, "cooler_comment");
+        }
+        
+        [HttpGet("{productId}/getComment/{commentId}")]
+        public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
+        {
+            return await GetComment(productId, commentId, "cooler_comment");
+        }
     }
 }

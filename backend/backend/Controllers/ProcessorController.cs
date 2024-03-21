@@ -1,10 +1,10 @@
 ﻿using backend.Entities;
+using backend.Entities.CommentEntities;
 using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
-using System.Diagnostics;
 
 namespace backend.Controllers
 {
@@ -466,6 +466,36 @@ namespace backend.Controllers
                 logger.LogError("Error with ClockFrequency filter");
                 return BadRequest(new { error = ex.Message });
             }
+        }
+        
+        [HttpPost("addComment")]
+        public async Task<IActionResult> AddComputerCaseComment(Comment computerCaseComment)
+        {
+            return await AddComment(computerCaseComment, "processor_comment");
+        }
+        
+        [HttpPut("updateComment")]
+        public async Task<IActionResult> UpdateComputerCaseComment(Comment computerCaseComment)
+        {
+            return await UpdateComment(computerCaseComment, "processor_comment");
+        }
+        
+        [HttpDelete("{productId}/deleteComment/{commentId}")]
+        public async Task<IActionResult> DeleteComputerCaseComment(int productId, int commentId)
+        {
+            return await DeleteComment(productId, commentId, "processor_comment");
+        }
+        
+        [HttpGet("GetAllComments")]
+        public async Task<IActionResult> GetComputerCaseAllComments(int limit = 1, int offset = 0)
+        {
+            return await GetAllComments(limit, offset, "processor_comment");
+        }
+        
+        [HttpGet("{productId}/getComment/{commentId}")]
+        public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
+        {
+            return await GetComment(productId, commentId, "processor_comment");
         }
     }
 }
