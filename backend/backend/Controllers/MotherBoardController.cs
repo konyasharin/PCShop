@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Entities.CommentEntities;
 using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
@@ -302,6 +303,36 @@ namespace backend.Controllers
                 logger.LogError("Error with country filter");
                 return BadRequest(new { error = ex.Message });
             }
+        }
+        
+        [HttpPost("addComment")]
+        public async Task<IActionResult> AddComputerCaseComment(Comment computerCaseComment)
+        {
+            return await AddComment(computerCaseComment, "mother_board_comment");
+        }
+        
+        [HttpPut("updateComment")]
+        public async Task<IActionResult> UpdateComputerCaseComment(Comment computerCaseComment)
+        {
+            return await UpdateComment(computerCaseComment, "mother_board_comment");
+        }
+        
+        [HttpDelete("{productId}/deleteComment/{commentId}")]
+        public async Task<IActionResult> DeleteComputerCaseComment(int productId, int commentId)
+        {
+            return await DeleteComment(productId, commentId, "mother_board_comment");
+        }
+        
+        [HttpGet("GetAllComments")]
+        public async Task<IActionResult> GetComputerCaseAllComments(int limit = 1, int offset = 0)
+        {
+            return await GetAllComments(limit, offset, "mother_board_comment");
+        }
+        
+        [HttpGet("{productId}/getComment/{commentId}")]
+        public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
+        {
+            return await GetComment(productId, commentId, "mother_board_comment");
         }
     }
 }

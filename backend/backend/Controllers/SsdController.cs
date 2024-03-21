@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using System.Runtime.Intrinsics.X86;
+using backend.Entities.CommentEntities;
 
 namespace backend.Controllers
 {
@@ -418,6 +419,36 @@ namespace backend.Controllers
                 logger.LogError("Error with capacity filter");
                 return BadRequest(new { error = ex.Message });
             }
+        }
+        
+        [HttpPost("addComment")]
+        public async Task<IActionResult> AddComputerCaseComment(Comment computerCaseComment)
+        {
+            return await AddComment(computerCaseComment, "ssd_comment");
+        }
+        
+        [HttpPut("updateComment")]
+        public async Task<IActionResult> UpdateComputerCaseComment(Comment computerCaseComment)
+        {
+            return await UpdateComment(computerCaseComment, "ssd_comment");
+        }
+        
+        [HttpDelete("{productId}/deleteComment/{commentId}")]
+        public async Task<IActionResult> DeleteComputerCaseComment(int productId, int commentId)
+        {
+            return await DeleteComment(productId, commentId, "ssd_comment");
+        }
+        
+        [HttpGet("GetAllComments")]
+        public async Task<IActionResult> GetComputerCaseAllComments(int limit = 1, int offset = 0)
+        {
+            return await GetAllComments(limit, offset, "ssd_comment");
+        }
+        
+        [HttpGet("{productId}/getComment/{commentId}")]
+        public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
+        {
+            return await GetComment(productId, commentId, "ssd_comment");
         }
     }
 }

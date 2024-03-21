@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Entities.CommentEntities;
 using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
@@ -409,6 +410,35 @@ namespace backend.Controllers
                 logger.LogError("Error with memory_db filter");
                 return BadRequest(new { error = ex.Message });
             }
+        }
+        [HttpPost("addComment")]
+        public async Task<IActionResult> AddComputerCaseComment(Comment videoCardComment)
+        {
+            return await AddComment(videoCardComment, "video_card_comment");
+        }
+        
+        [HttpPut("updateComment")]
+        public async Task<IActionResult> UpdateComputerCaseComment(Comment videoCardComment)
+        {
+            return await UpdateComment(videoCardComment, "video_card_comment");
+        }
+        
+        [HttpDelete("{productId}/deleteComment/{commentId}")]
+        public async Task<IActionResult> DeleteComputerCaseComment(int productId, int commentId)
+        {
+            return await DeleteComment(productId, commentId, "video_card_comment");
+        }
+        
+        [HttpGet("GetAllComments")]
+        public async Task<IActionResult> GetComputerCaseAllComments(int limit = 1, int offset = 0)
+        {
+            return await GetAllComments(limit, offset, "video_card_comment");
+        }
+        
+        [HttpGet("{productId}/getComment/{commentId}")]
+        public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
+        {
+            return await GetComment(productId, commentId, "video_card_comment");
         }
     }
 }
