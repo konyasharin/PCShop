@@ -11,7 +11,6 @@ import ShowMoreBtn from 'components/btns/ShowMoreBtn/ShowMoreBtn.tsx';
 import TProduct from 'types/TProduct.ts';
 import config from '../../../../../../config.ts';
 import CheckBox from 'components/CheckBox/CheckBox.tsx';
-import Radio from 'components/Radio/Radio.tsx';
 import createClassNames from 'utils/createClassNames.ts';
 
 type AddWindowProps = {
@@ -24,72 +23,43 @@ type AddWindowProps = {
 
 const AddWindow: React.FC<AddWindowProps> = props => {
   const [searchString, setSearchString] = useState('');
-  const { filters, setCheckBoxIsActive, setRadioIsActive } = useFilters(
-    useSelector((state: RootState) => state.filters[props.type]),
+  const { filters, setCheckBoxIsActive } = useFilters(
+    useSelector((state: RootState) => state.filters),
     'checkBox',
+    props.type,
   );
   const [priceFrom, setPriceFrom] = useState('');
   const [priceTo, setPriceTo] = useState('');
   const checkBoxes: ReactNode[] = [];
-  filters.forEach(filter => {
-    if (filter.type === 'checkBox') {
-      const filtersBlocks = filter.filters.map((filterBlock, i) => {
-        return (
-          <CheckBox
-            text={filterBlock.text}
-            isActive={filterBlock.isActive}
-            onChange={() => {
-              setCheckBoxIsActive(filter.name, i, !filterBlock.isActive);
-            }}
-            className={styles.filterBlockElement}
-          />
-        );
-      });
-      checkBoxes.push(
-        <div>
-          <h6
-            className={createClassNames([
-              styles.filterBlockElement,
-              styles.filterBlockElementTitle,
-            ])}
-          >
-            {filter.text}
-          </h6>
-          {...filtersBlocks}
-        </div>,
+  const filterKeys: (keyof typeof filters)[] = Object.keys(
+    filters,
+  ) as (keyof typeof filters)[]; // Нужно для сохранения ссылок на ключи при их передаче в компонент
+  filterKeys.forEach(filterKey => {
+    const filtersBlocks = filters[filterKey].filters.map((filterBlock, i) => {
+      return (
+        <CheckBox
+          text={filterBlock.text}
+          isActive={filterBlock.isActive}
+          onChange={() => {
+            setCheckBoxIsActive(filterKey, i, !filterBlock.isActive);
+          }}
+          className={styles.filterBlockElement}
+        />
       );
-    }
-  });
-
-  const radios: ReactNode[] = [];
-  filters.forEach(filter => {
-    if (filter.type === 'radio') {
-      const radiosBlocks = filter.filters.map((filterBlock, i) => {
-        return (
-          <Radio
-            text={filterBlock.text}
-            isActive={filterBlock.isActive}
-            onChange={() => {
-              setRadioIsActive(filter.name, i);
-            }}
-            className={styles.filterBlockElement}
-          />
-        );
-      });
-      radios.push(
-        <div>
-          <h6
-            className={createClassNames([
-              styles.filterBlockElement,
-              styles.filterBlockElementTitle,
-            ])}
-          >
-            {filter.text}
-          </h6>
-          {...radiosBlocks}
-        </div>,
-      );
-    }
+    });
+    checkBoxes.push(
+      <div>
+        <h6
+          className={createClassNames([
+            styles.filterBlockElement,
+            styles.filterBlockElementTitle,
+          ])}
+        >
+          {filters[filterKey].text}
+        </h6>
+        {...filtersBlocks}
+      </div>,
+    );
   });
   const inputs: ReactNode = (
     <div>
@@ -117,16 +87,6 @@ const AddWindow: React.FC<AddWindowProps> = props => {
       />
     </div>
   );
-  // const inputsBlocks = filters.inputsBlocks.map(inputsBlock => {
-  //   return (
-  //     <FilterBlock title={inputsBlock.name}>
-  //       <InputsBlock
-  //         inputs={inputsBlock.inputs}
-  //         onChange={(name, newValue) => setInputValue(name, newValue)}
-  //         inputClassName={styles.filterBlockElement}
-  //       />
-  //     </FilterBlock>
-  //   );
 
   const cards = props.products.map(product => {
     return (
@@ -141,10 +101,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
   });
   return (
     <div className={props.isActive ? styles.window : styles.windowDisable}>
-      <FiltersPanel
-        type={props.type}
-        blocks={[...checkBoxes, ...radios, inputs]}
-      />
+      <FiltersPanel type={props.type} blocks={[...checkBoxes, inputs]} />
       <div className={styles.rightBlock}>
         <h2 className={styles.title}>{props.searchTitle}</h2>
         <Input
