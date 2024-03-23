@@ -8,6 +8,7 @@ type ChooseComponentCard = {
   text: string;
   price: number;
   img: string;
+  onClick?: () => void;
   className?: string;
 };
 
@@ -18,7 +19,11 @@ const ChooseComponentCard: React.FC<ChooseComponentCard> = props => {
       className={props.className}
       name={props.name}
       text={props.text}
-      bottomBlock={<MainBtn className={styles.btn}>Добавить</MainBtn>}
+      bottomBlock={
+        <MainBtn className={styles.btn} onClick={props.onClick}>
+          Добавить
+        </MainBtn>
+      }
       rightBlock={<h2 className={styles.price}>{props.price}$</h2>}
     />
   );

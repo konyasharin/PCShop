@@ -19,6 +19,10 @@ type AddWindowProps = {
   isActive: boolean;
   products: TProduct[];
   onShowMore: () => void;
+  setCurrentProduct: (
+    newProduct: TProduct | null,
+    componentType: EComponentTypes,
+  ) => void;
 };
 
 const AddWindow: React.FC<AddWindowProps> = props => {
@@ -96,6 +100,9 @@ const AddWindow: React.FC<AddWindowProps> = props => {
         img={`${config.backupUrl}/${product.img}`}
         text={product.description}
         className={styles.card}
+        onClick={() => {
+          props.setCurrentProduct(product, props.type);
+        }}
       />
     );
   });
