@@ -1,5 +1,6 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
+using backend.Entities.User;
 using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
@@ -64,6 +65,8 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Power must be between 0 and 10" });
                 }
 
+                processor.Likes = 0;
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -80,15 +83,17 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = processor.Amount,
                         power = processor.Power,
+                        likes = processor.Likes,
                     };
 
                     connection.Open();
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.processor (brand, model, country, cores, clock_frequency, turbo_frequency," +
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.processor (brand, model," +
+                        " country, cores, clock_frequency, turbo_frequency," +
                         " heat_dissipation," +
-                        "price, description, image, amount, power)" +
+                        "price, description, image, amount, power, likes)" +
                         "VALUES (@brand, @model, @country, @cores, @clock_frequency, @turbo_frequency," +
                         " @heat_dissipation, @price," +
-                        " @description, @image, @amount, @power) RETURNING id", data);
+                        " @description, @image, @amount, @power, @likes) RETURNING id", data);
 
                     logger.LogInformation("Processor data saved to database");
                     return Ok(new { id = id, data });
@@ -180,6 +185,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Power must be between 0 and 10" });
                 }
 
+                if(updatedProcessor.Likes < 0)
+                {
+                    return BadRequest(new { error = "Likes must not be less than 0" });
+                }
+
                 string imagePath = string.Empty;
 
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -212,6 +222,7 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = updatedProcessor.Amount,
                         power = updatedProcessor.Power,
+                        likes = updatedProcessor.Likes,
                     };
 
                     connection.Open();
@@ -222,7 +233,7 @@ namespace backend.Controllers
                         " clock_frequency = @clock_frequency, turbo_frequency = @turbo_frequency," +
                         " heat_dissipation = @heat_dissipation," +
                         " depth = @depth, price = @price, description = @description," +
-                        " image = @image, amount = @amount, power = @power WHERE id = @id", data);
+                        " image = @image, amount = @amount, power = @power, likes = @likes WHERE id = @id", data);
 
                     logger.LogInformation("Processor data updated in the database");
 
@@ -508,6 +519,12 @@ namespace backend.Controllers
         public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
         {
             return await GetComment(productId, commentId, "processor_comment");
+        }
+
+        [HttpPut("likeProcessor/{id}")]
+        public async Task<IActionResult> LikeProcessor(int id, User user)
+        {
+            return await LikeComponent(id, user, "processor");
         }
     }
 }

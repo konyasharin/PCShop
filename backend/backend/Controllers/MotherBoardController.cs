@@ -1,5 +1,6 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
+using backend.Entities.User;
 using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
@@ -43,6 +44,8 @@ namespace backend.Controllers
                 return BadRequest(new { error = "Power must be between 0 and 10" });
             }
 
+            motherBoard.Likes = 0;
+
             try
             {
                 string imagePath = BackupWriter.Write(motherBoard.Image);
@@ -62,13 +65,14 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = motherBoard.Amount,
                         power = motherBoard.Power,
+                        likes = motherBoard.Likes,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.mother_board (brand, model, country, frequency, socket, chipset," +
-                        "price, description, image, amount, power)" +
+                        "price, description, image, amount, power, likes)" +
                         "VALUES (@brand, @model, @country, @frequency, @socket, @chipset," +
-                        " @price, @description, @image, @amount, @power) RETURNING id", data);
+                        " @price, @description, @image, @amount, @power, @likes) RETURNING id", data);
 
                     logger.LogInformation("MotherBoard data saved to database");
                     return Ok(new { id =  id, data});
@@ -146,6 +150,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Power must not be between 0 and 10" });
                 }
 
+                if(updatedMotherBoard.Likes < 0)
+                {
+                    return BadRequest(new { error = "Likes must not be less than 0" });
+                }
+
                 string imagePath = string.Empty;
 
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -177,6 +186,7 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = updatedMotherBoard.Amount,
                         power = updatedMotherBoard.Power,
+                        likes = updatedMotherBoard.Likes,
                     };
 
                     connection.Open();
@@ -186,7 +196,7 @@ namespace backend.Controllers
                         " Country = @country, Frequency = @frequency," +
                         " Socket = @socket, Chipset = @chipset," +
                         " Price = @price, Description = @description," +
-                        " Image = @image, Amount = @amount, Power = @power WHERE Id = @id", data);
+                        " Image = @image, Amount = @amount, Power = @power, Likes = @likes WHERE Id = @id", data);
 
                     logger.LogInformation("MotherBoard data updated in the database");
 
@@ -346,6 +356,12 @@ namespace backend.Controllers
         public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
         {
             return await GetComment(productId, commentId, "mother_board_comment");
+        }
+
+        [HttpPut("likeMotherBoard/{id}")]
+        public async Task<IActionResult> LikeMotherBoard(int id, User user)
+        {
+            return await LikeComponent(id, user, "mother_board");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using backend.Entities.CommentEntities;
+using backend.Entities.User;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
@@ -189,6 +190,87 @@ namespace backend.Controllers
             {
                 logger.LogError(ex, "Error with retrieving comment by ID");
                 return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        protected async Task<IActionResult> LikeComponent(int id, User user, string component)
+        {
+            try
+            {
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    int? userId = user.Id;
+
+                    bool isUserExist = await connection.ExecuteScalarAsync<bool>("SELECT EXISTS (SELECT 1 FROM public.users " +
+                        "WHERE Id = @UserId)",
+                        new { UserId = userId });
+
+                    if (!isUserExist)
+                    {
+                        return StatusCode(500, new {error = $"User with {userId} not Found"})
+                    }
+
+                    bool isUserLiked = await connection.ExecuteScalarAsync<bool>("SELECT EXISTS (SELECT 1 " +
+                        "FROM public.like WHERE UserId = @UserId AND ComponentId = @ComponentId AND Component = @Component)",
+                        new { UserId = userId, ComponentId = id, Component = component });
+
+                    var currentLikes = await connection.ExecuteScalarAsync<int>($"SELECT likes FROM public.{component} " +
+                        $"WHERE Id = @Id",
+                        new { Id = id });
+
+                    if (!isUserLiked)
+                    {
+
+                        int likeid = connection.QueryFirstOrDefault<int>("INSERT INTO public.like (userid," +
+                            " componentid, component) " +
+                            "VALUES (@userid, @componentid, component) RETURNING id",
+                            new { userid = userId, assemblyid = id, component = component });
+
+                        var updatedLikes = currentLikes + 1;
+
+                        await connection.ExecuteAsync($"UPDATE public.{component} SET likes = @Likes WHERE Id = @Id",
+                            new { Likes = updatedLikes, Id = id });
+
+                        logger.LogInformation($"Likes for {component} with Id {id} was plused");
+
+                        // ИНдекс сборки, которой поставили лайк
+                        return Ok(new { id = id });
+                    }
+
+                    else
+                    {
+                        connection.Execute("DELETE FROM public.like WHERE UserId = @UserId AND ComponentId = @ComponentId " +
+                            "AND Component = @Component",
+                            new { UserId = userId, AssemblyId = id });
+
+                        if (currentLikes > 0)
+                        {
+                            var updatedLikes = currentLikes - 1;
+                            await connection.ExecuteAsync($"UPDATE public.{component} SET likes = @Likes WHERE Id = @Id",
+                            new { Likes = updatedLikes, Id = id });
+                        }
+                        else
+                        {
+                            await connection.ExecuteAsync($"UPDATE public.{component} SET likes = @Likes WHERE Id = @Id",
+                            new { Likes = currentLikes, Id = id });
+                        }
+
+                        logger.LogInformation($"Likes for {component} with Id {id} was minused");
+
+                        // ИНдекс сборки, которой поставили лайк
+                        return Ok(new { id = id });
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Failed to like Assembly with Id {id}. Exception: {ex}");
+                return StatusCode(500, new { error = ex.Message });
             }
         }
     }

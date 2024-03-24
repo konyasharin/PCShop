@@ -1,9 +1,12 @@
 ﻿using backend.Entities;
+using backend.Entities.User;
 using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Npgsql;
+using System.Reflection;
 
 
 namespace backend.Controllers
@@ -207,6 +210,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must be less than 0" });
                 }
 
+                if(updatedAssembly.Likes < 0)
+                {
+                    return BadRequest(new { error = "Likes must not be less than 0" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -328,36 +336,9 @@ namespace backend.Controllers
         }
 
         [HttpPut("likeAssembly/{id}")]
-        public async Task<IActionResult> LikeAssembly(int id)
+        public async Task<IActionResult> LikeAssembly(int id, User user)
         {
-            try
-            {
-                
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    
-                    var currentLikes = await connection.ExecuteScalarAsync<int>("SELECT likes FROM public.assembly WHERE Id = @Id",
-                        new { Id = id });
-
-                    var updatedLikes = currentLikes + 1;
-
-                    await connection.ExecuteAsync("UPDATE public.assembly SET likes = @Likes WHERE Id = @Id",
-                        new { Likes = updatedLikes, Id = id });
-
-                    logger.LogInformation($"Likes for Assembly with Id {id} was plused");
-
-                    // ИНдекс сборки, которой поставили лайк
-                    return Ok(new {id = id});
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Failed to like Assembly with Id {id}. Exception: {ex}");
-                return StatusCode(500, new {error = ex.Message});
-            }
+            return await LikeComponent(id, user, "assembly");
         }
 
         [HttpGet("getPopularAssemblies")]
