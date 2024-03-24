@@ -14,6 +14,7 @@ import TCheckBox from 'types/TCheckBox.ts';
 import { TFilter } from 'store/slices/filtersSlice.ts';
 import TVideoCard from 'types/components/TVideoCard.ts';
 import useBorderValues from 'hooks/useBorderValues.ts';
+import TProcessor from 'types/components/TProcessor.ts';
 
 function searchActiveFromFilter(filter: TFilter): TCheckBox | null {
   let result: null | TCheckBox = null;
@@ -39,10 +40,10 @@ function AddProduct() {
     EComponentTypes.videoCard,
   );
   const [productName, setProductName] = useState('');
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useBorderValues(1, 1);
   const [img, setImg] = useState(emptyImg);
   const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useBorderValues(0, 0);
   const [power, setPower] = useBorderValues(0, 0, 10);
   const imgFile: React.MutableRefObject<null | File> = useRef(null);
   const allFiltersState = useSelector((state: RootState) => state.filters);
@@ -109,6 +110,13 @@ function AddProduct() {
                   '/VideoCard/createVideoCard',
                   requestData as TVideoCard<File>,
                 );
+                break;
+              case EComponentTypes.processor:
+                handleCreateProduct<TProcessor<File>>(
+                  'Processor/createProcessor',
+                  requestData as TProcessor<File>,
+                );
+                break;
             }
           }
         }}

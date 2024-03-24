@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import TProduct from 'types/TProduct.ts';
 import EComponentTypes from 'enums/EComponentTypes.ts';
 import EBuildBlockErrors from 'enums/EBuildBlockErrors.ts';
+import useBorderValues from 'hooks/useBorderValues.ts';
 
 export type TUseBuildComponents = {
   [componentType in EComponentTypes]: {
@@ -21,12 +22,14 @@ function useBuild() {
       currentErrorType: EBuildBlockErrors.Error,
     },
   });
-  const [progressOfBuild, setProgressOfBuild] = useState(0);
-  const [price, setPrice] = useState(0);
+  const [progressOfBuild, setProgressOfBuild] = useBorderValues(0, 0, 100);
+  const [price, setPrice] = useBorderValues(0, 0);
+  const [power, setPower] = useBorderValues(0, 0, 10);
 
   useEffect(() => {
     calculateProgressOfBuild();
     calculatePrice();
+    calculatePower();
   }, [components]);
   function toggleError(
     newError: EBuildBlockErrors,
@@ -80,7 +83,27 @@ function useBuild() {
     setPrice(newPrice);
   }
 
-  return { setComponent, toggleError, components, progressOfBuild, price };
+  function calculatePower() {
+    let key: keyof typeof components;
+    let sumPower = 0;
+    let countComponents = 0;
+    for (key in components) {
+      countComponents += 1;
+      sumPower += components[key].currentProduct
+        ? components[key].currentProduct!.power
+        : 0;
+    }
+    setPower(sumPower / countComponents);
+  }
+
+  return {
+    setComponent,
+    toggleError,
+    components,
+    progressOfBuild,
+    price,
+    power,
+  };
 }
 
 export default useBuild;

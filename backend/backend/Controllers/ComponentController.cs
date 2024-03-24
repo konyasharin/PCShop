@@ -211,7 +211,7 @@ namespace backend.Controllers
 
                     if (!isUserExist)
                     {
-                        return StatusCode(500, new {error = $"User with {userId} not Found"})
+                        return StatusCode(500, new { error = $"User with {userId} not Found" });
                     }
 
                     bool isUserLiked = await connection.ExecuteScalarAsync<bool>("SELECT EXISTS (SELECT 1 " +

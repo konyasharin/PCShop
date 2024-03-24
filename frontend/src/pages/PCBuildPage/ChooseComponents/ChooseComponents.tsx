@@ -23,6 +23,7 @@ function convertToTProduct<
       name: `${component.brand} ${component.model}`,
       description: component.description,
       price: component.price,
+      power: component.power,
     };
   });
 }

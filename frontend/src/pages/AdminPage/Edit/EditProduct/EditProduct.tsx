@@ -10,6 +10,7 @@ import CategoriesBlocks from '../CategoriesBlocks/CategoriesBlocks.tsx';
 import useFilters from 'hooks/useFilters.ts';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store/store.ts';
+import useBorderValues from 'hooks/useBorderValues.ts';
 
 function EditProduct() {
   const { radios: categories, setRadioIsActive: setCategoryIsActive } =
@@ -19,10 +20,11 @@ function EditProduct() {
     ]);
   const [productId, setProductId] = useState('');
   const [productName, setProductName] = useState('');
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useBorderValues(1, 1);
   const imgFile: React.MutableRefObject<null | File> = useRef(null);
   const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useBorderValues(0, 0);
+  const [power, setPower] = useBorderValues(0, 0, 10);
   const allFiltersState = useSelector((state: RootState) => state.filters);
   const [activeCategory, setActiveCategory] = useState<EComponentTypes>(
     EComponentTypes.videoCard,
@@ -65,6 +67,8 @@ function EditProduct() {
         description={description}
         amount={amount}
         setAmount={setAmount}
+        power={power}
+        setPower={setPower}
         filters={filters}
         setRadioIsActive={setRadioIsActive}
       />

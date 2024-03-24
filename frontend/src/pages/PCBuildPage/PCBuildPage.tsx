@@ -11,9 +11,14 @@ import useBuild from 'hooks/useBuild.ts';
 
 function PCBuildPage() {
   const [buildName, setBuildName] = useState('');
-  const [power, setPower] = useState<number>(0);
-  const { components, setComponent, toggleError, progressOfBuild, price } =
-    useBuild();
+  const {
+    components,
+    setComponent,
+    toggleError,
+    progressOfBuild,
+    price,
+    power,
+  } = useBuild();
   return (
     <div className={styles.body}>
       <Container>
