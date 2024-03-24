@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using System.Runtime.Intrinsics.Arm;
 using backend.Entities.CommentEntities;
+using backend.Entities.User;
 
 namespace backend.Controllers
 {
@@ -57,6 +58,8 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Power must be between 0 and 10" });
                 }
 
+                ram.Likes = 0;
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -72,14 +75,15 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = ram.Amount,
                         power = ram.Power,
+                        likes = ram.Likes,
 
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.ram (id, brand, model, country, frequency, timings, capacity_db," +
-                        "price, description, image, amount, power)" +
+                        "price, description, image, amount, power, likes)" +
                         "VALUES (@brand, @model, @country, @frequency, @timings, @capacity_db," +
-                        " @price, @description, @image, @amount, @power) RETURNING id", data);
+                        " @price, @description, @image, @amount, @power, @likes) RETURNING id", data);
 
                     logger.LogInformation("Ram data saved to database");
                     return Ok(new { id = id, data });
@@ -163,6 +167,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Power must be between 0 and 10" });
                 }
 
+                if(updatedRam.Likes < 0)
+                {
+                    return BadRequest(new { error = "Likes must not be less than 0" });
+                }
+
                 string imagePath = string.Empty;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -193,15 +202,17 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = updatedRam.Amount,
                         power = updatedRam.Power,
+                        likes = updatedRam.Likes,
                     };
 
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    connection.Execute("UPDATE public.ram SET Brand = @brand, Model = @model, Country = @country, Frequency = @frequency," +
+                    connection.Execute("UPDATE public.ram SET Brand = @brand, Model = @model," +
+                        " Country = @country, Frequency = @frequency," +
                         " Timings = @timings, Capacity_db = @capacity_db," +
                         " Price = @price, Description = @description," +
-                        " Image = @image, Amount = @amount, Power = @power WHERE Id = @id", data);
+                        " Image = @image, Amount = @amount, Power = @power, Likes = @likes WHERE Id = @id", data);
 
                     logger.LogInformation("RAM data updated in the database");
 
@@ -527,6 +538,12 @@ namespace backend.Controllers
         public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
         {
             return await GetComment(productId, commentId, "ram_comment");
+        }
+
+        [HttpPut("likeRam/{id}")]
+        public async Task<IActionResult> LikeRam(int id, User user)
+        {
+            return await LikeComponent(id, user, "ram");
         }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using System.Drawing;
 using backend.Entities.CommentEntities;
+using backend.Entities.User;
 
 namespace backend.Controllers
 {
@@ -52,6 +53,8 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Power must be between 0 and 10" });
                 }
 
+                cooler.Likes = 0;
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -66,14 +69,15 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = cooler.Amount,
                         power = cooler.Power,
+                        likes = cooler.Likes,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.cooler (brand, model, country," +
                         " speed, cooler_power," +
-                        "price, description, image, amount, power)" +
+                        "price, description, image, amount, power, likes)" +
                         "VALUES (@brand, @model, @country, @speed, @cooler_power, @price," +
-                        " @description, @image, @amount, @power) RETURNING id", data);
+                        " @description, @image, @amount, @power, @likes) RETURNING id", data);
 
                     logger.LogInformation("Cooler data saved to database");
 
@@ -153,6 +157,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Power must be between 0 and 10" });
                 }
 
+                if(updatedCooler.Likes < 0)
+                {
+                    return BadRequest(new { error = "Likes must not be less than 0" });
+                }
+
                 string imagePath = string.Empty;
 
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -183,6 +192,7 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = updatedCooler.Amount,
                         power = updatedCooler.Power,
+                        likes = updatedCooler.Likes,
                     };
 
                     connection.Open();
@@ -191,7 +201,7 @@ namespace backend.Controllers
                     connection.Execute("UPDATE public.cooler SET Brand = @brand, Model = @model, Country = @country, Speed = @speed," +
                         " Cooler_power = @cooler_power," +
                         " Price = @price, Description = @description," +
-                        " Image = @image, Amount = @amount, Power = @power WHERE Id = @id", data);
+                        " Image = @image, Amount = @amount, Power = @power, Likes = @likes WHERE Id = @id", data);
 
                     logger.LogInformation("Cooler data updated in the database");
 
@@ -352,6 +362,12 @@ namespace backend.Controllers
         public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
         {
             return await GetComment(productId, commentId, "cooler_comment");
+        }
+
+        [HttpPut("likeCooler/{id}")]
+        public async Task<IActionResult> LikeCooler(int id, User user)
+        {
+            return await LikeComponent(id, user, "cooler");
         }
     }
 }

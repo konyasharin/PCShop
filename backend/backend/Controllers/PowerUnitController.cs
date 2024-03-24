@@ -1,5 +1,6 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
+using backend.Entities.User;
 using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
@@ -48,6 +49,8 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Power must must be between 0 and 10" });
                 }
 
+                powerunit.Likes = 0;
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -62,14 +65,15 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = powerunit.Amount,
                         power = powerunit.Power,
+                        likes = powerunit.Likes,
 
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.power_unit (brand, model, country, battery, voltage," +
-                        "price, description, image, amount, power)" +
+                        "price, description, image, amount, power, likes)" +
                         "VALUES (@brand, @model, @country, @battery, @voltage, @price," +
-                        " @description, @image, @amount, @power) RETURNING id", data);
+                        " @description, @image, @amount, @power, @likes) RETURNING id", data);
 
                     logger.LogInformation("powerUnit data saved to database");
                     return Ok(new { id = id, data });
@@ -144,6 +148,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Power must be between 0 and 10" });
                 }
 
+                if(updatedPowerUnit.Likes < 0)
+                {
+                    return BadRequest(new { error = "Likes must not be less than 0" });
+                }
+
                 string imagePath = string.Empty;
 
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -174,15 +183,17 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = updatedPowerUnit.Amount,
                         power = updatedPowerUnit.Power,
+                        likes = updatedPowerUnit.Likes,
                     };
 
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    connection.Execute("UPDATE public.power_unit SET Brand = @brand, Model = @model, Country = @country, Battery = @battery," +
+                    connection.Execute("UPDATE public.power_unit SET Brand = @brand, Model = @model," +
+                        " Country = @country, Battery = @battery," +
                         " Voltage = @voltage," +
                         " Price = @price, Description = @description," +
-                        " Image = @image, Amount = @amount, Power = @power WHERE Id = @id", data);
+                        " Image = @image, Amount = @amount, Power = @power, Likes = @likes WHERE Id = @id", data);
 
                     logger.LogInformation("PowerUnit data updated in the database");
 
@@ -469,6 +480,12 @@ namespace backend.Controllers
         public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
         {
             return await GetComment(productId, commentId, "power_unit_comment");
+        }
+
+        [HttpPut("likePowerUnit/{id}")]
+        public async Task<IActionResult> LikePowerUnit(int id, User user)
+        {
+            return await LikeComponent(id, user, "power_unit");
         }
     }
 }

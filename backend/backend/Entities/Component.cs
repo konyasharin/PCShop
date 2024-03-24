@@ -11,5 +11,6 @@
         public T Image { get; set; }
         public int Amount { get; set; }
         public int Power { get; set; }
+        public int Likes { get; set; }
     }
 }

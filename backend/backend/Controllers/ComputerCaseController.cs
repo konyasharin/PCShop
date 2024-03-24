@@ -1,5 +1,6 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
+using backend.Entities.User;
 using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
@@ -56,6 +57,8 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Power must be between 0 and 10" });
                 }
 
+                computerCase.Likes = 0;
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -72,13 +75,14 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = computerCase.Amount,
                         power = computerCase.Power,
+                        likes = computerCase.Likes,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.computer_case (brand, model, country, material, width, height, depth," +
-                        "price, description, image, amount, power)" +
+                        "price, description, image, amount, power, likes)" +
                         "VALUES (@brand, @model, @country, @material, @width, @height, @depth, @price," +
-                        " @description, @image, @amount, @power) RETURNING id", data);
+                        " @description, @image, @amount, @power, @likes) RETURNING id", data);
 
                     logger.LogInformation($"ComputerCase data saved to database with id {id}");
                     return Ok(new { id = id, data });
@@ -103,7 +107,8 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var computerCases = connection.Query<ComputerCase<string>>("SELECT * FROM public.computer_case LIMIT @Limit OFFSET @Offset", 
+                    var computerCases = connection.Query<ComputerCase<string>>("SELECT * FROM public.computer_case " +
+                        "LIMIT @Limit OFFSET @Offset", 
                         new {Limit = limit, Offset = offset});
 
                     logger.LogInformation("Retrieved all ComputerCase data from the database");
@@ -133,7 +138,8 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
                     
-                    var computerCase = connection.QueryFirstOrDefault<ComputerCase<string>>("SELECT * FROM public.computer_case WHERE Id = @Id",
+                    var computerCase = connection.QueryFirstOrDefault<ComputerCase<string>>("SELECT * FROM public.computer_case " +
+                        "WHERE Id = @Id",
                         new { Id = id });
 
                     if (computerCase != null)
@@ -192,6 +198,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Power must be between 0 and 10" });
                 }
 
+                if(updatedComputerCase.Likes < 0)
+                {
+                    return BadRequest(new { error = "Likes must not be less than 0" });
+                }
+
 
                 string imagePath = string.Empty;
 
@@ -227,6 +238,7 @@ namespace backend.Controllers
                         image = imagePath,
                         amount = updatedComputerCase.Amount,
                         power = updatedComputerCase.Power,
+                        likes = updatedComputerCase.Likes,
                     };
 
                     connection.Open();
@@ -235,7 +247,7 @@ namespace backend.Controllers
                     connection.Execute("UPDATE public.computer_case SET Brand = @brand, Model = @model, Country = @country," +
                         " Material = @material, Width = @width, Height = @height," +
                         " Depth = @depth, Price = @price, Description = @description," +
-                        " Image = @image, Amount = @amount, Power = @power WHERE Id = @id", data);
+                        " Image = @image, Amount = @amount, Power = @power, Likes = @likes WHERE Id = @id", data);
 
                     logger.LogInformation("ComputerCase data updated in the database");
 
@@ -367,6 +379,12 @@ namespace backend.Controllers
         public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
         {
             return await GetComment(productId, commentId, "computer_case_comment");
+        }
+
+        [HttpPut("likeComputerCase/{id}")]
+        public async Task<IActionResult> LikeComputerCase(int id, User user)
+        {
+            return await LikeComponent(id, user, "computer_case");
         }
     }
 }
