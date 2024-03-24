@@ -1,0 +1,24 @@
+.checkBox{
+    margin-top: 5px;
+}
+
+.checkBox:last-child{
+    margin-bottom: 10px;
+}
+
+.filterTitle{
+    font-weight: 700;
+}
+
+.comments{
+    margin-top: 50px;
+    display: flex;
+}
+
+.filtersPanel{
+    margin-right: 20px;
+}
+
+.comment{
+    margin-bottom: 20px;
+}

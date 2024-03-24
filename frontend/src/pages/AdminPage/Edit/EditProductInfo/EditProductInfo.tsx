@@ -19,6 +19,8 @@ type EditProductInfoProps = {
   description: string;
   setAmount: (newValue: number) => void;
   amount: number;
+  power: number;
+  setPower: (newValue: number) => void;
   filters: TComponentFiltersKeys;
   setRadioIsActive: (
     nameBlock: keyof TComponentFiltersKeys,
@@ -112,6 +114,19 @@ const EditProductInfo: React.FC<EditProductInfoProps> = props => {
             value={`${props.amount}`}
             placeholder={'Количество товара'}
             onChange={newValue => props.setAmount(+newValue)}
+            className={styles.priceInput}
+            type={'number'}
+          />
+        }
+        className={styles.filterBlock}
+      />
+      <EditFilterBlock
+        title={'Мощность'}
+        filterBlock={
+          <Input
+            value={`${props.power}`}
+            placeholder={'Мощность компонента'}
+            onChange={newValue => props.setPower(+newValue)}
             className={styles.priceInput}
             type={'number'}
           />

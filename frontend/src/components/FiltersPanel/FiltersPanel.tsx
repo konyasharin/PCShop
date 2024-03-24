@@ -1,16 +1,16 @@
 import React, { ReactNode } from 'react';
-import EComponentTypes from 'enums/EComponentTypes.ts';
 import styles from './FiltersPanel.module.css';
 import MainBtn from 'components/btns/MainBtn/MainBtn.tsx';
+import createClassNames from 'utils/createClassNames.ts';
 
 type FiltersPanelProps = {
-  type: EComponentTypes;
   blocks: ReactNode[];
+  className?: string;
 };
 
 const FiltersPanel: React.FC<FiltersPanelProps> = props => {
   return (
-    <div className={styles.panel}>
+    <div className={createClassNames([styles.panel, props.className])}>
       {...props.blocks}
       <MainBtn className={styles.btn}>Применить</MainBtn>
     </div>

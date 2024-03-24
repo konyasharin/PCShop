@@ -108,7 +108,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
   });
   return (
     <div className={props.isActive ? styles.window : styles.windowDisable}>
-      <FiltersPanel type={props.type} blocks={[...checkBoxes, inputs]} />
+      <FiltersPanel blocks={[...checkBoxes, inputs]} />
       <div className={styles.rightBlock}>
         <h2 className={styles.title}>{props.searchTitle}</h2>
         <Input
