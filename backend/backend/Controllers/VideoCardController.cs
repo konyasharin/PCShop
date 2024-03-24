@@ -5,6 +5,7 @@ using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using System.Runtime.Intrinsics.Arm;
 
 namespace backend.Controllers
 {
@@ -34,6 +35,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must not be less than 0" });
                 }
 
+                if (videoCard.Power < 0 || videoCard.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -48,13 +54,14 @@ namespace backend.Controllers
                         description = videoCard.Description,
                         image = imagePath,
                         amount = videoCard.Amount,
+                        power = videoCard.Power,
                     };
 
                     connection.Open();
                     int id = connection.QuerySingleOrDefault<int>("INSERT INTO public.video_card (brand, model, country, memory_db, memory_type," +
-                        "price, description, image, amount)" +
+                        "price, description, image, amount, power)" +
                         "VALUES (@brand, @model, @country, @memory_db, @memory_type," +
-                        " @price, @description, @image, @amount) RETURNING id", data);
+                        " @price, @description, @image, @amount, @power) RETURNING id", data);
                     logger.LogInformation("VideoCard data saved to database");;
                     return Ok(new { id = id, data });
                 }
@@ -117,6 +124,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must not be less than 0" });
                 }
 
+                if (updatedVideoCard.Power < 0 || updatedVideoCard.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
                 string imagePath = string.Empty;
                
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -146,6 +158,7 @@ namespace backend.Controllers
                         description = updatedVideoCard.Description,
                         image = imagePath,
                         amount = updatedVideoCard.Amount,
+                        power = updatedVideoCard.Power,
                     };
 
                     connection.Open();

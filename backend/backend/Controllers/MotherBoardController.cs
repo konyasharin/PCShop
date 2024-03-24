@@ -38,6 +38,11 @@ namespace backend.Controllers
                 return BadRequest(new { error = "Amount must be less than 0" });
             }
 
+            if(motherBoard.Power < 0 || motherBoard.Power > 10)
+            {
+                return BadRequest(new { error = "Power must be between 0 and 10" });
+            }
+
             try
             {
                 string imagePath = BackupWriter.Write(motherBoard.Image);
@@ -56,13 +61,14 @@ namespace backend.Controllers
                         description = motherBoard.Description,
                         image = imagePath,
                         amount = motherBoard.Amount,
+                        power = motherBoard.Power,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.mother_board (brand, model, country, frequency, socket, chipset," +
-                        "price, description, image, amount)" +
+                        "price, description, image, amount, power)" +
                         "VALUES (@brand, @model, @country, @frequency, @socket, @chipset," +
-                        " @price, @description, @image, @amount) RETURNING id", data);
+                        " @price, @description, @image, @amount, @power) RETURNING id", data);
 
                     logger.LogInformation("MotherBoard data saved to database");
                     return Ok(new { id =  id, data});
@@ -135,6 +141,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must be less than 0" });
                 }
 
+                if(updatedMotherBoard.Power < 0 || updatedMotherBoard.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must not be between 0 and 10" });
+                }
+
                 string imagePath = string.Empty;
 
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -165,15 +176,17 @@ namespace backend.Controllers
                         description = updatedMotherBoard.Description,
                         image = imagePath,
                         amount = updatedMotherBoard.Amount,
+                        power = updatedMotherBoard.Power,
                     };
 
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    connection.Execute("UPDATE public.mother_board SET Brand = @brand, Model = @model, Country = @country, Frequency = @frequency," +
+                    connection.Execute("UPDATE public.mother_board SET Brand = @brand, Model = @model," +
+                        " Country = @country, Frequency = @frequency," +
                         " Socket = @socket, Chipset = @chipset," +
                         " Price = @price, Description = @description," +
-                        " Image = @image, Amount = @amount WHERE Id = @id", data);
+                        " Image = @image, Amount = @amount, Power = @power WHERE Id = @id", data);
 
                     logger.LogInformation("MotherBoard data updated in the database");
 

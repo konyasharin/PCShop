@@ -59,6 +59,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must be less than 0" });
                 }
 
+                if(processor.Power < 0 || processor.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -74,15 +79,16 @@ namespace backend.Controllers
                         description = processor.Description,
                         image = imagePath,
                         amount = processor.Amount,
+                        power = processor.Power,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.processor (brand, model, country, cores, clock_frequency, turbo_frequency," +
                         " heat_dissipation," +
-                        "price, description, image, amount)" +
+                        "price, description, image, amount, power)" +
                         "VALUES (@brand, @model, @country, @cores, @clock_frequency, @turbo_frequency," +
                         " @heat_dissipation, @price," +
-                        " @description, @image, @amount) RETURNING id", data);
+                        " @description, @image, @amount, @power) RETURNING id", data);
 
                     logger.LogInformation("Processor data saved to database");
                     return Ok(new { id = id, data });
@@ -169,6 +175,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must be less than 0" });
                 }
 
+                if(updatedProcessor.Power < 0 || updatedProcessor.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
                 string imagePath = string.Empty;
 
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -200,6 +211,7 @@ namespace backend.Controllers
                         description = updatedProcessor.Description,
                         image = imagePath,
                         amount = updatedProcessor.Amount,
+                        power = updatedProcessor.Power,
                     };
 
                     connection.Open();
@@ -210,7 +222,7 @@ namespace backend.Controllers
                         " clock_frequency = @clock_frequency, turbo_frequency = @turbo_frequency," +
                         " heat_dissipation = @heat_dissipation," +
                         " depth = @depth, price = @price, description = @description," +
-                        " image = @image, amount = @amount WHERE id = @id", data);
+                        " image = @image, amount = @amount, power = @power WHERE id = @id", data);
 
                     logger.LogInformation("Processor data updated in the database");
 

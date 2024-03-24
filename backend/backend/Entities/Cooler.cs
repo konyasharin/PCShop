@@ -4,7 +4,7 @@
     {
        
         public int Speed { get; set; }
-        public int Power { get; set; }
+        public int cooler_power { get; set; }
        
     }
 }

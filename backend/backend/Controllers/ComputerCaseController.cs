@@ -51,6 +51,11 @@ namespace backend.Controllers
                     return BadRequest(new {error = "Amount must not be less than 0"});
                 }
 
+                if(computerCase.Power < 0 || computerCase.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -66,13 +71,14 @@ namespace backend.Controllers
                         description = computerCase.Description,
                         image = imagePath,
                         amount = computerCase.Amount,
+                        power = computerCase.Power,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.computer_case (brand, model, country, material, width, height, depth," +
-                        "price, description, image, amount)" +
+                        "price, description, image, amount, power)" +
                         "VALUES (@brand, @model, @country, @material, @width, @height, @depth, @price," +
-                        " @description, @image, @amount) RETURNING id", data);
+                        " @description, @image, @amount, @power) RETURNING id", data);
 
                     logger.LogInformation($"ComputerCase data saved to database with id {id}");
                     return Ok(new { id = id, data });
@@ -181,6 +187,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must not be less than 0" });
                 }
 
+                if (updatedComputerCase.Power < 0 || updatedComputerCase.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
 
                 string imagePath = string.Empty;
 
@@ -215,6 +226,7 @@ namespace backend.Controllers
                         description = updatedComputerCase.Description,
                         image = imagePath,
                         amount = updatedComputerCase.Amount,
+                        power = updatedComputerCase.Power,
                     };
 
                     connection.Open();
@@ -223,7 +235,7 @@ namespace backend.Controllers
                     connection.Execute("UPDATE public.computer_case SET Brand = @brand, Model = @model, Country = @country," +
                         " Material = @material, Width = @width, Height = @height," +
                         " Depth = @depth, Price = @price, Description = @description," +
-                        " Image = @image, Amount = @amount WHERE Id = @id", data);
+                        " Image = @image, Amount = @amount, Power = @power WHERE Id = @id", data);
 
                     logger.LogInformation("ComputerCase data updated in the database");
 

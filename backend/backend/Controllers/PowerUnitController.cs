@@ -26,7 +26,7 @@ namespace backend.Controllers
             try
             {
                 string imagePath = BackupWriter.Write(powerunit.Image);
-                
+
 
                 if (powerunit.Price < 0)
                 {
@@ -38,9 +38,14 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Voltage must be between 0 and 50000" });
                 }
 
-                if(powerunit.Amount < 0)
+                if (powerunit.Amount < 0)
                 {
                     return BadRequest(new { error = "Amount must be less than 0" });
+                }
+
+                if (powerunit.Power < 0 || powerunit.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must must be between 0 and 10" });
                 }
 
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -56,14 +61,15 @@ namespace backend.Controllers
                         description = powerunit.Description,
                         image = imagePath,
                         amount = powerunit.Amount,
+                        power = powerunit.Power,
 
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.power_unit (brand, model, country, battery, voltage," +
-                        "price, description, image, amount)" +
+                        "price, description, image, amount, power)" +
                         "VALUES (@brand, @model, @country, @battery, @voltage, @price," +
-                        " @description, @image, @amount) RETURNING id", data);
+                        " @description, @image, @amount, @power) RETURNING id", data);
 
                     logger.LogInformation("powerUnit data saved to database");
                     return Ok(new { id = id, data });
@@ -133,6 +139,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must be less than 0" });
                 }
 
+                if (updatedPowerUnit.Power < 0 || updatedPowerUnit.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
                 string imagePath = string.Empty;
 
                 await using var connection = new NpgsqlConnection(connectionString);
@@ -162,6 +173,7 @@ namespace backend.Controllers
                         description = updatedPowerUnit.Description,
                         image = imagePath,
                         amount = updatedPowerUnit.Amount,
+                        power = updatedPowerUnit.Power,
                     };
 
                     connection.Open();
@@ -169,7 +181,8 @@ namespace backend.Controllers
 
                     connection.Execute("UPDATE public.power_unit SET Brand = @brand, Model = @model, Country = @country, Battery = @battery," +
                         " Voltage = @voltage," +
-                        " Price = @price, Description = @description, Image = @image, Amount = @amount WHERE Id = @id", data);
+                        " Price = @price, Description = @description," +
+                        " Image = @image, Amount = @amount, Power = @power WHERE Id = @id", data);
 
                     logger.LogInformation("PowerUnit data updated in the database");
 

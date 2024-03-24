@@ -52,6 +52,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must be less than 0" });
                 }
 
+                if(ram.Power < 0 || ram.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -66,14 +71,15 @@ namespace backend.Controllers
                         description = ram.Description,
                         image = imagePath,
                         amount = ram.Amount,
+                        power = ram.Power,
 
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.ram (id, brand, model, country, frequency, timings, capacity_db," +
-                        "price, description, image, amount)" +
+                        "price, description, image, amount, power)" +
                         "VALUES (@brand, @model, @country, @frequency, @timings, @capacity_db," +
-                        " @price, @description, @image, @amount) RETURNING id", data);
+                        " @price, @description, @image, @amount, @power) RETURNING id", data);
 
                     logger.LogInformation("Ram data saved to database");
                     return Ok(new { id = id, data });
@@ -152,6 +158,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must be less than 0" });
                 }
 
+                if (updatedRam.Power < 0 || updatedRam.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
                 string imagePath = string.Empty;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -181,6 +192,7 @@ namespace backend.Controllers
                         description = updatedRam.Description,
                         image = imagePath,
                         amount = updatedRam.Amount,
+                        power = updatedRam.Power,
                     };
 
                     connection.Open();
@@ -188,7 +200,8 @@ namespace backend.Controllers
 
                     connection.Execute("UPDATE public.ram SET Brand = @brand, Model = @model, Country = @country, Frequency = @frequency," +
                         " Timings = @timings, Capacity_db = @capacity_db," +
-                        " Price = @price, Description = @description, Image = @image, Amount = @amount WHERE Id = @id", data);
+                        " Price = @price, Description = @description," +
+                        " Image = @image, Amount = @amount, Power = @power WHERE Id = @id", data);
 
                     logger.LogInformation("RAM data updated in the database");
 

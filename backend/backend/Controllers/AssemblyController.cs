@@ -54,6 +54,33 @@ namespace backend.Controllers
                     int assembly_price = computerCasePrice + coolerPrice + motherBoardPrice + processorPrice + ramPrice 
                         + ssdPrice + videoCardPrice + powerUnitPrice + 3000;
 
+                    var computerCasePower = await connection
+                        .ExecuteScalarAsync<int>("SELECT power FROM computer_case WHERE Id = @Id", new { Id = assembly.ComputerCaseId });
+
+                    var coolerPower = await connection
+                        .ExecuteScalarAsync<int>("SELECT power FROM cooler WHERE Id = @Id", new { Id = assembly.CoolerId });
+
+                    var motherBoardPower = await connection
+                        .ExecuteScalarAsync<int>("SELECT power FROM mother_board WHERE Id = @Id", new { Id = assembly.MotherBoardId });
+
+                    var processorPower = await connection
+                        .ExecuteScalarAsync<int>("SELECT power FROM processor WHERE Id = @Id", new { Id = assembly.ProcessorId });
+
+                    var ramPower = await connection
+                        .ExecuteScalarAsync<int>("SELECT power FROM ram WHERE Id = @Id", new { Id = assembly.RamId });
+
+                    var ssdPower = await connection
+                        .ExecuteScalarAsync<int>("SELECT power FROM ssd WHERE Id = @Id", new { Id = assembly.SsdId });
+
+                    var videoCardPower = await connection
+                        .ExecuteScalarAsync<int>("SELECT power FROM mother_board WHERE Id = @Id", new { Id = assembly.VideoCardId });
+
+                    var powerUnitPower = await connection
+                        .ExecuteScalarAsync<int>("SELECT power FROM power_unit WHERE Id = @Id", new { Id = assembly.PowerUnitId });
+
+                    int assembly_power = (int)Math.Round((double)(computerCasePower + coolerPower + motherBoardPower + processorPower + ramPower
+                        + ssdPower + videoCardPower + powerUnitPower) / 8);
+
                     assembly.Price = assembly_price;
                     assembly.Likes = 0;
 
@@ -79,13 +106,15 @@ namespace backend.Controllers
                         likes = assembly.Likes,
                         creationTime = assembly.CreationTime,
                         amount = assembly.Amount,
+                        power = assembly_power,
                     };
 
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO assembly (name, price, computercase_id, cooler_id," +
-                        " motherboard_id, processor_id, ram_id, ssd_id, videocard_id, powerunit_id, likes, creation_time, amount) " +
+                        " motherboard_id, processor_id, ram_id, ssd_id, videocard_id," +
+                        " powerunit_id, likes, creation_time, amount, power) " +
                                       "VALUES (@name, @price, @computerCaseId, @coolerId, @motherBoardId," +
                                       " @processorId, @ramId, @ssdId, @videocardId, @powerunitId," +
-                                      " @likes, @creationTime, @amount) RETURN id", data);
+                                      " @likes, @creationTime, @amount, @power) RETURN id", data);
                     logger.LogInformation("Assembly data saved to database");
                     return Ok(new { id = id, data });
                 }
@@ -195,6 +224,7 @@ namespace backend.Controllers
                         powerUnitId = updatedAssembly.PowerUnitId,
                         creation_time = updatedAssembly.CreationTime,
                         amount = updatedAssembly.Amount,
+                        power = updatedAssembly.Power,
 
                     };
 
@@ -206,7 +236,7 @@ namespace backend.Controllers
                 connection.Execute("UPDATE public.assembly SET Name = @name, Price = @price, ComputerCaseId = @computerCaseId, " +
                     "CoolerId = @coolerId, MotherBoardId = @motherBoardId, ProcessorId = @processorId, RamId = @ramId," +
                     " SsdId = @ssdId, VideoCardId = @videoCardId, PowerUnitId = @powerUnitId," +
-                    " Creation_time = @creation_time, Amount = @amount WHERE Id = @id", updatedAssembly);
+                    " Creation_time = @creation_time, Amount = @amount, Power = @power WHERE Id = @id", updatedAssembly);
 
                 logger.LogInformation("Assembly data updated in the database");
 

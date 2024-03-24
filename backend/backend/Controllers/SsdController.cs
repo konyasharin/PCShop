@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using System.Runtime.Intrinsics.X86;
 using backend.Entities.CommentEntities;
+using System.Runtime.Intrinsics.Arm;
 
 namespace backend.Controllers
 {
@@ -41,6 +42,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must be less than 0" });
                 }
 
+                if (ssd.Power < 0 || ssd.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -53,12 +59,14 @@ namespace backend.Controllers
                         description = ssd.Description,
                         image = imagePath,
                         amount = ssd.Amount,
+                        power = ssd.Power,
                     };
 
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.ssd (brand, model, country, capacity," +
-                        "price, description, image, amount)" +
-                        "VALUES (@brand, @model, @country, @capacity, @price, @description, @image, @amount) RETURNING id", data);
+                        "price, description, image, amount, power)" +
+                        "VALUES (@brand, @model, @country, @capacity," +
+                        " @price, @description, @image, @amount, @power) RETURNING id", data);
 
                     logger.LogInformation("SSD data saved to database");
                     return Ok(new { id = id, data });
@@ -127,6 +135,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must be less than 0" });
                 }
 
+                if (updatedSsd.Power < 0 || updatedSsd.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
                 string imagePath = string.Empty;
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
@@ -154,6 +167,7 @@ namespace backend.Controllers
                         description = updatedSsd.Description,
                         image = imagePath,
                         amount = updatedSsd.Amount,
+                        power = updatedSsd.Power,
                     };
 
                     connection.Open();
@@ -161,7 +175,8 @@ namespace backend.Controllers
 
                     connection.Execute("UPDATE public.ssd SET Brand = @brand, Model = @model," +
                         " Country = @country, Capacity = @capacity," +
-                        " Price = @price, Description = @description, Image = @image, Amount = @amount WHERE Id = @id", data);
+                        " Price = @price, Description = @description," +
+                        " Image = @image, Amount = @amount, Power = @power WHERE Id = @id", data);
 
                     logger.LogInformation("SSD data updated in the database");
 

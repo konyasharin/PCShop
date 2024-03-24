@@ -32,9 +32,9 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Speed must be between 0 and 10000" });
                 }
 
-                if (cooler.Power < 0 || cooler.Power > 10000)
+                if (cooler.cooler_power < 0 || cooler.cooler_power > 10000)
                 {
-                    return BadRequest(new { error = "Power must be between 0 and 10000" });
+                    return BadRequest(new { error = "Cooler_power must be between 0 and 10000" });
                 }
 
                 if (cooler.Price < 0)
@@ -47,6 +47,11 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Amount must not be less than 0" });
                 }
 
+                if(cooler.Power < 0 || cooler.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
+                }
+
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     var data = new
@@ -55,18 +60,20 @@ namespace backend.Controllers
                         model = cooler.Model,
                         country = cooler.Country,
                         speed = cooler.Speed,
-                        power = cooler.Power,
+                        cooler_power = cooler.cooler_power,
                         price = cooler.Price,
                         description = cooler.Description,
                         image = imagePath,
                         amount = cooler.Amount,
+                        power = cooler.Power,
                     };
 
                     connection.Open();
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.cooler (brand, model, country, speed, power," +
-                        "price, description, image, amount)" +
-                        "VALUES (@brand, @model, @country, @speed, @power, @price," +
-                        " @description, @image, @amount) RETURNING id", data);
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.cooler (brand, model, country," +
+                        " speed, cooler_power," +
+                        "price, description, image, amount, power)" +
+                        "VALUES (@brand, @model, @country, @speed, @cooler_power, @price," +
+                        " @description, @image, @amount, @power) RETURNING id", data);
 
                     logger.LogInformation("Cooler data saved to database");
 
@@ -126,9 +133,9 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Speed must be between 0 and 10000" });
                 }
                 
-                if (updatedCooler.Power > 0 || updatedCooler.Power < 10000)
+                if (updatedCooler.cooler_power > 0 || updatedCooler.cooler_power < 10000)
                 {
-                    return BadRequest(new { error = "Speed must be between 0 and 10000" });
+                    return BadRequest(new { error = "Cooler_power must be between 0 and 10000" });
                 }
 
                 if (updatedCooler.Price < 0)
@@ -139,6 +146,11 @@ namespace backend.Controllers
                 if (updatedCooler.Amount < 0)
                 {
                     return BadRequest(new { error = "Amount must not be less than 0" });
+                }
+
+                if(updatedCooler.Power < 0 || updatedCooler.Power > 10)
+                {
+                    return BadRequest(new { error = "Power must be between 0 and 10" });
                 }
 
                 string imagePath = string.Empty;
@@ -165,19 +177,21 @@ namespace backend.Controllers
                         model = updatedCooler.Model,
                         country = updatedCooler.Country,
                         speed = updatedCooler.Speed,
-                        power = updatedCooler.Power,
+                        cooler_power = updatedCooler.cooler_power,
                         price = updatedCooler.Price,
                         description = updatedCooler.Description,
                         image = imagePath,
                         amount = updatedCooler.Amount,
+                        power = updatedCooler.Power,
                     };
 
                     connection.Open();
                     logger.LogInformation("Connection started");
 
                     connection.Execute("UPDATE public.cooler SET Brand = @brand, Model = @model, Country = @country, Speed = @speed," +
-                        " Power = @power," +
-                        " Price = @price, Description = @description, Image = @image, Amount = @amount WHERE Id = @id", data);
+                        " Cooler_power = @cooler_power," +
+                        " Price = @price, Description = @description," +
+                        " Image = @image, Amount = @amount, Power = @power WHERE Id = @id", data);
 
                     logger.LogInformation("Cooler data updated in the database");
 
