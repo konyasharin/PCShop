@@ -6,3 +6,30 @@
 .productCharacteristics h2{
     text-align: center;
 }
+
+.characteristicsBlock{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.characteristicBlock{
+    display: flex;
+    justify-content: space-between;
+    width: 560px;
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.characteristicBlock:first-child{
+    margin-top: 50px;
+}
+
+.characteristicBlock:last-child{
+    margin-bottom: 50px;
+}
+
+.characteristicName{
+    color: #404040;
+}

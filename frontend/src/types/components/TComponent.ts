@@ -7,6 +7,7 @@ type TComponent<T extends File | string> = TComponentFilters & {
   description: string;
   image: T;
   amount: number;
+  power: number;
 };
 
 export default TComponent;

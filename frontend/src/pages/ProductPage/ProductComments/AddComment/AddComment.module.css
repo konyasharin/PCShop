@@ -1,0 +1,19 @@
+.addComment textarea{
+    width: 850px;
+    height: 150px;
+    resize: none;
+    font-size: 20px;
+    font-weight: 400;
+    padding: 12px 10px;
+    border-radius: 8px;
+    border: 1px solid black;
+}
+
+.topBlock{
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.stars{
+    margin-left: auto;
+}

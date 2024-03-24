@@ -13,6 +13,7 @@ import useFilters from 'hooks/useFilters.ts';
 import TCheckBox from 'types/TCheckBox.ts';
 import { TFilter } from 'store/slices/filtersSlice.ts';
 import TVideoCard from 'types/components/TVideoCard.ts';
+import useBorderValues from 'hooks/useBorderValues.ts';
 
 function searchActiveFromFilter(filter: TFilter): TCheckBox | null {
   let result: null | TCheckBox = null;
@@ -42,6 +43,7 @@ function AddProduct() {
   const [img, setImg] = useState(emptyImg);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState(0);
+  const [power, setPower] = useBorderValues(0, 0, 10);
   const imgFile: React.MutableRefObject<null | File> = useRef(null);
   const allFiltersState = useSelector((state: RootState) => state.filters);
   const { filters, setRadioIsActive, setComponentTypeHandle } = useFilters(
@@ -73,6 +75,8 @@ function AddProduct() {
         setDescription={setDescription}
         amount={amount}
         setAmount={setAmount}
+        power={power}
+        setPower={setPower}
         filters={filters}
         setRadioIsActive={setRadioIsActive}
         imgFileRef={imgFile}
@@ -96,6 +100,7 @@ function AddProduct() {
             description: description,
             image: imgFile.current,
             amount: amount,
+            power: power,
           };
           if (imgFile.current != null) {
             switch (activeCategory) {

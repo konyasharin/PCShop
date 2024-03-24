@@ -1,0 +1,18 @@
+.comment{
+    border: 1px solid black;
+    border-radius: 8px;
+    width: 947px;
+    padding: 12px 10px;
+}
+
+.commentText{
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.bin{
+    cursor: pointer;
+    width: 44px;
+}

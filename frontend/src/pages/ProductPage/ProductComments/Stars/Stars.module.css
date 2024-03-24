@@ -1,0 +1,7 @@
+.star{
+    margin-right: 5px;
+}
+
+.star:last-child{
+    margin-right: 0;
+}
