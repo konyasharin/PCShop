@@ -19,6 +19,11 @@ type ChooseComponentProps = {
   searchTitle: string;
   products: TProduct[];
   onShowMore: () => void;
+  currentProduct: TProduct | null;
+  setCurrentProduct: (
+    newProduct: TProduct | null,
+    componentType: EComponentTypes,
+  ) => void;
 };
 
 const ChooseComponent: React.FC<ChooseComponentProps> = props => {
@@ -43,7 +48,7 @@ const ChooseComponent: React.FC<ChooseComponentProps> = props => {
             dispatch(setIsActive({ type: props.type, newIsActive: !isActive }))
           }
         >
-          Выбрать
+          {props.currentProduct ? props.currentProduct.name : 'Выбрать'}
         </div>
         <ErrorCorner type={props.errorType} className={styles.errorCorner} />
       </div>
@@ -53,6 +58,7 @@ const ChooseComponent: React.FC<ChooseComponentProps> = props => {
         isActive={isActive}
         products={props.products}
         onShowMore={props.onShowMore}
+        setCurrentProduct={props.setCurrentProduct}
       />
     </div>
   );
