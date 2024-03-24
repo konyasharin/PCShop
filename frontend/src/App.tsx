@@ -12,6 +12,7 @@ import ProfilePage from './pages/ProfilePage/ProfilePage.tsx';
 import PCComponents from './pages/PCComponents/PCComponents.tsx';
 import EComponentTypes from 'enums/EComponentTypes.ts';
 import BuildsPage from './pages/BuildsPage/BuildsPage.tsx';
+import ProductPage from './pages/ProductPage/ProductPage.tsx';
 
 function App() {
   return (
@@ -48,6 +49,10 @@ function App() {
               products={[]}
             />
           }
+        />
+        <Route
+          path={'/product/:productCategory/:productId'}
+          element={<ProductPage />}
         />
       </Routes>
       <Footer />

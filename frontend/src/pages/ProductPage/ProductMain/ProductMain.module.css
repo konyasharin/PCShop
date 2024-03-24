@@ -1,0 +1,37 @@
+.productMain{
+    display: flex;
+}
+
+.rightBlock{
+    display: flex;
+    flex-direction: column;
+}
+
+.productImg{
+    width: 366px;
+    height: 304px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 21px;
+}
+
+.mark{
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.mark h3{
+    margin-left: 10px;
+}
+
+.description{
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.btn{
+    width: 173px;
+    margin-top: auto;
+}
