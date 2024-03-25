@@ -9,4 +9,10 @@ enum EComponentTypes {
   case = 'case',
   powerSupply = 'powerSupply',*/
 }
+
+export const componentTypesTitles = {
+  videoCard: 'Видеокарта',
+  processor: 'Процессор',
+} as const;
+
 export default EComponentTypes;

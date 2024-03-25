@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import TProduct from 'types/TProduct.ts';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import EComponentTypes, {
+  componentTypesTitles,
+} from 'enums/EComponentTypes.ts';
 import EBuildBlockErrors from 'enums/EBuildBlockErrors.ts';
 import useBorderValues from 'hooks/useBorderValues.ts';
 
@@ -10,6 +12,17 @@ export type TUseBuildComponents = {
     currentErrorType: EBuildBlockErrors;
   };
 };
+
+export type TUseBuildError = {
+  errorType: 'Error' | 'Warning';
+  componentType: EComponentTypes;
+  errorDescription: string;
+  errorDetailedType: keyof typeof errorDetailedTypes;
+};
+
+export const errorDetailedTypes = {
+  empty: 'empty',
+} as const;
 
 function useBuild() {
   const [components, setComponents] = useState<TUseBuildComponents>({
@@ -25,6 +38,7 @@ function useBuild() {
   const [progressOfBuild, setProgressOfBuild] = useBorderValues(0, 0, 100);
   const [price, setPrice] = useBorderValues(0, 0);
   const [power, setPower] = useBorderValues(0, 0, 10);
+  const [errors, setErrors] = useState<TUseBuildError[]>([]);
 
   useEffect(() => {
     calculateProgressOfBuild();
@@ -94,6 +108,20 @@ function useBuild() {
         : 0;
     }
     setPower(sumPower / countComponents);
+  }
+  function addError(newError: TUseBuildError) {
+    setErrors([...errors, newError]);
+  }
+
+  function removeError(
+    errorDetailedType: keyof typeof errorDetailedTypes,
+    componentType: EComponentTypes,
+  ) {
+    const newErrors = errors.filter(
+      error =>
+        error.errorDetailedType === errorDetailedType &&
+        componentTypesTitles[error.componentType] === componentType,
+    );
   }
 
   return {
