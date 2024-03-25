@@ -20,7 +20,7 @@ namespace backend.Controllers
             connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         }
 
-        protected async Task<IActionResult> AddComment(Comment comment, string tableName)
+        protected async Task<IActionResult> AddComment(Comment comment)
         {
             try
             {
@@ -40,7 +40,8 @@ namespace backend.Controllers
                     {
                         content = comment.Content,
                         commentDate = comment.CommentDate,
-                        computerCaseId = comment.ProductId,
+                        componentId = comment.ComponentId,
+                        component = comment.Component,
                     };
                     
                     await connection.OpenAsync();
@@ -48,8 +49,8 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
                     insertedId = await connection.QueryFirstOrDefaultAsync<int>(
-                        $"INSERT INTO public.{tableName} (content, comment_date, computer_case_id)" +
-                        "VALUES (@content, @commentDate, @computerCaseId) RETURNING id", data);
+                        $"INSERT INTO public.comment (content, comment_date, component_id, component)" +
+                        "VALUES (@content, @commentDate, @commentId, @component) RETURNING id", data);
 
                     return Ok(new { id = insertedId, data });
                 }
@@ -63,7 +64,7 @@ namespace backend.Controllers
             }
         }
 
-        protected async Task<IActionResult> UpdateComment(Comment comment, string tableName)
+        protected async Task<IActionResult> UpdateComment(Comment comment)
         {
             try
             {
@@ -82,7 +83,8 @@ namespace backend.Controllers
                         id = comment.Id,
                         content = comment.Content,
                         commentDate = comment.CommentDate,
-                        computerCaseId = comment.ProductId,
+                        componentId = comment.ComponentId,
+                        component = comment.Component,
                     };
 
                     await connection.OpenAsync();
@@ -90,9 +92,9 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
                     int updatedComment = await connection.ExecuteAsync(
-                        $"UPDATE public.{tableName} " +
+                        $"UPDATE public.comment " +
                         "SET content = @content, comment_date = @commentDate " +
-                        "WHERE id = @id AND computer_case_id = @computerCaseId", data);
+                        "WHERE id = @id AND component_id = @componentId AND component = @component", data);
 
                     if (updatedComment == 0)
                     {
@@ -110,7 +112,7 @@ namespace backend.Controllers
             }
         }
 
-        protected async Task<IActionResult> DeleteComment(int productId, int commentId, string tableName)
+        protected async Task<IActionResult> DeleteComment(int productId, int commentId, string component)
         {
             try
             {
@@ -121,8 +123,9 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
                     int deletedComment = await connection.ExecuteAsync(
-                        $"DELETE FROM public.{tableName} " +
-                        "WHERE id = @commentId AND computer_case_id = @productId", new { productId, commentId });
+                        $"DELETE FROM public.comment " +
+                        "WHERE id = @commentId AND component_id = @productId AND component = @Component",
+                        new { productId, commentId, component });
 
                     if (deletedComment == 0)
                     {
@@ -130,7 +133,7 @@ namespace backend.Controllers
                     }
                 }
 
-                return Ok(new { id = productId, comment_id = commentId });
+                return Ok(new { id = productId, comment_id = commentId, Component = component });
             }
             catch (Exception ex)
             {
@@ -139,7 +142,7 @@ namespace backend.Controllers
             }
         }
 
-        protected async Task<IActionResult> GetAllComments(int limit, int offset, string tableName)
+        protected async Task<IActionResult> GetAllComments(int limit, int offset, string component, int productId)
         {
             try
             {
@@ -148,9 +151,10 @@ namespace backend.Controllers
                     connection.Open();
                     logger.LogInformation("Connection started");
 
-                    var comments = connection.Query<Comment>($"SELECT * FROM public.{tableName} " +
+                    var comments = connection.Query<Comment>($"SELECT * FROM public.comment WHERE" +
+                        $" component = @Component AND component_id = @ProductId " +
                                                              "LIMIT @Limit OFFSET @Offset",
-                        new { Limit = limit, Offset = offset });
+                        new { Limit = limit, Offset = offset, Component = component, ProductId = productId });
 
                     logger.LogInformation("Retrieved all ComputerCase data from the database");
 
@@ -164,7 +168,7 @@ namespace backend.Controllers
             }
         }
 
-        protected async Task<IActionResult> GetComment(int productId, int commentId, string tableName)
+        protected async Task<IActionResult> GetComment(int productId, int commentId, string component)
         {
             try
             {
@@ -174,8 +178,9 @@ namespace backend.Controllers
                     logger.LogInformation("Connection started");
 
                     var comment = await connection.QueryFirstOrDefaultAsync<Comment>(
-                        $"SELECT * FROM public.{tableName} WHERE id = @commentId AND computer_case_id = @productId",
-                        new { commentId = commentId, productId = productId });
+                        $"SELECT * FROM public.comment WHERE id = @commentId AND " +
+                        $"component_id = @productId AND component = @Component",
+                        new { commentId = commentId, productId = productId, Component = component });
 
                     if (comment == null)
                     {

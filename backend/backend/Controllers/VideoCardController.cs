@@ -210,6 +210,12 @@ namespace backend.Controllers
 
                     connection.Execute("DELETE FROM public.video_card WHERE Id = @id", new { id });
 
+                    connection.Execute("DELETE FROM public.like WHERE componentid = @id AND component = video_card",
+                        new { id });
+
+                    connection.Execute("DELETE FROM public.comment WHERE component_id = @id AND component = video_card",
+                        new { id });
+
                     logger.LogInformation("VideoCard data deleted from the database");
 
                     return Ok(new {id=id});
@@ -437,31 +443,31 @@ namespace backend.Controllers
         [HttpPost("addComment")]
         public async Task<IActionResult> AddComputerCaseComment(Comment videoCardComment)
         {
-            return await AddComment(videoCardComment, "video_card_comment");
+            return await AddComment(videoCardComment);
         }
         
         [HttpPut("updateComment")]
         public async Task<IActionResult> UpdateComputerCaseComment(Comment videoCardComment)
         {
-            return await UpdateComment(videoCardComment, "video_card_comment");
+            return await UpdateComment(videoCardComment);
         }
         
         [HttpDelete("{productId}/deleteComment/{commentId}")]
         public async Task<IActionResult> DeleteComputerCaseComment(int productId, int commentId)
         {
-            return await DeleteComment(productId, commentId, "video_card_comment");
+            return await DeleteComment(productId, commentId, "video_card");
         }
         
         [HttpGet("GetAllComments")]
-        public async Task<IActionResult> GetComputerCaseAllComments(int limit = 1, int offset = 0)
+        public async Task<IActionResult> GetComputerCaseAllComments(int productId, int limit = 1, int offset = 0)
         {
-            return await GetAllComments(limit, offset, "video_card_comment");
+            return await GetAllComments(limit, offset, "video_card", productId);
         }
         
         [HttpGet("{productId}/getComment/{commentId}")]
         public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
         {
-            return await GetComment(productId, commentId, "video_card_comment");
+            return await GetComment(productId, commentId, "video_card");
         }
 
         [HttpPut("likeVideoCard/{id}")]
