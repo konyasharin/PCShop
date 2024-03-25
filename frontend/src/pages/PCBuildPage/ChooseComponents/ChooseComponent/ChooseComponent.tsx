@@ -3,14 +3,14 @@ import React from 'react';
 import ErrorCorner from './ErrorCorner/ErrorCorner.tsx';
 import createClassNames from 'utils/createClassNames.ts';
 import AddWindow from './AddWindow/AddWindow.tsx';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import componentTypes from 'enums/componentTypes.ts';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsActive } from 'store/slices/chooseComponentsSlice.ts';
 import { RootState } from 'store/store.ts';
 import TProduct from 'types/TProduct.ts';
 
 type ChooseComponentProps = {
-  type: EComponentTypes;
+  type: keyof typeof componentTypes;
   img: string;
   title: string;
   isImportant: boolean;
@@ -22,7 +22,7 @@ type ChooseComponentProps = {
   currentProduct: TProduct | null;
   setCurrentProduct: (
     newProduct: TProduct | null,
-    componentType: EComponentTypes,
+    componentType: keyof typeof componentTypes,
   ) => void;
 };
 

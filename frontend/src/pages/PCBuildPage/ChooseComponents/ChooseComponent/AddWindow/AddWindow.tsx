@@ -1,6 +1,6 @@
 import FiltersPanel from 'components/FiltersPanel/FiltersPanel.tsx';
 import React, { ReactNode, useState } from 'react';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import componentTypes from 'enums/componentTypes.ts';
 import useFilters from 'hooks/useFilters.ts';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store/store.ts';
@@ -14,14 +14,14 @@ import CheckBox from 'components/CheckBox/CheckBox.tsx';
 import createClassNames from 'utils/createClassNames.ts';
 
 type AddWindowProps = {
-  type: EComponentTypes;
+  type: keyof typeof componentTypes;
   searchTitle: string;
   isActive: boolean;
   products: TProduct[];
   onShowMore: () => void;
   setCurrentProduct: (
     newProduct: TProduct | null,
-    componentType: EComponentTypes,
+    componentType: keyof typeof componentTypes,
   ) => void;
 };
 

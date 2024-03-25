@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import TProduct from 'types/TProduct.ts';
-import EComponentTypes, {
-  componentTypesTitles,
-} from 'enums/EComponentTypes.ts';
+import componentTypes from 'enums/componentTypes.ts';
 import EBuildBlockErrors from 'enums/EBuildBlockErrors.ts';
 import useBorderValues from 'hooks/useBorderValues.ts';
 
 export type TUseBuildComponents = {
-  [componentType in EComponentTypes]: {
+  [componentType in keyof typeof componentTypes]: {
     currentProduct: TProduct | null;
     currentErrorType: EBuildBlockErrors;
   };
@@ -15,7 +13,7 @@ export type TUseBuildComponents = {
 
 export type TUseBuildError = {
   errorType: 'Error' | 'Warning';
-  componentType: EComponentTypes;
+  componentType: keyof typeof componentTypes;
   errorDescription: string;
   errorDetailedType: keyof typeof errorDetailedTypes;
 };
@@ -47,7 +45,7 @@ function useBuild() {
   }, [components]);
   function toggleError(
     newError: EBuildBlockErrors,
-    componentType: EComponentTypes,
+    componentType: keyof typeof componentTypes,
   ) {
     setComponents({
       ...components,
@@ -60,7 +58,7 @@ function useBuild() {
 
   function setComponent(
     newProduct: TProduct | null,
-    componentType: EComponentTypes,
+    componentType: keyof typeof componentTypes,
   ) {
     setComponents({
       ...components,
@@ -115,12 +113,14 @@ function useBuild() {
 
   function removeError(
     errorDetailedType: keyof typeof errorDetailedTypes,
-    componentType: EComponentTypes,
+    componentType: keyof typeof componentTypes,
   ) {
-    const newErrors = errors.filter(
-      error =>
-        error.errorDetailedType === errorDetailedType &&
-        componentTypesTitles[error.componentType] === componentType,
+    setErrors(
+      errors.filter(
+        error =>
+          error.errorDetailedType !== errorDetailedType &&
+          error.componentType !== componentType,
+      ),
     );
   }
 
@@ -131,6 +131,8 @@ function useBuild() {
     progressOfBuild,
     price,
     power,
+    addError,
+    removeError,
   };
 }
 

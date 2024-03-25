@@ -2,7 +2,7 @@ import ChooseComponent from './ChooseComponent/ChooseComponent.tsx';
 import videoCardIcon from 'assets/videocard-white-icon.png';
 import processorIcon from 'assets/cpu-white-icon.png';
 import styles from './ChooseComponents.module.css';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import componentTypes from 'enums/componentTypes.ts';
 import React, { useEffect, useRef } from 'react';
 import TProduct from 'types/TProduct.ts';
 import TVideoCard from 'types/components/TVideoCard.ts';
@@ -32,7 +32,7 @@ type ChooseComponentsProps = {
   components: TUseBuildComponents;
   setComponent: (
     newProduct: TProduct | null,
-    componentType: EComponentTypes,
+    componentType: keyof typeof componentTypes,
   ) => void;
 };
 
@@ -59,7 +59,7 @@ const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
     <section className={styles.blocks}>
       <ChooseComponent
         img={videoCardIcon}
-        type={EComponentTypes.videoCard}
+        type={'videoCard'}
         title={'Видеокарта'}
         isImportant={true}
         errorType={props.components.videoCard.currentErrorType}
@@ -74,7 +74,7 @@ const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
       />
       <ChooseComponent
         img={processorIcon}
-        type={EComponentTypes.processor}
+        type={'processor'}
         title={'Процессор'}
         isImportant={true}
         errorType={props.components.processor.currentErrorType}

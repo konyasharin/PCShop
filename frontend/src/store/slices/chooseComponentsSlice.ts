@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import EComponentTypes from 'enums/componentTypes.ts';
 
 type TChooseComponents = {
   [componentType in EComponentTypes]: {

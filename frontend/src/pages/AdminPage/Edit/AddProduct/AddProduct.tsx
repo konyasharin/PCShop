@@ -1,7 +1,7 @@
 import CategoriesBlocks from '../CategoriesBlocks/CategoriesBlocks.tsx';
 import useRadios from 'hooks/useRadios.ts';
 import React, { useEffect, useRef, useState } from 'react';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import componentTypes from 'enums/componentTypes.ts';
 import styles from './AddProduct.module.css';
 import EditProductInfo from '../EditProductInfo/EditProductInfo.tsx';
 import emptyImg from 'assets/empty-img.png';
@@ -36,9 +36,8 @@ function AddProduct() {
       { text: 'Видеокарты', isActive: true },
       { text: 'Процессоры', isActive: false },
     ]);
-  const [activeCategory, setActiveCategory] = useState<EComponentTypes>(
-    EComponentTypes.videoCard,
-  );
+  const [activeCategory, setActiveCategory] =
+    useState<keyof typeof componentTypes>('videoCard');
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useBorderValues(1, 1);
   const [img, setImg] = useState(emptyImg);
@@ -105,13 +104,13 @@ function AddProduct() {
           };
           if (imgFile.current != null) {
             switch (activeCategory) {
-              case EComponentTypes.videoCard:
+              case 'videoCard':
                 handleCreateProduct<TVideoCard<File>>(
                   '/VideoCard/createVideoCard',
                   requestData as TVideoCard<File>,
                 );
                 break;
-              case EComponentTypes.processor:
+              case 'processor':
                 handleCreateProduct<TProcessor<File>>(
                   'Processor/createProcessor',
                   requestData as TProcessor<File>,

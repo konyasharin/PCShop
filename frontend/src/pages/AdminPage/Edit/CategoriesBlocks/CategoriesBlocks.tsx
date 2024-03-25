@@ -1,7 +1,7 @@
 import React from 'react';
 import TCheckBox from 'types/TCheckBox.ts';
 import Radio from 'components/Radio/Radio.tsx';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import EComponentTypes from 'enums/componentTypes.ts';
 import styles from '../EditProduct/EditProduct.module.css';
 
 type CategoriesBlocksProps = {

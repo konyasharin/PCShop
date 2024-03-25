@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
 import { TFilters } from 'store/slices/filtersSlice.ts';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import componentTypes from 'enums/componentTypes.ts';
 import TComponentFiltersKeys from 'types/components/TComponentFiltersKeys.ts';
 
 function useFilters(
   filtersState: TFilters,
   initialType: 'radio' | 'checkBox',
-  initialComponentType: EComponentTypes,
+  initialComponentType: keyof typeof componentTypes,
 ) {
   const type = useRef(initialType);
   const componentType = useRef(initialComponentType);
@@ -14,7 +14,9 @@ function useFilters(
     initFilters(filtersState[componentType.current]),
   );
 
-  function setComponentTypeHandle(newComponentType: EComponentTypes) {
+  function setComponentTypeHandle(
+    newComponentType: keyof typeof componentTypes,
+  ) {
     componentType.current = newComponentType;
     setFilters(initFilters(filtersState[componentType.current]));
   }

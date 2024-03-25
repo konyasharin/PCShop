@@ -10,7 +10,6 @@ import RegistrationPage from './pages/AuthPage/RegistrationPage/RegistrationPage
 import AdminPage from './pages/AdminPage/AdminPage.tsx';
 import ProfilePage from './pages/ProfilePage/ProfilePage.tsx';
 import PCComponents from './pages/PCComponents/PCComponents.tsx';
-import EComponentTypes from 'enums/EComponentTypes.ts';
 import BuildsPage from './pages/BuildsPage/BuildsPage.tsx';
 import ProductPage from './pages/ProductPage/ProductPage.tsx';
 
@@ -34,7 +33,7 @@ function App() {
           path={'/components'}
           element={
             <PCComponents
-              type={EComponentTypes.videoCard}
+              type={'videoCard'}
               searchTitle={'Выберите видеокарту'}
               products={[]}
             />
@@ -44,7 +43,7 @@ function App() {
           path={'/builds'}
           element={
             <BuildsPage
-              type={EComponentTypes.videoCard}
+              type={'videoCard'}
               searchTitle={'Выберите видеокарту'}
               products={[]}
             />
