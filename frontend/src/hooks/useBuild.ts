@@ -42,19 +42,8 @@ function useBuild() {
     calculateProgressOfBuild();
     calculatePrice();
     calculatePower();
+    updateErrors();
   }, [components]);
-  function toggleError(
-    newError: EBuildBlockErrors,
-    componentType: keyof typeof componentTypes,
-  ) {
-    setComponents({
-      ...components,
-      [componentType]: {
-        ...components[componentType],
-        currentErrorType: newError,
-      },
-    });
-  }
 
   function setComponent(
     newProduct: TProduct | null,
@@ -72,7 +61,7 @@ function useBuild() {
     });
   }
   function calculateProgressOfBuild() {
-    let key: keyof typeof components;
+    let key: keyof typeof componentTypes;
     let choseProducts = 0;
     let countProducts = 0;
     for (key in components) {
@@ -85,7 +74,7 @@ function useBuild() {
   }
 
   function calculatePrice() {
-    let key: keyof typeof components;
+    let key: keyof typeof componentTypes;
     let newPrice = 0;
     for (key in components) {
       newPrice += components[key].currentProduct
@@ -96,7 +85,7 @@ function useBuild() {
   }
 
   function calculatePower() {
-    let key: keyof typeof components;
+    let key: keyof typeof componentTypes;
     let sumPower = 0;
     let countComponents = 0;
     for (key in components) {
@@ -107,32 +96,29 @@ function useBuild() {
     }
     setPower(sumPower / countComponents);
   }
-  function addError(newError: TUseBuildError) {
-    setErrors([...errors, newError]);
-  }
-
-  function removeError(
-    errorDetailedType: keyof typeof errorDetailedTypes,
-    componentType: keyof typeof componentTypes,
-  ) {
-    setErrors(
-      errors.filter(
-        error =>
-          error.errorDetailedType !== errorDetailedType &&
-          error.componentType !== componentType,
-      ),
-    );
+  function updateErrors() {
+    const newErrors: TUseBuildError[] = [];
+    let key: keyof typeof components;
+    for (key in components) {
+      if (components[key].currentProduct === null) {
+        newErrors.push({
+          errorType: 'Error',
+          componentType: key,
+          errorDescription: `Выберите компонент из списка`,
+          errorDetailedType: errorDetailedTypes.empty,
+        });
+      }
+    }
+    setErrors(newErrors);
   }
 
   return {
     setComponent,
-    toggleError,
     components,
     progressOfBuild,
     price,
     power,
-    addError,
-    removeError,
+    errors,
   };
 }
 

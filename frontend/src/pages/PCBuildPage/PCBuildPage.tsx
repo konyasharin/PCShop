@@ -8,6 +8,7 @@ import Input from 'components/Input/Input.tsx';
 import styles from './PCBuildPage.module.css';
 import Btn from 'components/btns/Btn/Btn.tsx';
 import useBuild from 'hooks/useBuild.ts';
+import componentTypes from 'enums/componentTypes.ts';
 
 function PCBuildPage() {
   const [buildName, setBuildName] = useState('');
@@ -18,7 +19,17 @@ function PCBuildPage() {
     progressOfBuild,
     price,
     power,
+    errors,
   } = useBuild();
+  const errorsBlocks = errors.map(error => {
+    return (
+      <BuildsError
+        type={error.errorType}
+        title={componentTypes[error.componentType]}
+        description={error.errorDescription}
+      />
+    );
+  });
   return (
     <div className={styles.body}>
       <Container>
@@ -30,16 +41,7 @@ function PCBuildPage() {
           onChange={(newBuildName: string) => setBuildName(newBuildName)}
         />
         <Scale className={styles.scale} percents={progressOfBuild} />
-        <BuildsError
-          type={'Warning'}
-          title={'Процессор'}
-          description={'Выберите процессор из списка'}
-        />
-        <BuildsError
-          type={'Error'}
-          title={'Процессор'}
-          description={'Выберите процессор из списка'}
-        />
+        {...errorsBlocks}
         <ChooseComponents components={components} setComponent={setComponent} />
         <PowerOfBuild power={power} price={`${price}$`} />
         <Btn className={styles.button}>Cоздать пк</Btn>
