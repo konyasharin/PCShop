@@ -38,7 +38,6 @@ function AddProduct() {
     ]);
   const [activeCategory, setActiveCategory] =
     useState<keyof typeof componentTypes>('videoCard');
-  const [productName, setProductName] = useState('');
   const [price, setPrice] = useBorderValues(1, 1);
   const [img, setImg] = useState(emptyImg);
   const [description, setDescription] = useState('');
@@ -66,8 +65,6 @@ function AddProduct() {
       <EditProductInfo
         type={activeCategory}
         img={img}
-        productName={productName}
-        setProductName={setProductName}
         price={price}
         setPrice={setPrice}
         setImg={setImg}

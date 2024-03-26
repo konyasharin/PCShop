@@ -2,7 +2,7 @@
 {
     public class Component<T>
     {
-        public int? Id { get; set; }
+        public int? ProductId { get; set; }
         public string Brand { get; set; }
         public string Model { get; set; }
         public int Price { get; set; }
@@ -12,5 +12,6 @@
         public int Amount { get; set; }
         public int Power { get; set; }
         public int Likes { get; set; }
+        public string ProductType { get; set; }
     }
 }

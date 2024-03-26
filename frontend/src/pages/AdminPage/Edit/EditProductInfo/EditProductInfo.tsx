@@ -1,17 +1,15 @@
 import React, { ReactNode } from 'react';
-import EComponentTypes from 'enums/componentTypes.ts';
+import componentTypes from 'enums/componentTypes.ts';
 import EditFilterBlock from '../EditFilterBlock/EditFilterBlock.tsx';
 import Radio from 'components/Radio/Radio.tsx';
 import styles from './EditProductInfo.module.css';
-import Input from 'components/Input/Input.tsx';
+import Input from 'components/inputs/Input/Input.tsx';
 import TComponentFiltersKeys from 'types/components/TComponentFiltersKeys.ts';
 
 type EditProductInfoProps = {
-  type: EComponentTypes;
+  type: keyof typeof componentTypes;
   price: number;
   setPrice: (newPrice: number) => void;
-  productName: string;
-  setProductName: (newProductName: string) => void;
   img: string;
   imgFileRef: React.MutableRefObject<null | File>;
   setImg: React.Dispatch<React.SetStateAction<string>>;
@@ -61,12 +59,6 @@ const EditProductInfo: React.FC<EditProductInfoProps> = props => {
 
   return (
     <>
-      <Input
-        value={props.productName}
-        placeholder={'Введите название товара'}
-        onChange={newValue => props.setProductName(newValue)}
-        className={styles.input}
-      />
       <input
         type="file"
         id={'editProductImg'}

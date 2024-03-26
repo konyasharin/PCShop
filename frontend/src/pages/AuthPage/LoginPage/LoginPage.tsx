@@ -1,6 +1,6 @@
 import styles from './LoginPage.module.css';
 import { useState } from 'react';
-import Input from 'components/Input/Input.tsx';
+import Input from 'components/inputs/Input/Input.tsx';
 import Btn from 'components/btns/Btn/Btn.tsx';
 import { NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';

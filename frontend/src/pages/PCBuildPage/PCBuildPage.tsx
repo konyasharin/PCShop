@@ -4,7 +4,7 @@ import { useState } from 'react';
 import BuildsError from './BuildsError/BuildsError.tsx';
 import PowerOfBuild from './PowerOfBuild/PowerOfBuild.tsx';
 import ChooseComponents from './ChooseComponents/ChooseComponents.tsx';
-import Input from 'components/Input/Input.tsx';
+import Input from 'components/inputs/Input/Input.tsx';
 import styles from './PCBuildPage.module.css';
 import Btn from 'components/btns/Btn/Btn.tsx';
 import useBuild from 'hooks/useBuild.ts';

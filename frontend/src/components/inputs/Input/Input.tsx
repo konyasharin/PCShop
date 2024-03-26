@@ -2,7 +2,7 @@ import React from 'react';
 import createClassNames from 'utils/createClassNames.ts';
 import styles from './Input.module.css';
 
-type InputProps = {
+export type InputProps = {
   value: string;
   placeholder: string;
   onChange: (newValue: string) => void;
