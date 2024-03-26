@@ -21,108 +21,25 @@ namespace backend.Controllers
         [HttpPost("createComputerCase")]
         public async Task<IActionResult> CreateCreateCase([FromForm] ComputerCase<IFormFile> computerCase)
         {
-
-            try
-            {
-                string imagePath = BackupWriter.Write(computerCase.Image);
-
-
-                if (computerCase.Price < 0)
-                {
-                    return BadRequest(new {error = "Price must not be less than 0" });
-                }
-
                 if (computerCase.Width < 10 || computerCase.Width > 100)
                 {
                     return BadRequest(new { error = "Width must be between 10 and 100" });
                 }
-
                 if (computerCase.Height < 30 || computerCase.Height > 150)
                 {
                     return BadRequest(new { error = "Height must be between 30 and 150" });
                 }
-
                 if (computerCase.Depth < 20 || computerCase.Depth > 100)
                 {
                     return BadRequest(new { error = "Depth must be between 20 and 100" });
                 }
-
-                if (computerCase.Amount < 0)
-                {
-                    return BadRequest(new {error = "Amount must not be less than 0"});
-                }
-
-                if(computerCase.Power < 0 || computerCase.Power > 10)
-                {
-                    return BadRequest(new { error = "Power must be between 0 and 10" });
-                }
-
-                computerCase.Likes = 0;
-
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    var data = new
-                    {
-                        brand = computerCase.Brand,
-                        model = computerCase.Model,
-                        country = computerCase.Country,
-                        material = computerCase.Material,
-                        width = computerCase.Width,
-                        height = computerCase.Height,
-                        depth = computerCase.Depth,
-                        price = computerCase.Price,
-                        description = computerCase.Description,
-                        image = imagePath,
-                        amount = computerCase.Amount,
-                        power = computerCase.Power,
-                        likes = computerCase.Likes,
-                    };
-
-                    connection.Open();
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.computer_case (brand, model, country, material, width, height, depth," +
-                        "price, description, image, amount, power, likes)" +
-                        "VALUES (@brand, @model, @country, @material, @width, @height, @depth, @price," +
-                        " @description, @image, @amount, @power, @likes) RETURNING id", data);
-
-                    logger.LogInformation($"ComputerCase data saved to database with id {id}");
-                    return Ok(new { id = id, data });
-                }
-            }
-            catch(Exception ex)
-            {
-                logger.LogError($"ComputerCase data failed to save in database. Exception: {ex}");
-                return BadRequest(new { error = ex .Message});
-            }
+                return await CreateComponent<ComputerCase<IFormFile>>(computerCase, ["material", "width", "height", "depth"], "computer_cases"); ;
         }
 
         [HttpGet("getAllComputerCases")]
         public async Task<IActionResult> GetAllComputerCases(int limit, int offset)
         {
-            logger.LogInformation("Get method has started");
-            try
-            {
-
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var computerCases = connection.Query<ComputerCase<string>>("SELECT * FROM public.computer_case " +
-                        "LIMIT @Limit OFFSET @Offset", 
-                        new {Limit = limit, Offset = offset});
-
-                    logger.LogInformation("Retrieved all ComputerCase data from the database");
-
-                    return Ok(new { data=computerCases });
-                }
-
-               
-            }
-            catch(Exception ex)
-            {
-                logger.LogError($"ComputerCase data did not get from database. Exception: {ex}");
-                return NotFound(new {error = ex.Message});
-            }
+            return await GetAllComponents<ComputerCase<string>>(limit, offset, "computer_cases");
         }
 
         [HttpGet("getComputerCase/{id}")]

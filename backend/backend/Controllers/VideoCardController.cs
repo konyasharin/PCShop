@@ -47,7 +47,7 @@ namespace backend.Controllers
                 {
                     var data = new
                     {
-                        id = videoCard.Id,
+                        id = videoCard.ProductId,
                         brand = videoCard.Brand,
                         model = videoCard.Model,
                         country = videoCard.Country,
