@@ -237,6 +237,12 @@ namespace backend.Controllers
 
                     connection.Execute("DELETE FROM public.cooler WHERE Id = @id", new { id });
 
+                    connection.Execute("DELETE FROM public.like WHERE componentid = @id AND component = cooler",
+                        new { id });
+
+                    connection.Execute("DELETE FROM public.comment WHERE component_id = @id AND component = cooler",
+                        new { id });
+
                     logger.LogInformation("Cooler data deleted from the database");
 
                     return Ok(new {Id = id});
@@ -337,31 +343,31 @@ namespace backend.Controllers
         [HttpPost("addComment")]
         public async Task<IActionResult> AddComputerCaseComment(Comment computerCaseComment)
         {
-            return await AddComment(computerCaseComment, "cooler_comment");
+            return await AddComment(computerCaseComment);
         }
         
         [HttpPut("updateComment")]
         public async Task<IActionResult> UpdateComputerCaseComment(Comment computerCaseComment)
         {
-            return await UpdateComment(computerCaseComment, "cooler_comment");
+            return await UpdateComment(computerCaseComment);
         }
         
         [HttpDelete("{productId}/deleteComment/{commentId}")]
         public async Task<IActionResult> DeleteComputerCaseComment(int productId, int commentId)
         {
-            return await DeleteComment(productId, commentId, "cooler_comment");
+            return await DeleteComment(productId, commentId, "cooler");
         }
         
         [HttpGet("GetAllComments")]
-        public async Task<IActionResult> GetComputerCaseAllComments(int limit = 1, int offset = 0)
+        public async Task<IActionResult> GetComputerCaseAllComments(int productId, int limit = 1, int offset = 0)
         {
-            return await GetAllComments(limit, offset, "cooler_comment");
+            return await GetAllComments(limit, offset, "cooler", productId);
         }
         
         [HttpGet("{productId}/getComment/{commentId}")]
         public async Task<IActionResult> GetComputerCaseComment(int productId, int commentId)
         {
-            return await GetComment(productId, commentId, "cooler_comment");
+            return await GetComment(productId, commentId, "cooler");
         }
 
         [HttpPut("likeCooler/{id}")]

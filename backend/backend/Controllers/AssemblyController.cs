@@ -1,4 +1,5 @@
 ﻿using backend.Entities;
+using backend.Entities.CommentEntities;
 using backend.Entities.User;
 using backend.UpdatedEntities;
 using backend.Utils;
@@ -270,6 +271,12 @@ namespace backend.Controllers
 
                     connection.Execute("DELETE FROM public.assembly WHERE Id = @id", new { id });
 
+                    connection.Execute("DELETE FROM public.like WHERE componentid = @id AND component = assembly",
+                        new { id });
+
+                    connection.Execute("DELETE FROM public.comment WHERE component_id = @id AND component = assembly",
+                        new { id });
+
                     logger.LogInformation("Assembly data deleted from the database");
 
                     return Ok(new {id = id});
@@ -339,6 +346,36 @@ namespace backend.Controllers
         public async Task<IActionResult> LikeAssembly(int id, User user)
         {
             return await LikeComponent(id, user, "assembly");
+        }
+
+        [HttpPost("addComment")]
+        public async Task<IActionResult> AddAssemblyComment(Comment assemblyComment)
+        {
+            return await AddComment(assemblyComment);
+        }
+
+        [HttpPut("updateComment")]
+        public async Task<IActionResult> UpdateAssemblyComment(Comment assemblyComment)
+        {
+            return await UpdateComment(assemblyComment);
+        }
+
+        [HttpDelete("{productId}/deleteComment/{commentId}")]
+        public async Task<IActionResult> DeleteAssemblyComment(int productId, int commentId)
+        {
+            return await DeleteComment(productId, commentId, "assembly");
+        }
+
+        [HttpGet("GetAllComments")]
+        public async Task<IActionResult> GetAssemblyAllComments(int productId, int limit = 1, int offset = 0)
+        {
+            return await GetAllComments(limit, offset, "assembly", productId);
+        }
+
+        [HttpGet("{productId}/getComment/{commentId}")]
+        public async Task<IActionResult> GetAssemblyComment(int productId, int commentId)
+        {
+            return await GetComment(productId, commentId, "assembly");
         }
 
         [HttpGet("getPopularAssemblies")]
