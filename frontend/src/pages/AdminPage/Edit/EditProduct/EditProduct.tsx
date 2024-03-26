@@ -1,6 +1,6 @@
 import useRadios from 'hooks/useRadios.ts';
 import styles from './EditProduct.module.css';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import componentTypes from 'enums/componentTypes.ts';
 import Input from 'components/Input/Input.tsx';
 import React, { useEffect, useRef, useState } from 'react';
 import emptyImg from 'assets/empty-img.png';
@@ -26,9 +26,8 @@ function EditProduct() {
   const [amount, setAmount] = useBorderValues(0, 0);
   const [power, setPower] = useBorderValues(0, 0, 10);
   const allFiltersState = useSelector((state: RootState) => state.filters);
-  const [activeCategory, setActiveCategory] = useState<EComponentTypes>(
-    EComponentTypes.videoCard,
-  );
+  const [activeCategory, setActiveCategory] =
+    useState<keyof typeof componentTypes>('videoCard');
   const [img, setImg] = useState(emptyImg);
   const { filters, setRadioIsActive, setComponentTypeHandle } = useFilters(
     allFiltersState,

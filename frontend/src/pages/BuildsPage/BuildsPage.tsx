@@ -1,12 +1,12 @@
 import AddWindow from '../PCBuildPage/ChooseComponents/ChooseComponent/AddWindow/AddWindow.tsx';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import componentTypes from 'enums/componentTypes.ts';
 import TProduct from 'types/TProduct.ts';
 import React from 'react';
 import styles from './BuildsPage.module.css';
 import Container from 'components/Container/Container.tsx';
 
 type BuildsProps = {
-  type: EComponentTypes;
+  type: keyof typeof componentTypes;
   searchTitle: string;
   products: TProduct[];
 };

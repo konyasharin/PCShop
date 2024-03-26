@@ -5,7 +5,7 @@ import ProductMain from './ProductMain/ProductMain.tsx';
 import { useEffect } from 'react';
 import productImg from 'assets/videocard.jpg';
 import ProductCharacteristics from './ProductCharacteristics/ProductCharacteristics.tsx';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import EComponentTypes from 'enums/componentTypes.ts';
 import EProductCharacteristics from 'enums/characteristics/EProductCharacteristics.ts';
 import ProductComments from './ProductComments/ProductComments.tsx';
 

@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import EComponentTypes from 'enums/EComponentTypes.ts';
+import EComponentTypes from 'enums/componentTypes.ts';
 import EditFilterBlock from '../EditFilterBlock/EditFilterBlock.tsx';
 import Radio from 'components/Radio/Radio.tsx';
 import styles from './EditProductInfo.module.css';

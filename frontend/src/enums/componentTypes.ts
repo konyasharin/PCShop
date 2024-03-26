@@ -1,6 +1,6 @@
-enum EComponentTypes {
-  videoCard = 'videoCard',
-  processor = 'processor',
+const componentTypes = {
+  videoCard: 'Видеокарта',
+  processor: 'Процессор',
   /*cooling = 'cooling',
   RAM = 'RAM',
   motherBoard = 'motherBoard',
@@ -8,5 +8,6 @@ enum EComponentTypes {
   SSD = 'SSD',
   case = 'case',
   powerSupply = 'powerSupply',*/
-}
-export default EComponentTypes;
+} as const;
+
+export default componentTypes;
