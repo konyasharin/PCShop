@@ -1,6 +1,6 @@
 import Btn from 'components/btns/Btn/Btn.tsx';
 import styles from './Balance.module.css';
-import Input from 'components/Input/Input.tsx';
+import Input from 'components/inputs/Input/Input.tsx';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store/store.ts';

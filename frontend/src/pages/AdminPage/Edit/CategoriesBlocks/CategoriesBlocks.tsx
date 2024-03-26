@@ -1,13 +1,13 @@
 import React from 'react';
 import TCheckBox from 'types/TCheckBox.ts';
 import Radio from 'components/Radio/Radio.tsx';
-import EComponentTypes from 'enums/componentTypes.ts';
+import componentTypes from 'enums/componentTypes.ts';
 import styles from '../EditProduct/EditProduct.module.css';
 
 type CategoriesBlocksProps = {
   categories: TCheckBox[];
   setCategoryIsActive: (index: number) => void;
-  setActiveCategory: (type: EComponentTypes) => void;
+  setActiveCategory: (type: keyof typeof componentTypes) => void;
   className?: string;
 };
 
@@ -21,10 +21,10 @@ const CategoriesBlocks: React.FC<CategoriesBlocksProps> = props => {
           props.setCategoryIsActive(i);
           switch (category.text) {
             case 'Видеокарты':
-              props.setActiveCategory(EComponentTypes.videoCard);
+              props.setActiveCategory('videoCard');
               break;
             case 'Процессоры':
-              props.setActiveCategory(EComponentTypes.processor);
+              props.setActiveCategory('processor');
               break;
           }
         }}

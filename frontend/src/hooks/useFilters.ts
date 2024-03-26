@@ -76,11 +76,24 @@ function useFilters(
     setFilters(newFilters);
   }
 
+  function findIndexOfFilter(
+    nameBlock: keyof TComponentFiltersKeys,
+    filterText: string,
+  ): null | number {
+    filters[nameBlock].filters.map((filter, i) => {
+      if (filter.text === filterText) {
+        return i;
+      }
+    });
+    return null;
+  }
+
   return {
     filters,
     setCheckBoxIsActive,
     setRadioIsActive,
     setComponentTypeHandle,
+    findIndexOfFilter,
   };
 }
 

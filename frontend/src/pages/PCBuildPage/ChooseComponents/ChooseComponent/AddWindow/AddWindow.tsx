@@ -5,7 +5,7 @@ import useFilters from 'hooks/useFilters.ts';
 import { useSelector } from 'react-redux';
 import { RootState } from 'store/store.ts';
 import styles from './AddWindow.module.css';
-import Input from 'components/Input/Input.tsx';
+import Input from 'components/inputs/Input/Input.tsx';
 import ChooseComponentCard from 'components/cards/ChooseComponentCard/ChooseComponentCard.tsx';
 import ShowMoreBtn from 'components/btns/ShowMoreBtn/ShowMoreBtn.tsx';
 import TProduct from 'types/TProduct.ts';

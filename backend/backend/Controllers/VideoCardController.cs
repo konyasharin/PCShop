@@ -91,6 +91,7 @@ namespace backend.Controllers
 
                     var videoCard = connection.QueryFirstOrDefault<VideoCard<string>>("SELECT * FROM public.video_card WHERE Id = @Id",
                         new { Id = id });
+                    logger.LogInformation(videoCard.MemoryDb);
 
                     if (videoCard != null)
                     {

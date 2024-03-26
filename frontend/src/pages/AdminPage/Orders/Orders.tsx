@@ -1,4 +1,4 @@
-import Input from 'components/Input/Input.tsx';
+import Input from 'components/inputs/Input/Input.tsx';
 import { useState } from 'react';
 import styles from './Orders.module.css';
 import CheckBox from 'components/CheckBox/CheckBox.tsx';
