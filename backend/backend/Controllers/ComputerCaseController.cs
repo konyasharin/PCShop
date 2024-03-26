@@ -33,7 +33,7 @@ namespace backend.Controllers
                 {
                     return BadRequest(new { error = "Depth must be between 20 and 100" });
                 }
-                return await CreateComponent<ComputerCase<IFormFile>>(computerCase, ["material", "width", "height", "depth"], "computer_cases"); ;
+                return await CreateComponent<ComputerCase<IFormFile>>(computerCase, ["material", "width", "height", "depth"], "computer_cases");
         }
 
         [HttpGet("getAllComputerCases")]

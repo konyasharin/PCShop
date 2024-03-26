@@ -24,66 +24,15 @@ namespace backend.Controllers
         public async Task<IActionResult> CreatePowerUnit([FromForm] PowerUnit<IFormFile> powerunit)
         {
 
-            try
-            {
-                string imagePath = BackupWriter.Write(powerunit.Image);
-
-
-                if (powerunit.Price < 0)
-                {
-                    return BadRequest(new { error = "Price must not be less than 0" });
-                }
 
                 if (powerunit.Voltage < 0 || powerunit.Voltage > 50000)
                 {
                     return BadRequest(new { error = "Voltage must be between 0 and 50000" });
                 }
 
-                if (powerunit.Amount < 0)
-                {
-                    return BadRequest(new { error = "Amount must be less than 0" });
-                }
-
-                if (powerunit.Power < 0 || powerunit.Power > 10)
-                {
-                    return BadRequest(new { error = "Power must must be between 0 and 10" });
-                }
-
                 powerunit.Likes = 0;
 
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    var data = new
-                    {
-                        brand = powerunit.Brand,
-                        model = powerunit.Model,
-                        country = powerunit.Country,
-                        battery = powerunit.Battery,
-                        voltage = powerunit.Voltage,
-                        price = powerunit.Price,
-                        description = powerunit.Description,
-                        image = imagePath,
-                        amount = powerunit.Amount,
-                        power = powerunit.Power,
-                        likes = powerunit.Likes,
-
-                    };
-
-                    connection.Open();
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.power_unit (brand, model, country, battery, voltage," +
-                        "price, description, image, amount, power, likes)" +
-                        "VALUES (@brand, @model, @country, @battery, @voltage, @price," +
-                        " @description, @image, @amount, @power, @likes) RETURNING id", data);
-
-                    logger.LogInformation("powerUnit data saved to database");
-                    return Ok(new { id = id, data });
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("PowerUnit data did not save in database");
-                return BadRequest(new { error = ex.Message });
-            }
+            return await CreateComponent<PowerUnit<IFormFile>>(powerunit, ["battery", "voltage"], "power_unit");
         }
 
         [HttpGet("getPowerUnit/{id}")]

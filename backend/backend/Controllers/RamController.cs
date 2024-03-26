@@ -24,10 +24,7 @@ namespace backend.Controllers
         public async Task<IActionResult> CreateRam([FromForm] RAM<IFormFile> ram)
         {
 
-            try
-            {
-                string imagePath = BackupWriter.Write(ram.Image);
-               
+           
                 if (ram.Frequency < 0 || ram.Frequency > 100000)
                 {
                     return BadRequest(new { error = "Frequency must be between 0 and 100000" });
@@ -43,57 +40,9 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Capacity_db must be between 0 and 10000" });
                 }
 
-                if (ram.Price < 0)
-                {
-                    return BadRequest(new { error = "Price must not be less than 0" });
-                }
-
-                if (ram.Amount < 0)
-                {
-                    return BadRequest(new { error = "Amount must be less than 0" });
-                }
-
-                if(ram.Power < 0 || ram.Power > 10)
-                {
-                    return BadRequest(new { error = "Power must be between 0 and 10" });
-                }
-
                 ram.Likes = 0;
 
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    var data = new
-                    {
-                        brand = ram.Brand,
-                        model = ram.Model,
-                        country = ram.Country,
-                        frequency = ram.Frequency,
-                        timings = ram.Timings,
-                        capacity_db = ram.Capacity_db,
-                        price = ram.Price,
-                        description = ram.Description,
-                        image = imagePath,
-                        amount = ram.Amount,
-                        power = ram.Power,
-                        likes = ram.Likes,
-
-                    };
-
-                    connection.Open();
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.ram (id, brand, model, country, frequency, timings, capacity_db," +
-                        "price, description, image, amount, power, likes)" +
-                        "VALUES (@brand, @model, @country, @frequency, @timings, @capacity_db," +
-                        " @price, @description, @image, @amount, @power, @likes) RETURNING id", data);
-
-                    logger.LogInformation("Ram data saved to database");
-                    return Ok(new { id = id, data });
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Ram data did not save in database. Exception: {ex}");
-                return BadRequest(new { error = ex.Message });
-            }
+            return await CreateComponent<RAM<IFormFile>>(ram, ["frequency", "timings", "capacity_db"], "ram");
         }
 
         [HttpGet("getRam/{id}")]

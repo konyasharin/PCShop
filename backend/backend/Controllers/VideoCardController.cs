@@ -22,59 +22,10 @@ namespace backend.Controllers
         [HttpPost("createVideoCard")]
         public async Task<IActionResult> CreateVideoCard([FromForm] VideoCard<IFormFile> videoCard)
         {
-            try
-            {
-                string imagePath = BackupWriter.Write(videoCard.Image);
-                
-                if (videoCard.Price < 0)
-                {
-                    return BadRequest(new { error = "Price must not be less than 0" });
-                }
-
-                if(videoCard.Amount < 0)
-                {
-                    return BadRequest(new { error = "Amount must not be less than 0" });
-                }
-
-                if (videoCard.Power < 0 || videoCard.Power > 10)
-                {
-                    return BadRequest(new { error = "Power must be between 0 and 10" });
-                }
-
+            
                 videoCard.Likes = 0;
 
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    var data = new
-                    {
-                        id = videoCard.ProductId,
-                        brand = videoCard.Brand,
-                        model = videoCard.Model,
-                        country = videoCard.Country,
-                        memory_db = videoCard.MemoryDb,
-                        memory_type = videoCard.MemoryType,
-                        price = videoCard.Price,
-                        description = videoCard.Description,
-                        image = imagePath,
-                        amount = videoCard.Amount,
-                        power = videoCard.Power,
-                        likes = videoCard.Likes,
-                    };
-
-                    connection.Open();
-                    int id = connection.QuerySingleOrDefault<int>("INSERT INTO public.video_card (brand, model, country, memory_db, memory_type," +
-                        "price, description, image, amount, power, likes)" +
-                        "VALUES (@brand, @model, @country, @memory_db, @memory_type," +
-                        " @price, @description, @image, @amount, @power, @likes) RETURNING id", data);
-                    logger.LogInformation("VideoCard data saved to database");;
-                    return Ok(new { id = id, data });
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"VideoCard data did not save in database. \nException: {ex}");
-                return BadRequest(new { error = ex.Message });
-            }
+            return await CreateComponent<VideoCard<IFormFile>>(videoCard, ["memory_db", "memory_type"], "video_card");
         }
 
         [HttpGet("getVideoCard/{id}")]

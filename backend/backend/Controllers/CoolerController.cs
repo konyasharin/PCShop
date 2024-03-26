@@ -22,12 +22,6 @@ namespace backend.Controllers
         [HttpPost("createCooler")]
         public async Task<IActionResult> CreateCooler([FromForm] Cooler<IFormFile> cooler)
         {
-            try
-            {
-                string imagePath = BackupWriter.Write(cooler.Image);
-
-                var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-
                 if (cooler.Speed <= 0 || cooler.Speed > 10000)
                 {
                     return BadRequest(new { error = "Speed must be between 0 and 10000" });
@@ -38,56 +32,12 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Cooler_power must be between 0 and 10000" });
                 }
 
-                if (cooler.Price < 0)
-                {
-                    return BadRequest(new { error = "Price must not be less then 0" });
-                }
-
-                if(cooler.Amount < 0)
-                {
-                    return BadRequest(new { error = "Amount must not be less than 0" });
-                }
-
-                if(cooler.Power < 0 || cooler.Power > 10)
-                {
-                    return BadRequest(new { error = "Power must be between 0 and 10" });
-                }
-
                 cooler.Likes = 0;
 
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    var data = new
-                    {
-                        brand = cooler.Brand,
-                        model = cooler.Model,
-                        country = cooler.Country,
-                        speed = cooler.Speed,
-                        cooler_power = cooler.cooler_power,
-                        price = cooler.Price,
-                        description = cooler.Description,
-                        image = imagePath,
-                        amount = cooler.Amount,
-                        power = cooler.Power,
-                        likes = cooler.Likes,
-                    };
+            return await CreateComponent<Cooler<IFormFile>>(cooler, ["speed", "cooler_power"], "coolers");
 
-                    connection.Open();
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.cooler (brand, model, country," +
-                        " speed, cooler_power," +
-                        "price, description, image, amount, power, likes)" +
-                        "VALUES (@brand, @model, @country, @speed, @cooler_power, @price," +
-                        " @description, @image, @amount, @power, @likes) RETURNING id", data);
 
-                    logger.LogInformation("Cooler data saved to database");
 
-                    return Ok(new { id = id, data });
-                }
-            }catch(Exception ex)
-            {
-                logger.LogError("Cooler data did not save in database");
-                return BadRequest(new { error = ex.Message });
-            }
         }
 
         [HttpGet("getCooler/{id}")]

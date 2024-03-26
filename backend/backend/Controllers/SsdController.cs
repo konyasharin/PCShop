@@ -24,63 +24,15 @@ namespace backend.Controllers
         [HttpPost("createSsd")]
         public async Task<IActionResult> CreateSsd([FromForm] SSD<IFormFile> ssd)
         {
-            try
-            {
-                string imagePath = BackupWriter.Write(ssd.Image);
-               
+            
                 if (ssd.Capacity < 0 || ssd.Capacity > 10000)
                 {
                     return BadRequest(new { error = "Capacity must be between 0 and 10000" });
                 }
 
-                if (ssd.Price < 0)
-                {
-                    return BadRequest(new { error = "Price must not be less than 0" });
-                }
-
-                if (ssd.Amount < 0)
-                {
-                    return BadRequest(new { error = "Amount must be less than 0" });
-                }
-
-                if (ssd.Power < 0 || ssd.Power > 10)
-                {
-                    return BadRequest(new { error = "Power must be between 0 and 10" });
-                }
-
                 ssd.Likes = 0;
 
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    var data = new
-                    {
-                        brand = ssd.Brand,
-                        model = ssd.Model,
-                        country = ssd.Country,
-                        capacity = ssd.Capacity,
-                        price = ssd.Price,
-                        description = ssd.Description,
-                        image = imagePath,
-                        amount = ssd.Amount,
-                        power = ssd.Power,
-                        likes = ssd.Likes,
-                    };
-
-                    connection.Open();
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.ssd (brand, model, country, capacity," +
-                        "price, description, image, amount, power, likes)" +
-                        "VALUES (@brand, @model, @country, @capacity," +
-                        " @price, @description, @image, @amount, @power, @likes) RETURNING id", data);
-
-                    logger.LogInformation("SSD data saved to database");
-                    return Ok(new { id = id, data });
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"SSD data did not save in database. \nEsception: {ex}");
-                return BadRequest(new { error = ex.Message });
-            }
+            return await CreateComponent<SSD<IFormFile>>(ssd, ["capacity"], "ssd");
         }
 
         [HttpGet("getSsd/{id}")]
