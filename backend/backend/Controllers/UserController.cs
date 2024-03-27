@@ -10,10 +10,17 @@ namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ComponentController
+    public class UserController : ControllerBase
     {
-        public UserController(ILogger<UserController> logger) :base(logger)
-        { }
+        protected readonly ILogger<UserController> logger;
+        protected readonly string connectionString;
+        
+        public UserController(ILogger<UserController> logger)
+        {
+            this.logger = logger;
+            DotNetEnv.Env.Load();
+            Environment.GetEnvironmentVariable("ConnectionString");
+        }
 
         [HttpPost("signUp")]
         public async Task<IActionResult> SignUpUser(User user)
