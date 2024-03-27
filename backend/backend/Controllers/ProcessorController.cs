@@ -23,16 +23,7 @@ namespace backend.Controllers
         public async Task<IActionResult> CreateProcessor([FromForm] Processor<IFormFile> processor)
         {
 
-            try
-            {
-                string imagePath = BackupWriter.Write(processor.Image);
-                
-                
-                if (processor.Price < 0)
-                {
-                    return BadRequest(new { error = "Price must be less than 0" });
-                }
-
+           
                 if ((processor.Clock_frequency < 0 || processor.Clock_frequency >= 50000)
                     && (processor.Clock_frequency > processor.Turbo_frequency))
                 {
@@ -55,55 +46,10 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Heat_dissipation must be between 0 and 10000" });
                 }
 
-                if (processor.Amount < 0)
-                {
-                    return BadRequest(new { error = "Amount must be less than 0" });
-                }
-
-                if(processor.Power < 0 || processor.Power > 10)
-                {
-                    return BadRequest(new { error = "Power must be between 0 and 10" });
-                }
-
+               
                 processor.Likes = 0;
 
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    var data = new
-                    {
-                        brand = processor.Brand,
-                        model = processor.Model,
-                        cores = processor.Cores,
-                        country = processor.Country,
-                        clock_frequency = processor.Clock_frequency,
-                        turbo_frequency = processor.Turbo_frequency,
-                        heat_dissipation = processor.Heat_dissipation,
-                        price = processor.Price,
-                        description = processor.Description,
-                        image = imagePath,
-                        amount = processor.Amount,
-                        power = processor.Power,
-                        likes = processor.Likes,
-                    };
-
-                    connection.Open();
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.processor (brand, model," +
-                        " country, cores, clock_frequency, turbo_frequency," +
-                        " heat_dissipation," +
-                        "price, description, image, amount, power, likes)" +
-                        "VALUES (@brand, @model, @country, @cores, @clock_frequency, @turbo_frequency," +
-                        " @heat_dissipation, @price," +
-                        " @description, @image, @amount, @power, @likes) RETURNING id", data);
-
-                    logger.LogInformation("Processor data saved to database");
-                    return Ok(new { id = id, data });
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Processor data did not save in database. Exeption: {ex}");
-                return BadRequest(new { error = ex.Message });
-            }
+            return await CreateComponent<Processor<IFormFile>>(processor, ["cores", "heat_dissipation", "clock_frequency", "turbo_frequency"], "processor");
         }
 
         [HttpGet("getProcessor/{id}")]

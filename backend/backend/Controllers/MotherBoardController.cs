@@ -29,62 +29,13 @@ namespace backend.Controllers
                 return BadRequest(new { error = "Frequency must be between 0 and 100000" });
             }
 
-            if (motherBoard.Price < 0)
-            {
-                return BadRequest(new { error = "Price must not be less than 0" });
-            }
-
-            if(motherBoard.Amount < 0)
-            {
-                return BadRequest(new { error = "Amount must be less than 0" });
-            }
-
-            if(motherBoard.Power < 0 || motherBoard.Power > 10)
-            {
-                return BadRequest(new { error = "Power must be between 0 and 10" });
-            }
-
             motherBoard.Likes = 0;
 
-            try
-            {
-                string imagePath = BackupWriter.Write(motherBoard.Image);
-                
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    var data = new
-                    {
-                        brand = motherBoard.Brand,
-                        model = motherBoard.Model,
-                        country = motherBoard.Country,
-                        frequency = motherBoard.Frequency,
-                        socket = motherBoard.Socket,
-                        chipset = motherBoard.Chipset,
-                        price = motherBoard.Price,
-                        description = motherBoard.Description,
-                        image = imagePath,
-                        amount = motherBoard.Amount,
-                        power = motherBoard.Power,
-                        likes = motherBoard.Likes,
-                    };
-
-                    connection.Open();
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.mother_board (brand, model, country, frequency, socket, chipset," +
-                        "price, description, image, amount, power, likes)" +
-                        "VALUES (@brand, @model, @country, @frequency, @socket, @chipset," +
-                        " @price, @description, @image, @amount, @power, @likes) RETURNING id", data);
-
-                    logger.LogInformation("MotherBoard data saved to database");
-                    return Ok(new { id =  id, data});
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"MotherBoard data did not save in database. Exception: {ex}");
-                return BadRequest(new { error = ex.Message });
-               
-            }
+            return await CreateComponent<MotherBoard<IFormFile>>(motherBoard, ["frequency", "socket", "chipset"], "mother_board");
         }
+
+
+    
 
         [HttpGet("getMotherBoard/{id}")]
         public async Task<IActionResult> GetComputerCaseById(int id)

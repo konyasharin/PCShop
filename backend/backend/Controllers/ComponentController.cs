@@ -336,15 +336,17 @@ namespace backend.Controllers
             }
         }
 
-        protected async Task<IActionResult> GetAllComponents<T>(int limit, int offset, string databaseName) where T: Component<string>
+        protected async Task<IActionResult> GetAllComponents<T>(int limit, int offset, string databaseName, string[] characteristics) where T : Component<string>
         {
+            logger.LogInformation(TransformToCamelCase(["brand", "model"], ["product_type"]));
             try
             {
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
-                    var computerCasesBase = connection.Query<Component<string>>($"SELECT * FROM public.products WHERE product_type = '{databaseName}'", 
-                        new {Limit = limit, Offset = offset});
+                    var computerCasesBase = connection.Query<Component<string>>($"SELECT {TransformToCamelCase(SeparateCharacteristics(characteristics)["characteristicsWithoutSnakes"],
+                        SeparateCharacteristics(characteristics)["characteristicsWithSnakes"])} FROM public.products WHERE product_type = '{databaseName}'",
+                        new { Limit = limit, Offset = offset });
                     Dictionary<string, object>[] computerCases = [];
                     foreach (var computerCase in computerCasesBase)
                     {
@@ -352,20 +354,20 @@ namespace backend.Controllers
                         logger.LogInformation(computerCase.ProductId.Value.ToString());
                         if (computerCase.ProductId != null)
                         {
-                            computerCases.Append(await JoinProductInfo(computerCase.ProductId.Value, databaseName, computerCase));   
+                            computerCases.Append(await JoinProductInfo(computerCase.ProductId.Value, databaseName, computerCase));
                         }
                     }
                     logger.LogInformation("Retrieved all ComputerCase data from the database");
                     return Ok(new { data = computerCases });
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError($"ComputerCase data did not get from database. Exception: {ex}");
-                return NotFound(new {error = ex.Message});
+                return NotFound(new { error = ex.Message });
             }
         }
-        
+
         private static string TransformCharacteristicsToString(string[] characteristics, string prev = "")
         {
             string stringOfCharacteristics = "";
@@ -415,6 +417,60 @@ namespace backend.Controllers
                 logger.LogError(ex.ToString());
                 return new Dictionary<string, object>();
             }
+        }
+
+        private string TransformToCamelCase(string[] characteristics, string[] snakeCaseCharacteristics)
+        {
+            string[] camelStrings = new string[snakeCaseCharacteristics.Length];
+
+            for (int i = 0;  i < snakeCaseCharacteristics.Length; i++)
+            {
+                List<char> snakeElemsList = new List<char>(snakeCaseCharacteristics[i].ToCharArray());
+
+                for(int j = 0; j < snakeElemsList.Count; j++)
+                {
+                    if (snakeElemsList[j] == '_')
+                    {
+                        snakeElemsList[j + 1] = Char.ToUpper(snakeElemsList[j + 1]);
+                        snakeElemsList.RemoveAt(j);
+                    }
+                }
+
+                string camelString = new string(snakeElemsList.ToArray());
+                camelStrings[i] = $"{snakeCaseCharacteristics[i]} AS {camelString}";
+                
+            }
+
+            string characteristicsString = TransformCharacteristicsToString(characteristics);
+            
+            if(camelStrings.Length > 0)
+            {
+                string camelString = TransformCharacteristicsToString(camelStrings);
+                characteristicsString = characteristicsString + ", " + camelString;
+            }
+
+            return characteristicsString;
+        }
+
+        private Dictionary<string, string[]> SeparateCharacteristics(string[] characteristics)
+        {
+            List<string> characteristicsWithoutSnakes = new List<string>();
+            List<string> chacteristicsWithSnakes = new List<string>();
+            for (int i = 0; i < characteristics.Length;  i++) { 
+
+                if (characteristics[i].Contains("_"))
+                {
+                    chacteristicsWithSnakes.Add(characteristics[i]);
+                }
+
+                else
+                {
+                    characteristicsWithoutSnakes.Add(characteristics[i]);
+                }
+            }
+
+            return new Dictionary<string, string[]>() { { "characteristicsWithoutSnakes", characteristicsWithoutSnakes.ToArray()},
+                { "characteristicsWithSnakes", chacteristicsWithSnakes.ToArray()} };
         }
     }
 }
