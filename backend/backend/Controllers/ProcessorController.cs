@@ -1,5 +1,6 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
+using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
 using backend.UpdatedEntities;
 using backend.Utils;
@@ -55,234 +56,34 @@ namespace backend.Controllers
         [HttpGet("getProcessor/{id}")]
         public async Task<IActionResult> GetProcessorById(int id)
         {
-            try
-            {
-
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-
-                    var processor = connection.QueryFirstOrDefault<Processor<string>>("SELECT * FROM public.processor WHERE Id = @Id",
-                        new { Id = id });
-
-                    if (processor != null)
-                    {
-                        logger.LogInformation($"Retrieved Processor with Id {id} from the database");
-                        return Ok(new { id = id, processor });
-
-                    }
-                    else
-                    {
-                        logger.LogInformation($"Processor with Id {id} not found in the database");
-                        return NotFound(new {error = $"Processor NotFound with {id}"});
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Failed to retrieve Processor data from the database. \nException {ex}");
-                return StatusCode(500, new { error = "Internal server error" });
-            }
+            return await getComponent<PowerUnitInfo>(id, "power_unit", ["battery", "voltage"]);
         }
 
         [HttpPut("updateProcessor/{id}")]
-        public async Task<IActionResult> UpdateProcessor(int id, [FromForm] UpdatedProcessor updatedProcessor)
+        public async Task<IActionResult> UpdateProcessor(int id, [FromForm] Processor<IFormFile> processor, [FromQuery] bool isUpdated)
         {
-            try
-            {
-               
-
-                if ((updatedProcessor.Clock_frequency < 0 || updatedProcessor.Clock_frequency >= 50000)
-                    && (updatedProcessor.Clock_frequency > updatedProcessor.Turbo_frequency))
-                {
-                    return BadRequest(new { error = "Clock_frequency must be between 0 and 50000 and less than turbo_frequency" });
-                }
-
-                if ((updatedProcessor.Turbo_frequency < updatedProcessor.Clock_frequency) 
-                    && (updatedProcessor.Turbo_frequency > 100000 || updatedProcessor.Turbo_frequency < 0))
-                {
-                    return BadRequest(new { error = "Turbo_frequency must be bigger than clock_frequency and 100000 and less than 0" });
-                }
-                
-                if (updatedProcessor.Price < 0)
-                {
-                    return BadRequest(new { error = "Price must not be less than 0" });
-                }
-
-                if (updatedProcessor.Cores < 0 || updatedProcessor.Cores > 8)
-                {
-                    return BadRequest(new { error = "Cores most be between 0 and 8" });
-                }
-
-                if (updatedProcessor.Heat_dissipation < 0 || updatedProcessor.Heat_dissipation > 10000)
-                {
-                    return BadRequest(new { error = "Heat_dissipation must be between 0 and 10000" });
-                }
-
-                if (updatedProcessor.Amount < 0)
-                {
-                    return BadRequest(new { error = "Amount must be less than 0" });
-                }
-
-                if(updatedProcessor.Power < 0 || updatedProcessor.Power > 10)
-                {
-                    return BadRequest(new { error = "Power must be between 0 and 10" });
-                }
-
-                if(updatedProcessor.Likes < 0)
-                {
-                    return BadRequest(new { error = "Likes must not be less than 0" });
-                }
-
-                string imagePath = string.Empty;
-
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.processor WHERE Id = @id");
-
-                    if (updatedProcessor.updated)
-                    {
-
-                        BackupWriter.Delete(filePath);
-                        imagePath = BackupWriter.Write(updatedProcessor.Image);
-                    }
-                    else
-                    {
-                        imagePath = filePath;
-                    }
-
-                    var data = new
-                    {
-                        id = id,
-                        brand = updatedProcessor.Brand,
-                        model = updatedProcessor.Model,
-                        country = updatedProcessor.Country,
-                        cores = updatedProcessor.Cores,
-                        clock_frequency = updatedProcessor.Clock_frequency,
-                        turbo_frequency = updatedProcessor.Turbo_frequency,
-                        heat_dissipation = updatedProcessor.Heat_dissipation,
-                        price = updatedProcessor.Price,
-                        description = updatedProcessor.Description,
-                        image = imagePath,
-                        amount = updatedProcessor.Amount,
-                        power = updatedProcessor.Power,
-                        likes = updatedProcessor.Likes,
-                    };
-
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    connection.Execute("UPDATE public.processor SET brand = @brand, model = @model, country = @country," +
-                        " cores = @cores," +
-                        " clock_frequency = @clock_frequency, turbo_frequency = @turbo_frequency," +
-                        " heat_dissipation = @heat_dissipation," +
-                        " depth = @depth, price = @price, description = @description," +
-                        " image = @image, amount = @amount, power = @power, likes = @likes WHERE id = @id", data);
-
-                    logger.LogInformation("Processor data updated in the database");
-
-                    return Ok(new { id = id, data});
-
-                }
-
-                
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Failed to update Processor data in database. \nException: {ex}");
-                return StatusCode(500, new { error = "Internal server error" });
-            }
+            processor.ProductId = id;
+            return await UpdateComponent<Processor<IFormFile>>(processor, isUpdated, "processor",
+                ["cores", "clock_frequency", "turbo_frequency", "heat_dissipation"]);
         }
 
         [HttpDelete("deleteProcessor/{id}")]
-        public async Task<IActionResult> DeleteComputerCase(int id)
+        public async Task<IActionResult> DeleteProcessor(int id)
         {
-            try
-            {
-                string filePath;
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.processor WHERE Id = @id", new { Id = id });
-                    BackupWriter.Delete(filePath);
-
-                    connection.Execute("DELETE FROM public.processor WHERE Id = @id", new { id });
-
-                    connection.Execute("DELETE FROM public.like WHERE componentid = @id AND component = processor",
-                        new { id });
-
-                    connection.Execute("DELETE FROM public.comment WHERE component_id = @id AND component = processor",
-                        new { id });
-
-                    logger.LogInformation("Processor data deleted from the database");
-
-                    return Ok(new {id=id});
-                }
-
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Failed to delete Processor data in database. \nException: {ex}");
-                return StatusCode(500, new {error = ex.Message});
-            }
+            return await DeleteComponent(id);
         }
 
         [HttpGet("getAllProcessors")]
         public async Task<IActionResult> GetAllprocessors(int limit, int offset)
         {
-            logger.LogInformation("Get method has started");
-            try
-            {
-
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var processors = connection.Query<Processor<string>>("SELECT * FROM public.processor LIMIT @Limit OFFSET @Offset",
-                        new {Limit = limit, Offset = offset});
-
-                    logger.LogInformation("Retrieved all Processor data from the database");
-
-                    return Ok(new {data=processors});
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Processor data did not get from database. Exception: {ex}");
-                return NotFound(new {error=ex.Message});
-            }
+            return await GetAllComponents<ProcessorInfo>(limit, offset, "processor",
+                ["cores", "clock_frequency", "turbo_frequency", "heat_dissipation"]);
         }
 
         [HttpGet("search")]
         public async Task<IActionResult> SearchProcessor(string keyword, int limit = 1, int offset = 0)
         {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var processors = connection.Query<Processor<string>>(@"SELECT * FROM public.processor " +
-                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
-                        "LIMIT @Limit OFFSET @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset });
-
-                    return Ok(new { processors });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with search");
-                return StatusCode(500, new { error = ex.Message });
-            }
+            return await SearchComponent(keyword, limit, offset);
         }
 
         [HttpGet("FilterByCountry")]

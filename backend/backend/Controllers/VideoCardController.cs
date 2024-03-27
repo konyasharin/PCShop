@@ -1,5 +1,6 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
+using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
 using backend.UpdatedEntities;
 using backend.Utils;
@@ -31,208 +32,34 @@ namespace backend.Controllers
         [HttpGet("getVideoCard/{id}")]
         public async Task<IActionResult> GetVideoCardById(int id)
         {
-            try
-            {
-                
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-
-                    var videoCard = connection.QueryFirstOrDefault<VideoCard<string>>("SELECT * FROM public.video_card WHERE Id = @Id",
-                        new { Id = id });
-                    logger.LogInformation(videoCard.MemoryDb);
-
-                    if (videoCard != null)
-                    {
-                        logger.LogInformation($"Retrieved VideoCard with Id {id} from the database");
-                        return Ok(new {id=id, videoCard});
-
-                    }
-                    else
-                    {
-                        logger.LogInformation($"VideoCard with Id {id} not found in the database");
-                        return NotFound(new {error = $"VideoCard NotFound with {id}"});
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Failed to retrieve VideoCard data from the database. \nException {ex}");
-                return StatusCode(500, new { error = "Internal server error" });
-            }
+            return await getComponent<VideoCardInfo>(id, "video_card", ["memory_db", "memory_type"]);
         }
 
         [HttpPut("updateVideoCard/{id}")]
-        public async Task<IActionResult> UpdateVideoCard(int id, [FromForm] UpdatedVideoCard updatedVideoCard)
+        public async Task<IActionResult> UpdateVideoCard(int id, [FromForm] VideoCard<IFormFile> videoCard, [FromQuery] bool isUpdated)
         {
-            try
-            {
-                
-                if (updatedVideoCard.Price < 0)
-                {
-                    return BadRequest(new { error = "Price must not be less than 0" });
-                }
-
-                if (updatedVideoCard.Amount < 0)
-                {
-                    return BadRequest(new { error = "Amount must not be less than 0" });
-                }
-
-                if (updatedVideoCard.Power < 0 || updatedVideoCard.Power > 10)
-                {
-                    return BadRequest(new { error = "Power must be between 0 and 10" });
-                }
-
-                if(updatedVideoCard.Likes < 0)
-                {
-                    return BadRequest(new { error = "Likes must not be less than 0" });
-                }
-
-                string imagePath = string.Empty;
-               
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    string filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.video_card WHERE Id = @id");
-
-                    if (updatedVideoCard.updated)
-                    {
-
-                        BackupWriter.Delete(filePath);
-                        imagePath = BackupWriter.Write(updatedVideoCard.Image);
-                    }
-                    else
-                    {
-                        imagePath = filePath;
-                    }
-
-                    var data = new
-                    {
-                        id = id,
-                        brand = updatedVideoCard.Brand,
-                        model = updatedVideoCard.Model,
-                        country = updatedVideoCard.Country,
-                        memory_db = updatedVideoCard.MemoryDb,
-                        memory_type = updatedVideoCard.MemoryType,
-                        price = updatedVideoCard.Price,
-                        description = updatedVideoCard.Description,
-                        image = imagePath,
-                        amount = updatedVideoCard.Amount,
-                        power = updatedVideoCard.Power,
-                        likes = updatedVideoCard.Likes,
-                    };
-
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    connection.Execute("UPDATE public.video_card SET Brand = @brand, Model = @model," +
-                        " Country = @country, Memory_db = @memory_db," +
-                        " Memory_type = @memory_db," +
-                        " Price = @price, Description = @description," +
-                        " Image = @image, Amount = @amount, Power = @power, Likes = @likes WHERE Id = @id", data);
-
-                    logger.LogInformation("VideoCard data updated in the database");
-
-                    return Ok(new { id = id, data });
-                }
-
-                
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Failed to update VideoCard data in database. \nException: {ex}");
-                return StatusCode(500, new { error = ex.Message });
-            }
+            videoCard.ProductId = id;
+            return await UpdateComponent<VideoCard<IFormFile>>(videoCard, isUpdated, "video_card",
+                ["memory_db", "memory_type"]);
         }
 
         [HttpDelete("deleteVideoCard/{id}")]
         public async Task<IActionResult> DeleteVideoCard(int id)
         {
-            try
-            {
-                string filePath;
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    filePath = connection.QueryFirstOrDefault<string>("SELECT image FROM public.video_card WHERE Id = @id", new { Id = id });
-                    BackupWriter.Delete(filePath);
-
-                    connection.Execute("DELETE FROM public.video_card WHERE Id = @id", new { id });
-
-                    connection.Execute("DELETE FROM public.like WHERE componentid = @id AND component = video_card",
-                        new { id });
-
-                    connection.Execute("DELETE FROM public.comment WHERE component_id = @id AND component = video_card",
-                        new { id });
-
-                    logger.LogInformation("VideoCard data deleted from the database");
-
-                    return Ok(new {id=id});
-                }
-
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Failed to delete VideoCard data in database. \nException: {ex}");
-                return StatusCode(500, new { error = ex.Message });
-            }
+            return await DeleteComponent(id);
         }
 
         [HttpGet("getAllVideoCards")]
         public async Task<IActionResult> GetAllComputerCases(int limit, int offset)
         {
-            logger.LogInformation("Get method has started");
-            try
-            {
-                
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var videoCards = connection.Query<VideoCard<string>>("SELECT * FROM public.video_card LIMIT @Limit OFFSET @Offset",
-                        new {Limit = limit, Offset = offset});
-
-                    logger.LogInformation("Retrieved all VideoCard data from the database");
-
-                    return Ok(new {data=videoCards});
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"VideoCard data did not get ftom database. Exception: {ex}");
-                return NotFound(new {error = ex.Message});
-            }
+            return await GetAllComponents<VideoCardInfo>(limit, offset, "video_card",
+               ["memory_db", "memory_type"]);
         }
 
         [HttpGet("search")]
         public async Task<IActionResult> SearchRam(string keyword, int limit = 1, int offset = 0)
         {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var videoCard = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
-                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
-                        "LIMIT @Limit OFFSET @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset });
-
-                    return Ok(new { videoCard });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with search");
-                return StatusCode(500, new { error = ex.Message });
-            }
+            return await SearchComponent(keyword, limit, offset);
         }
 
         [HttpGet("FilterByCountry")]
