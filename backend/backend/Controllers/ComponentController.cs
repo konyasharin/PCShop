@@ -343,5 +343,31 @@ namespace backend.Controllers
                 return new Dictionary<string, object>();
             }
         }
+
+        protected async Task<IActionResult> SearchComponent(string keyword, int limit = 1, int offset = 0)
+        {
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    logger.LogInformation("Connection started");
+
+                    var component = connection.Query<VideoCard<string>>(@"SELECT * FROM public.products " +
+                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
+                        "LIMIT @Limit OFFSET @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset });
+
+                    return Ok(new { component });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with search");
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        
     }
 }

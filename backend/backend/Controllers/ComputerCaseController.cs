@@ -65,26 +65,7 @@ namespace backend.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> SearchComputerCase(string keyword, int limit = 1, int offset = 0)
         {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var computerCases = connection.Query<ComputerCase<string>>(@"SELECT * FROM public.computer_case " +
-                        "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
-                        "LIMIT @Limit OFFSET @Offset", new { Keyword = "%" + keyword + "%", Limit = limit, Offset = offset });
-
-                    return Ok(new { computerCases });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with search");
-                return StatusCode(500, new { error = ex.Message });
-            }
+            return await SearchComponent(keyword, limit, offset);
         }
 
         [HttpGet("Filter")]
