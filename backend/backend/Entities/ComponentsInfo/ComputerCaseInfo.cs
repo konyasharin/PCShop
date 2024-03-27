@@ -2,9 +2,9 @@ namespace backend.Entities.ComponentsInfo;
 
 public class ComputerCaseInfo
 {
-    public int? product_id { get; set; }
-    public string material { get; set; }
-    public int width { get; set; }
-    public int height { get; set; }
-    public int depth { get; set; }
+    public int? ProductId { get; set; }
+    public string Material { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public int Depth { get; set; }
 }

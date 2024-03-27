@@ -39,7 +39,7 @@ namespace backend.Controllers
         [HttpGet("getAllComputerCases")]
         public async Task<IActionResult> GetAllComputerCases(int limit, int offset)
         {
-            return await GetAllComponents<ComputerCase<string>>(limit, offset, "computer_cases");
+            return await GetAllComponents<ComputerCase<string>>(limit, offset, "computer_cases", ["material", "width", "height", "depth"]);
         }
 
         [HttpGet("getComputerCase/{id}")]
