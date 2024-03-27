@@ -34,6 +34,10 @@ namespace backend.Controllers
                 {
                     return BadRequest(new { error = "Depth must be between 20 and 100" });
                 }
+
+                computerCase.ProductType = "computer_cases";
+                computerCase.Likes = 0;
+
                 return await CreateComponent<ComputerCase<IFormFile>>(computerCase, ["material", "width", "height", "depth"], "computer_cases");
         }
 
@@ -53,6 +57,7 @@ namespace backend.Controllers
         public async Task<IActionResult> UpdateComputerCase(int id, [FromForm] ComputerCase<IFormFile> computerCase, [FromQuery] bool isUpdated)
         {
             computerCase.ProductId = id;
+            computerCase.ProductType = "computer_cases";
             return await UpdateComponent<ComputerCase<IFormFile>>(computerCase, isUpdated, "computer_cases", ["material", "width", "height", "depth"]);
         }
 

@@ -12,6 +12,6 @@
         public int Amount { get; set; }
         public int Power { get; set; }
         public int Likes { get; set; }
-        public string ProductType { get; set; }
+        public string? ProductType { get; set; }
     }
 }

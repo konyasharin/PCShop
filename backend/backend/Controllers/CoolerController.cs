@@ -34,6 +34,7 @@ namespace backend.Controllers
                 }
 
                 cooler.Likes = 0;
+                cooler.ProductType = "cooler";
 
             return await CreateComponent<Cooler<IFormFile>>(cooler, ["speed", "cooler_power"], "coolers");
 
@@ -49,6 +50,7 @@ namespace backend.Controllers
         public async Task<IActionResult> UpdateCooler(int id, [FromForm] Cooler<IFormFile> cooler, [FromQuery] bool isUpdated)
         {
             cooler.ProductId = id;
+            cooler.ProductType = "cooler";
             return await UpdateComponent<Cooler<IFormFile>>(cooler, isUpdated, "cooler", ["speed", "cooler_power"]);
         }
 

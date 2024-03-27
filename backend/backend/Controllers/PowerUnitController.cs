@@ -26,12 +26,13 @@ namespace backend.Controllers
         {
 
 
-                if (powerunit.Voltage < 0 || powerunit.Voltage > 50000)
-                {
-                    return BadRequest(new { error = "Voltage must be between 0 and 50000" });
-                }
+            if (powerunit.Voltage < 0 || powerunit.Voltage > 50000)
+            {
+                return BadRequest(new { error = "Voltage must be between 0 and 50000" });
+            }
 
-                powerunit.Likes = 0;
+            powerunit.Likes = 0;
+            powerunit.ProductType = "power_unit";
 
             return await CreateComponent<PowerUnit<IFormFile>>(powerunit, ["battery", "voltage"], "power_unit");
         }
@@ -46,6 +47,7 @@ namespace backend.Controllers
         public async Task<IActionResult> UpdatePowerUnit(int id, [FromForm] PowerUnit<IFormFile> powerUnit, [FromQuery] bool isUpdated)
         {
             powerUnit.ProductId = id;
+            powerUnit.ProductType = "power_unit";
             return await UpdateComponent<PowerUnit<IFormFile>>(powerUnit, isUpdated, "power_unit", ["battery", "voltage"]);
         }
 

@@ -27,23 +27,23 @@ namespace backend.Controllers
         {
 
            
-                if (ram.Frequency < 0 || ram.Frequency > 100000)
-                {
-                    return BadRequest(new { error = "Frequency must be between 0 and 100000" });
-                }
+            if (ram.Frequency < 0 || ram.Frequency > 100000)
+            {
+                return BadRequest(new { error = "Frequency must be between 0 and 100000" });
+            }
 
-                if (ram.Timings < 0 || ram.Timings > 10000)
-                {
-                    return BadRequest(new { error = "Timings must be between 0 and 10000" });
-                }
+            if (ram.Timings < 0 || ram.Timings > 10000)
+            {
+                return BadRequest(new { error = "Timings must be between 0 and 10000" });
+            }
 
-                if (ram.Capacity_db < 0 || ram.Capacity_db > 10000)
-                {
-                    return BadRequest(new { error = "Capacity_db must be between 0 and 10000" });
-                }
+            if (ram.Capacity_db < 0 || ram.Capacity_db > 10000)
+            {
+                return BadRequest(new { error = "Capacity_db must be between 0 and 10000" });
+            }
 
-                ram.Likes = 0;
-
+            ram.Likes = 0;
+            ram.ProductType = "ram";
             return await CreateComponent<RAM<IFormFile>>(ram, ["frequency", "timings", "capacity_db"], "ram");
         }
 
@@ -57,6 +57,7 @@ namespace backend.Controllers
         public async Task<IActionResult> UpdateRam(int id, [FromForm] RAM<IFormFile> ram, [FromQuery] bool isUpdated)
         {
             ram.ProductId = id;
+            ram.ProductType = "ram";
             return await UpdateComponent<RAM<IFormFile>>(ram, isUpdated, "ram",
                 ["frequency", "timings", "capacity_db"]);
         }

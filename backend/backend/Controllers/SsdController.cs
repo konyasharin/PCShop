@@ -27,13 +27,13 @@ namespace backend.Controllers
         public async Task<IActionResult> CreateSsd([FromForm] SSD<IFormFile> ssd)
         {
             
-                if (ssd.Capacity < 0 || ssd.Capacity > 10000)
-                {
-                    return BadRequest(new { error = "Capacity must be between 0 and 10000" });
-                }
+            if (ssd.Capacity < 0 || ssd.Capacity > 10000)
+            {
+                return BadRequest(new { error = "Capacity must be between 0 and 10000" });
+            }
 
-                ssd.Likes = 0;
-
+            ssd.Likes = 0;
+            ssd.ProductType = "ssd";
             return await CreateComponent<SSD<IFormFile>>(ssd, ["capacity"], "ssd");
         }
 
@@ -47,6 +47,7 @@ namespace backend.Controllers
         public async Task<IActionResult> UpdateSsd(int id, [FromForm] SSD<IFormFile> ssd, [FromQuery] bool isUpdated)
         {
             ssd.ProductId = id;
+            ssd.ProductType = "ssd";
             return await UpdateComponent<SSD<IFormFile>>(ssd, isUpdated, "ssd", ["capacity"]);
         }
 

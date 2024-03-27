@@ -7,6 +7,7 @@ using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using System.Diagnostics;
 using System.Runtime.Intrinsics.Arm;
 
 namespace backend.Controllers
@@ -24,7 +25,8 @@ namespace backend.Controllers
         public async Task<IActionResult> CreateVideoCard([FromForm] VideoCard<IFormFile> videoCard)
         {
             
-                videoCard.Likes = 0;
+            videoCard.Likes = 0;
+            videoCard.ProductType = "video_card";
 
             return await CreateComponent<VideoCard<IFormFile>>(videoCard, ["memory_db", "memory_type"], "video_card");
         }
@@ -39,6 +41,7 @@ namespace backend.Controllers
         public async Task<IActionResult> UpdateVideoCard(int id, [FromForm] VideoCard<IFormFile> videoCard, [FromQuery] bool isUpdated)
         {
             videoCard.ProductId = id;
+            videoCard.ProductType = "video_card";
             return await UpdateComponent<VideoCard<IFormFile>>(videoCard, isUpdated, "video_card",
                 ["memory_db", "memory_type"]);
         }

@@ -32,6 +32,7 @@ namespace backend.Controllers
             }
 
             motherBoard.Likes = 0;
+            motherBoard.ProductType = "mother_board";
 
             return await CreateComponent<MotherBoard<IFormFile>>(motherBoard, ["frequency", "socket", "chipset"], "mother_board");
         }
@@ -49,6 +50,7 @@ namespace backend.Controllers
         public async Task<IActionResult> UpdateMotherBoard(int id, [FromForm] MotherBoard<IFormFile> motherBoard, [FromQuery] bool isUpdated)
         {
             motherBoard.ProductId = id;
+            motherBoard.ProductType = "mother_board";
             return await UpdateComponent<MotherBoard<IFormFile>>(motherBoard, isUpdated, "mother_board", ["frequency", "socket", "chipset"]);
         }
 
