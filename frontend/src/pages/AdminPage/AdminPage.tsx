@@ -6,6 +6,7 @@ import Orders from './Orders/Orders.tsx';
 import Order from './Order/Order.tsx';
 import Roles from './Roles/Roles.tsx';
 import Edit from './Edit/Edit.tsx';
+import Storage from './Storage/Storage.tsx';
 
 function AdminPage() {
   return (
@@ -19,6 +20,7 @@ function AdminPage() {
             <Route path={'/orders/:orderNumber'} element={<Order />} />
             <Route path={'/roles'} element={<Roles />} />
             <Route path={'/edit/*'} element={<Edit />} />
+            <Route path={'/store'} element={<Storage />} />
           </Routes>
         </div>
       </Container>
