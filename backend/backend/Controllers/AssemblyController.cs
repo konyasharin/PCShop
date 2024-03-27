@@ -14,10 +14,10 @@ namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AssemblyController : ComponentController
+    public class AssemblyController : ProductController
     {
 
-        public AssemblyController(ILogger<AssemblyController> logger):base(logger)
+        public AssemblyController(ILogger<AssemblyController> logger) : base(logger)
         {
         }
 
