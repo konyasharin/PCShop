@@ -1,0 +1,20 @@
+.storage{
+    width: 850px;
+}
+
+.productImg{
+    width: 160px;
+    height: 133px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.productName{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.productCount{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
