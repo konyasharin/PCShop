@@ -26,7 +26,7 @@ namespace backend.Controllers
         {
             try
             {
-                string[] characteristicsBase = ["brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type"];
+                string[] characteristicsBase = ["product_id AS productId", "brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type AS productType"];
                 string imagePath = BackupWriter.Write(component.Image);
 
 
@@ -62,8 +62,11 @@ namespace backend.Controllers
                 requestData["product_type"] = databaseName;
                 await using var connection = new NpgsqlConnection(connectionString);
                 connection.Open();
-                requestData["product_id"] = connection.QueryFirstOrDefault<int>($"INSERT INTO public.products ({TransformCharacteristicsToString(characteristicsBase)}) VALUES ({TransformCharacteristicsToString(characteristicsBase, "@")}) RETURNING product_id", requestData);
-                connection.QueryFirstOrDefault<int>($"INSERT INTO public.{databaseName} (product_id, {TransformCharacteristicsToString(characteristics)}) VALUES (@product_id, {TransformCharacteristicsToString(characteristics, "@")})", requestData);
+                
+                requestData["product_id"] = connection.QueryFirstOrDefault<int>($"INSERT INTO public.products ({SnakeCaseToPascalCase(TransformCharacteristicsToString(characteristicsBase))}) " +
+                    $"VALUES ({SnakeCaseToPascalCase(TransformCharacteristicsToString(characteristicsBase, "@"))}) RETURNING product_id", requestData);
+                connection.QueryFirstOrDefault<int>($"INSERT INTO public.{databaseName} (product_id, {SnakeCaseToPascalCase(TransformCharacteristicsToString(characteristics))}) " +
+                    $"VALUES (@product_id, {SnakeCaseToPascalCase(TransformCharacteristicsToString(characteristics, "@"))})", requestData);
                 logger.LogInformation($"Component data saved to database with id {requestData["product_id"]}");
                 return Ok(new { id = requestData["product_id"], requestData });
             }
@@ -298,6 +301,8 @@ namespace backend.Controllers
             {
                 words[i] = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(words[i]);
             }
+
+            Console.WriteLine(words);
             return string.Concat(words);
         }
         
