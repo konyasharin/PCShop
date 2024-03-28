@@ -7,8 +7,13 @@ import ChooseComponents from './ChooseComponents/ChooseComponents.tsx';
 import Input from 'components/inputs/Input/Input.tsx';
 import styles from './PCBuildPage.module.css';
 import Btn from 'components/btns/Btn/Btn.tsx';
-import useBuild from 'hooks/useBuild.ts';
+import useBuild, {
+  TUseBuildComponents,
+  TUseBuildError,
+} from 'hooks/useBuild.ts';
 import componentTypes from 'enums/componentTypes.ts';
+import EBuildBlockErrors from 'enums/EBuildBlockErrors.ts';
+import TProduct from 'types/TProduct.ts';
 
 function PCBuildPage() {
   const [buildName, setBuildName] = useState('');
@@ -21,6 +26,24 @@ function PCBuildPage() {
     power,
     errors,
   } = useBuild();
+  // const errors: TUseBuildError[] = [];
+  // const power = 5;
+  // const price = 100;
+  // const progressOfBuild = 50;
+  // const components: TUseBuildComponents = {
+  //   videoCard: {
+  //     currentProduct: null,
+  //     currentErrorType: EBuildBlockErrors.Error,
+  //   },
+  //   processor: {
+  //     currentProduct: null,
+  //     currentErrorType: EBuildBlockErrors.Error,
+  //   },
+  // };
+  // const setComponent = (
+  //   newProduct: TProduct | null,
+  //   componentType: keyof typeof componentTypes,
+  // ) => {};
   const errorsBlocks = errors.map(error => {
     return (
       <BuildsError
@@ -42,7 +65,11 @@ function PCBuildPage() {
         />
         <Scale className={styles.scale} percents={progressOfBuild} />
         {...errorsBlocks}
-        <ChooseComponents components={components} setComponent={setComponent} />
+        <ChooseComponents
+          components={components}
+          setComponent={setComponent}
+          key={0}
+        />
         <PowerOfBuild power={power} price={`${price}$`} />
         <Btn className={styles.button}>Cоздать пк</Btn>
       </Container>
