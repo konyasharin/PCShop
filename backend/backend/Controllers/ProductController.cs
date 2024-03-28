@@ -179,7 +179,7 @@ namespace backend.Controllers
                     var comment = await connection.QueryFirstOrDefaultAsync<Comment>(
                         $"SELECT * FROM public.comment WHERE id = @commentId AND " +
                         $"component_id = @productId AND component = @Component",
-                        new { commentId = commentId, productId = productId, Component = component });
+                        new { CommentId = commentId, ProductId = productId, Component = component });
 
                     if (comment == null)
                     {
