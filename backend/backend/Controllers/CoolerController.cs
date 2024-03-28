@@ -43,7 +43,7 @@ namespace backend.Controllers
         [HttpGet("getCooler/{id}")]
         public async Task<IActionResult> GetCoolerById(int id)
         {
-            return await getComponent<CoolerInfo>(id, "cooler", ["speed", "cooler_power"]);
+            return await GetComponent<CoolerInfo>(id, "cooler", ["speed", "cooler_power"]);
         }
 
         [HttpPut("updateCooler/{id}")]

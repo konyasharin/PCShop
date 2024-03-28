@@ -51,6 +51,7 @@ const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
       await getProcessors();
       dispatch(setIsLoading(false));
     }
+    console.log('123', isLoaded);
     if (isLoaded.current) return;
     void getComponents();
     isLoaded.current = true;

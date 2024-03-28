@@ -23,31 +23,6 @@ namespace backend.Controllers
         [HttpPost("createProcessor")]
         public async Task<IActionResult> CreateProcessor([FromForm] Processor<IFormFile> processor)
         {
-
-           
-            if ((processor.Clock_frequency < 0 || processor.Clock_frequency >= 50000)
-                && (processor.Clock_frequency > processor.Turbo_frequency))
-            {
-                return BadRequest(new { error = "Clock_frequency must be between 0 and 50000 and less than turbo_frequency" });
-            }
-
-            if ((processor.Turbo_frequency < processor.Clock_frequency)
-                && (processor.Turbo_frequency >= 100000 || processor.Turbo_frequency < 0))
-            {
-                return BadRequest(new { error = "Turbo_frequency must be bigger than clock_frequency and 100000 and less than 0" });
-            }
-
-            if (processor.Cores < 0 || processor.Cores >= 8)
-            {
-                return BadRequest(new { error = "Cores most be between 0 and 8" });
-            }
-
-            if (processor.Heat_dissipation < 0 || processor.Heat_dissipation > 10000)
-            {
-                return BadRequest(new { error = "Heat_dissipation must be between 0 and 10000" });
-            }
-
-               
             processor.Likes = 0;
             processor.ProductType = "processor";
             return await CreateComponent<Processor<IFormFile>>(processor, ["cores", "heat_dissipation", "clock_frequency", "turbo_frequency"], "processor");
@@ -56,7 +31,7 @@ namespace backend.Controllers
         [HttpGet("getProcessor/{id}")]
         public async Task<IActionResult> GetProcessorById(int id)
         {
-            return await getComponent<PowerUnitInfo>(id, "power_unit", ["battery", "voltage"]);
+            return await GetComponent<PowerUnitInfo>(id, "power_unit", ["battery", "voltage"]);
         }
 
         [HttpPut("updateProcessor/{id}")]

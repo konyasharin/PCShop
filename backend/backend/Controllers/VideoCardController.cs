@@ -34,7 +34,7 @@ namespace backend.Controllers
         [HttpGet("getVideoCard/{id}")]
         public async Task<IActionResult> GetVideoCardById(int id)
         {
-            return await getComponent<VideoCardInfo>(id, "video_card", ["memory_db", "memory_type"]);
+            return await GetComponent<VideoCardInfo>(id, "video_card", ["memory_db", "memory_type"]);
         }
 
         [HttpPut("updateVideoCard/{id}")]

@@ -50,7 +50,7 @@ namespace backend.Controllers
         [HttpGet("getComputerCase/{id}")]
         public async Task<IActionResult> GetComputerCaseById (int id)
         {
-            return await getComponent<ComputerCaseInfo>(id, "computer_cases", ["material", "width", "height", "depth"]);
+            return await GetComponent<ComputerCaseInfo>(id, "computer_cases", ["material", "width", "height", "depth"]);
         }
 
         [HttpPut("updateComputerCase/{id}")]

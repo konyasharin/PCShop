@@ -43,7 +43,7 @@ namespace backend.Controllers
         [HttpGet("getMotherBoard/{id}")]
         public async Task<IActionResult> GetComputerCaseById(int id)
         {
-            return await getComponent<MotherBoardInfo>(id, "mother_board", ["frequency", "socket", "chipset"]);
+            return await GetComponent<MotherBoardInfo>(id, "mother_board", ["frequency", "socket", "chipset"]);
         }
 
         [HttpPut("updateMotherBoard/{id}")]

@@ -1,4 +1,6 @@
-﻿namespace backend.Entities
+﻿using Newtonsoft.Json;
+
+namespace backend.Entities
 {
     public class Component<T>
     {

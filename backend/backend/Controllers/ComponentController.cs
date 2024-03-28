@@ -63,7 +63,7 @@ namespace backend.Controllers
                 await using var connection = new NpgsqlConnection(connectionString);
                 connection.Open();
                 requestData["product_id"] = connection.QueryFirstOrDefault<int>($"INSERT INTO public.products ({TransformCharacteristicsToString(characteristicsBase)}) VALUES ({TransformCharacteristicsToString(characteristicsBase, "@")}) RETURNING product_id", requestData);
-                connection.QueryFirstOrDefault<int>($"INSERT INTO public.{databaseName} (product_id, {TransformCharacteristicsToString(characteristics)}) VALUES (@product_id, {TransformCharacteristicsToString(characteristics, "@")})", requestData);
+                connection.QueryFirstOrDefault<int>($"INSERT INTO public.{databaseName} (product_id, {TransformCharacteristicsToString(characteristics)}) VALUES (@product_id, {TransformCharacteristicsToString(SnakeCasesToPascalCase(characteristics), "@")})", requestData);
                 logger.LogInformation($"Component data saved to database with id {requestData["product_id"]}");
                 return Ok(new { id = requestData["product_id"], requestData });
             }
@@ -92,9 +92,11 @@ namespace backend.Controllers
                     {
                         if (component.ProductId != null)
                         {
-                            components.Add(await JoinComponentInfo<T>(component.ProductId.Value, databaseName, component, componentCharacteristics));
+                            components.Add((await JoinComponentInfo<T>(component.ProductId.Value, databaseName, component, componentCharacteristics)).ToDictionary(kvp => char.ToLower(kvp.Key[0]) + kvp.Key.Substring(1),
+                                kvp => kvp.Value));
                         }
                     }
+                    
                     return Ok(new { data = components });
                 }
             }
@@ -105,7 +107,7 @@ namespace backend.Controllers
             }
         }
         
-        protected async Task<IActionResult> getComponent<T>(int componentId, string databaseName, string[] componentCharacteristics)
+        protected async Task<IActionResult> GetComponent<T>(int componentId, string databaseName, string[] componentCharacteristics)
         {
             string[] characteristicsBase = ["product_id AS productId", "brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type AS productType"];
             
@@ -299,6 +301,17 @@ namespace backend.Controllers
                 words[i] = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(words[i]);
             }
             return string.Concat(words);
+        }
+
+        private static string[] SnakeCasesToPascalCase(string[] snakeCases)
+        {
+            string[] pascalCases = new string[snakeCases.Length];
+            for (int i = 0; i < snakeCases.Length; i++)
+            {
+                pascalCases[i] = SnakeCaseToPascalCase(snakeCases[i]);
+            }
+
+            return pascalCases;
         }
         
         private async Task<Dictionary<string, object>> JoinComponentInfo<T>(int componentId, string databaseName, Component<string> componentBase,

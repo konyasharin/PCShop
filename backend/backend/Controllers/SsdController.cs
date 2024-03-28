@@ -40,7 +40,7 @@ namespace backend.Controllers
         [HttpGet("getSsd/{id}")]
         public async Task<IActionResult> GetSsdById(int id)
         {
-            return await getComponent<PowerUnitInfo>(id, "power_unit", ["battery", "voltage"]);
+            return await GetComponent<PowerUnitInfo>(id, "power_unit", ["battery", "voltage"]);
         }
 
         [HttpPut("updateSsd/{id}")]
