@@ -1,5 +1,4 @@
 ﻿using backend.Entities;
-using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +42,7 @@ namespace backend.Controllers
         [HttpGet("getCooler/{id}")]
         public async Task<IActionResult> GetCoolerById(int id)
         {
-            return await GetComponent<CoolerInfo>(id, "cooler", ["speed", "cooler_power"]);
+            return await GetComponent<Cooler<string>>(id, "cooler", ["speed", "cooler_power"]);
         }
 
         [HttpPut("updateCooler/{id}")]
@@ -63,7 +62,7 @@ namespace backend.Controllers
         [HttpGet("getAllCoolers")]
         public async Task<IActionResult> GetAllCoolers(int limit, int offset)
         {
-            return await GetAllComponents<CoolerInfo>(limit, offset, "cooler", ["speed", "cooler_power"]);
+            return await GetAllComponents<Cooler<string>>(limit, offset, "cooler", ["speed", "cooler_power"]);
         }
 
         [HttpGet("search")]

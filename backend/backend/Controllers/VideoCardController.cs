@@ -2,7 +2,6 @@
 using backend.Entities.CommentEntities;
 using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
-using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +33,7 @@ namespace backend.Controllers
         [HttpGet("getVideoCard/{id}")]
         public async Task<IActionResult> GetVideoCardById(int id)
         {
-            return await GetComponent<VideoCardInfo>(id, "video_card", ["memory_db", "memory_type"]);
+            return await GetComponent<VideoCard<string>>(id, "video_cards_view", ["memory_db AS memoryDb", "memory_type AS memoryType"]);
         }
 
         [HttpPut("updateVideoCard/{id}")]
@@ -55,8 +54,8 @@ namespace backend.Controllers
         [HttpGet("getAllVideoCards")]
         public async Task<IActionResult> GetAllComputerCases(int limit, int offset)
         {
-            return await GetAllComponents<VideoCardInfo>(limit, offset, "video_card",
-               ["memory_db", "memory_type"]);
+            return await GetAllComponents<VideoCard<string>>(limit, offset, "video_cards_view",
+               ["memory_db AS memoryDb", "memory_type AS memoryType"]);
         }
 
         [HttpGet("search")]
@@ -65,163 +64,19 @@ namespace backend.Controllers
             return await SearchComponent(keyword, limit, offset);
         }
 
-        [HttpGet("FilterByCountry")]
-        public async Task<IActionResult> FilterByCountry(string country, int limit, int offset)
+        [HttpPost("addFilter")]
+        public async Task<IActionResult> AddVideoCardFilter(Filter newFilter)
         {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var videoCards = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
-                    "WHERE country = @Country " +
-                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Limit = limit, Offset = offset });
-
-                    return Ok(new { videoCards });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with country filter");
-                return BadRequest(new { error = ex.Message });
-            }
+            newFilter.ComponentType = "videoCard";
+            return await AddFilter(newFilter);
         }
 
-        [HttpGet("FilterByBrand")]
-        public async Task<IActionResult> FilterByBrand(string brand, int limit, int offset)
+        [HttpPost("filter")]
+        public async Task<IActionResult> Filter(Filter[] filters)
         {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var videoCards = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
-                    "WHERE brand = @Brand " +
-                    "LIMIT @Limit OFFSET @Offset", new { Brand = brand, Limit = limit, Offset = offset });
-
-                    return Ok(new { videoCards });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with brand filter");
-                return BadRequest(new { error = ex.Message });
-            }
+            return await FilterComponents<VideoCard<string>>("video_cards_view", filters, ["memory_db AS memoryDb", "memory_type AS memoryType"]);
         }
-
-
-        [HttpGet("FilterByModel")]
-        public async Task<IActionResult> FilterByModel(string model, int limit, int offset)
-        {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var videoCards = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
-                    "WHERE model = @Model " +
-                    "LIMIT @Limit OFFSET @Offset", new { Model = model, Limit = limit, Offset = offset });
-
-                    return Ok(new { videoCards });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with model filter");
-                return BadRequest(new { error = ex.Message });
-            }
-        }
-
-        [HttpGet("FilterByPrice")]
-        public async Task<IActionResult> FilterByPrice(int minPrice, int maxPrice, int limit, int offset)
-        {
-            try
-            {
-                if (minPrice < 0 || maxPrice < 0)
-                {
-                    return BadRequest(new { error = "price must not be 0" });
-                }
-
-                if (maxPrice < minPrice)
-                {
-                    return BadRequest(new { error = "maxPrice could not be less than minPrice" });
-                }
-
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var videoCards = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
-                    "WHERE price >=  @MinPrice AND price <= @MaxPrice " +
-                    "LIMIT @Limit OFFSET @Offset", new
-                    {
-                        MinPrice = minPrice,
-                        MaxPrice = maxPrice,
-                        Limit = limit,
-                        Offset = offset
-                    });
-
-                    return Ok(new { videoCards });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with price filter");
-                return BadRequest(new { error = ex.Message });
-            }
-        }
-
-        [HttpGet("FilterByMemory")]
-        public async Task<IActionResult> FilterByCapacity(int minMemory, int maxMemory, int limit, int offset)
-        {
-            try
-            {
-                if (minMemory < 0 || maxMemory < 0)
-                {
-                    return BadRequest(new { error = "memory_db must not be 0" });
-                }
-
-                if (maxMemory < minMemory)
-                {
-                    return BadRequest(new { error = "maxMemory could not be less than minMemory" });
-                }
-
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var videoCards = connection.Query<VideoCard<string>>(@"SELECT * FROM public.video_card " +
-                    "WHERE memory_db >=  @MinCapacity AND memory_db <= @MaxCapacity " +
-                    "LIMIT @Limit OFFSET @Offset", new
-                    {
-                        MinMemory = minMemory,
-                        MaxMemory = maxMemory,
-                        Limit = limit,
-                        Offset = offset
-                    });
-
-                    return Ok(new { videoCards });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with memory_db filter");
-                return BadRequest(new { error = ex.Message });
-            }
-        }
+        
         [HttpPost("addComment")]
         public async Task<IActionResult> AddComputerCaseComment(Comment videoCardComment)
         {

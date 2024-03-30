@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using System.Text;
 using backend.Entities;
 using backend.Utils;
 using Dapper;
@@ -74,8 +75,8 @@ namespace backend.Controllers
             }
         }
 
-        protected async Task<IActionResult> GetAllComponents<T>(int limit, int offset, string databaseName,
-            string[] componentCharacteristics)
+        protected async Task<IActionResult> GetAllComponents<T>(int limit, int offset, string viewName,
+            string[] characteristics) where T: Component<string>
         {
             string[] characteristicsBase = ["product_id AS productId", "brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type AS productType"];
             try
@@ -83,20 +84,10 @@ namespace backend.Controllers
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
-                    var componentsBase = 
-                        connection.Query<Component<string>>($"SELECT {TransformCharacteristicsToString(characteristicsBase)} " +
-                                                            $"FROM public.products WHERE product_type = '{databaseName}' " +
+                    var components = 
+                        connection.Query<T>($"SELECT {TransformCharacteristicsToString(characteristicsBase.Concat(characteristics).ToArray())} " +
+                                                            $"FROM public.{viewName} " +
                                                             $"LIMIT {limit} OFFSET {offset}");
-                    List<Dictionary<string, object>> components = new List<Dictionary<string, object>>();
-                    foreach (var component in componentsBase)
-                    {
-                        if (component.ProductId != null)
-                        {
-                            components.Add((await JoinComponentInfo<T>(component.ProductId.Value, databaseName, component, componentCharacteristics)).ToDictionary(kvp => char.ToLower(kvp.Key[0]) + kvp.Key.Substring(1),
-                                kvp => kvp.Value));
-                        }
-                    }
-                    
                     return Ok(new { data = components });
                 }
             }
@@ -107,7 +98,7 @@ namespace backend.Controllers
             }
         }
         
-        protected async Task<IActionResult> GetComponent<T>(int componentId, string databaseName, string[] componentCharacteristics)
+        protected async Task<IActionResult> GetComponent<T>(int componentId, string viewName, string[] characteristics) where T: Component<string>
         {
             string[] characteristicsBase = ["product_id AS productId", "brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type AS productType"];
             
@@ -117,14 +108,13 @@ namespace backend.Controllers
                 {
                     connection.Open();
                     
-                    var componentBase = connection.QueryFirstOrDefault<Component<string>>($"SELECT {TransformCharacteristicsToString(characteristicsBase)} FROM public.products " +
+                    var component = connection.QueryFirstOrDefault<T>($"SELECT {TransformCharacteristicsToString(characteristicsBase.Concat(characteristics).ToArray())} FROM public.{viewName} " +
                         $"WHERE product_id = {componentId}");
                     
-                    if (componentBase != null)
+                    if (component != null)
                     {
-                        var response = await JoinComponentInfo<T>(componentId, databaseName, componentBase, componentCharacteristics);
                         logger.LogInformation($"Retrieved component with Id {componentId} from the database");
-                        return Ok(new { response });
+                        return Ok(new { data = component });
                     }
                     else
                     {
@@ -233,11 +223,9 @@ namespace backend.Controllers
             try
             {
                 string filePath;
-
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
-                    logger.LogInformation("Connection started");
 
                     filePath = connection.QueryFirstOrDefault<string>($"SELECT image FROM public.products WHERE product_id = {id}");
                     BackupWriter.Delete(filePath);
@@ -255,6 +243,77 @@ namespace backend.Controllers
                 logger.LogError($"Failed to delete component data in database. \nException: {ex}");
                 return StatusCode(500, new { error = ex.Message });
             }
+        }
+
+        protected async Task<IActionResult> AddFilter(Filter newFilter)
+        {
+            string[] filterCharacteristics = ["filter_name", "component_type", "filter_value"];
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    int id = connection.QueryFirstOrDefault<int>(
+                        $"INSERT INTO public.filters ({TransformCharacteristicsToString(filterCharacteristics)}) " +
+                        $"VALUES ({TransformCharacteristicsToString(SnakeCasesToPascalCase(filterCharacteristics), "@")})", newFilter);
+                    newFilter.Id = id;
+                    logger.LogInformation("Filter add success");
+                    return Ok(newFilter);
+                }
+            }
+            catch (Exception err)
+            {
+                logger.LogError($"Filter wasn't create: {err.Message}");
+                return BadRequest(new { error = err });
+            }
+        }
+
+        protected async Task<IActionResult> FilterComponents<T>(string viewName, Filter[] filters, string[] characteristics) where T: Component<string>
+        {
+            string[] characteristicsBase =
+            [
+                "brand", "model", "country", "price", "description", "image", "amount", "power", "likes",
+                "product_type AS productType"
+            ];
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    var components =
+                        connection.Query(
+                            $"SELECT {TransformCharacteristicsToString(characteristicsBase.Concat(characteristics).ToArray())} FROM public.{viewName} WHERE {TransformFiltersToString(filters)}");
+                    if (components != null)
+                    {
+                        return Ok(new { components });    
+                    }
+
+                    return NotFound(new {error = "Not found components"});
+                }
+            }
+            catch (Exception err)
+            {
+                logger.LogError($"Filter wasn't do: {err.Message}");
+                return BadRequest(new { error = err });
+            }
+        }
+        
+        private string TransformFiltersToString(Filter[] filters)
+        {
+            string filtersString = "";
+            for (int i = 0; i < filters.Length; i++)
+            {
+                if (i != 0)
+                {
+                    filtersString += $" OR {PascalCaseToSnakeCase(filters[i].FilterName)} = '{filters[i].FilterValue}'";
+                }
+                else
+                {
+                    filtersString += $"{PascalCaseToSnakeCase(filters[i].FilterName)} = '{filters[i].FilterValue}'";
+                }
+            }
+
+            return filtersString;
         }
 
         private static string TransformCharacteristicsToString(string[] characteristics, string prev = "")
@@ -313,48 +372,29 @@ namespace backend.Controllers
 
             return pascalCases;
         }
-        
-        private async Task<Dictionary<string, object>> JoinComponentInfo<T>(int componentId, string databaseName, Component<string> componentBase,
-            string[] componentCharacteristics)
+
+        static string PascalCaseToSnakeCase(string input)
         {
-            try
+            StringBuilder result = new StringBuilder();
+            bool isFirst = true;
+
+            foreach (char c in input)
             {
-                await using var connection = new NpgsqlConnection(connectionString);
+                if (char.IsUpper(c))
                 {
-                    connection.Open();
-                    Dictionary<string, object> component = new Dictionary<string, object>();
-                    var componentInfo =
-                        connection.QueryFirstOrDefault<T>($"SELECT {TransformCharacteristicsToString(componentCharacteristics)} " +
-                                                           $"FROM public.{databaseName} WHERE product_id = {componentId}");
-                    List<PropertyInfo> properties = new List<PropertyInfo>(typeof(Component<string>).GetProperties());
-                    for (int i = 0; i < typeof(T).GetProperties().Length; i++)
+                    if (!isFirst)
                     {
-                        bool isContains = properties.Any(property =>
-                            property.Name == typeof(T).GetProperties()[i].Name);
-                        if (!isContains)
-                        {
-                            properties.Add(typeof(T).GetProperties()[i]);
-                        }
+                        result.Append('_');
                     }
-                    foreach (var property in properties)
-                    {
-                        if (typeof(Component<string>).GetProperties().Any(elem => elem.Name == property.Name))
-                        {
-                            component[property.Name] = property.GetValue(componentBase)!;
-                        }
-                        else
-                        {
-                            component[property.Name] = property.GetValue(componentInfo);
-                        }
-                    }
-                    return component;
+                    result.Append(char.ToLower(c));
                 }
+                else
+                {
+                    result.Append(c);
+                }
+                isFirst = false;
             }
-            catch(Exception ex)
-            {
-                logger.LogError(ex.ToString());
-                return new Dictionary<string, object>();
-            }
+            return result.ToString();
         }
 
         protected async Task<IActionResult> SearchComponent(string keyword, int limit = 1, int offset = 0)
@@ -380,7 +420,5 @@ namespace backend.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-
-        
     }
 }

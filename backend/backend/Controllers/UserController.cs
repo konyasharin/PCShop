@@ -1,6 +1,5 @@
 ﻿using backend.Entities.User;
 using backend.Password;
-using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +40,7 @@ namespace backend.Controllers
                         username = user.Username,
                         email = user.Email,
                         password = hashedPassword,
-                        role = UserRoles.UserRole.User,
+                        role = UserRoles.EUserRole.User,
                         balance = 0,
                     };
 

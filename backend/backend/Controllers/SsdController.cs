@@ -1,5 +1,4 @@
 ﻿using backend.Entities;
-using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
@@ -40,7 +39,7 @@ namespace backend.Controllers
         [HttpGet("getSsd/{id}")]
         public async Task<IActionResult> GetSsdById(int id)
         {
-            return await GetComponent<PowerUnitInfo>(id, "power_unit", ["battery", "voltage"]);
+            return await GetComponent<SSD<string>>(id, "power_unit", ["battery", "voltage"]);
         }
 
         [HttpPut("updateSsd/{id}")]
@@ -61,7 +60,7 @@ namespace backend.Controllers
         [HttpGet("getAllSsd")]
         public async Task<IActionResult> GetAllSsd(int limit, int offset)
         {
-            return await GetAllComponents<ProcessorInfo>(limit, offset, "processor", ["capacity"]);
+            return await GetAllComponents<SSD<string>>(limit, offset, "processor", ["capacity"]);
         }
 
         [HttpGet("search")]

@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="backup\" />
+      <Folder Include="Backup\" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
 ﻿using backend.Entities;
-using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -50,7 +49,7 @@ namespace backend.Controllers
         [HttpGet("getRam/{id}")]
         public async Task<IActionResult> GetRamById(int id)
         {
-            return await GetComponent<PowerUnitInfo>(id, "power_unit", ["battery", "voltage"]);
+            return await GetComponent<RAM<string>>(id, "power_unit", ["battery", "voltage"]);
         }
 
         [HttpPut("updateRam/{id}")]
@@ -71,7 +70,7 @@ namespace backend.Controllers
         [HttpGet("getAllRam")]
         public async Task<IActionResult> GetAllRams(int limit, int offset)
         {
-            return await GetAllComponents<ProcessorInfo>(limit, offset, "ram", ["frequency", "timings", "capacity_db"]);
+            return await GetAllComponents<RAM<string>>(limit, offset, "ram", ["frequency", "timings", "capacity_db"]);
         }
 
         [HttpGet("search")]

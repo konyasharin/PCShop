@@ -2,7 +2,6 @@
 using backend.Entities.CommentEntities;
 using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
-using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +30,7 @@ namespace backend.Controllers
         [HttpGet("getProcessor/{id}")]
         public async Task<IActionResult> GetProcessorById(int id)
         {
-            return await GetComponent<PowerUnitInfo>(id, "power_unit", ["battery", "voltage"]);
+            return await GetComponent<Processor<string>>(id, "power_unit", ["battery", "voltage"]);
         }
 
         [HttpPut("updateProcessor/{id}")]
@@ -52,7 +51,7 @@ namespace backend.Controllers
         [HttpGet("getAllProcessors")]
         public async Task<IActionResult> GetAllprocessors(int limit, int offset)
         {
-            return await GetAllComponents<ProcessorInfo>(limit, offset, "processor",
+            return await GetAllComponents<Processor<string>>(limit, offset, "processor",
                 ["cores", "clock_frequency", "turbo_frequency", "heat_dissipation"]);
         }
 

@@ -1,7 +1,6 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
 using backend.Entities.User;
-using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;

@@ -2,7 +2,6 @@
 using backend.Entities.CommentEntities;
 using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
-using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
@@ -40,7 +39,7 @@ namespace backend.Controllers
         [HttpGet("getPowerUnit/{id}")]
         public async Task<IActionResult> GetPowerUnitById(int id)
         {
-            return await GetComponent<PowerUnitInfo>(id, "power_unit", ["battery", "voltage"]);
+            return await GetComponent<PowerUnit<string>>(id, "power_unit", ["battery", "voltage"]);
         }
 
         [HttpPut("updatePowerUnit/{id}")]
@@ -60,7 +59,7 @@ namespace backend.Controllers
         [HttpGet("getAllPowerUnits")]
         public async Task<IActionResult> GetAllPowerUnits(int limit, int offset)
         {
-            return await GetAllComponents<PowerUnitInfo>(limit, offset, "power_unit", ["battery", "voltage"]);
+            return await GetAllComponents<PowerUnit<string>>(limit, offset, "power_unit", ["battery", "voltage"]);
         }
 
         [HttpGet("search")]

@@ -2,7 +2,7 @@
 {
 
  
-    public enum UserRole
+    public enum EUserRole
     {
         
         Admin = 0,

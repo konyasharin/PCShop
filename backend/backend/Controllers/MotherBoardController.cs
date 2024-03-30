@@ -2,7 +2,6 @@
 using backend.Entities.CommentEntities;
 using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
-using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +42,7 @@ namespace backend.Controllers
         [HttpGet("getMotherBoard/{id}")]
         public async Task<IActionResult> GetComputerCaseById(int id)
         {
-            return await GetComponent<MotherBoardInfo>(id, "mother_board", ["frequency", "socket", "chipset"]);
+            return await GetComponent<MotherBoard<string>>(id, "mother_board", ["frequency", "socket", "chipset"]);
         }
 
         [HttpPut("updateMotherBoard/{id}")]
@@ -63,7 +62,7 @@ namespace backend.Controllers
         [HttpGet("getAllMotherBoards")]
         public async Task<IActionResult> GetAllMotherBoards(int limit, int offset)
         {
-            return await GetAllComponents<CoolerInfo>(limit, offset, "mother_board", ["frequency", "socket", "chipset"]);
+            return await GetAllComponents<MotherBoard<string>>(limit, offset, "mother_board", ["frequency", "socket", "chipset"]);
         }
 
         [HttpGet("search")]

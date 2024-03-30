@@ -2,7 +2,6 @@
 using backend.Entities.CommentEntities;
 using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
-using backend.UpdatedEntities;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -44,13 +43,13 @@ namespace backend.Controllers
         [HttpGet("getAllComputerCases")]
         public async Task<IActionResult> GetAllComputerCases(int limit, int offset)
         {
-            return await GetAllComponents<ComputerCaseInfo>(limit, offset, "computer_cases", ["material", "width", "height", "depth"]);
+            return await GetAllComponents<ComputerCase<string>>(limit, offset, "computer_cases", ["material", "width", "height", "depth"]);
         }
 
         [HttpGet("getComputerCase/{id}")]
         public async Task<IActionResult> GetComputerCaseById (int id)
         {
-            return await GetComponent<ComputerCaseInfo>(id, "computer_cases", ["material", "width", "height", "depth"]);
+            return await GetComponent<ComputerCase<string>>(id, "computer_cases", ["material", "width", "height", "depth"]);
         }
 
         [HttpPut("updateComputerCase/{id}")]

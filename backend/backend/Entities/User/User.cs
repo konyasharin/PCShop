@@ -10,8 +10,8 @@ namespace backend.Entities.User
         public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        [EnumDataType(typeof(UserRole))]
-        public UserRole? Role { get; set; }
+        [EnumDataType(typeof(EUserRole))]
+        public EUserRole? Role { get; set; }
         public int? Balance { get; set; }
     }
 }
