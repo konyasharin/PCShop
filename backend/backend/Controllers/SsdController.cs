@@ -8,7 +8,6 @@ using System.Runtime.Intrinsics.X86;
 using backend.Entities.CommentEntities;
 using System.Runtime.Intrinsics.Arm;
 using backend.Entities.User;
-using backend.Entities.ComponentsInfo;
 using System.Diagnostics;
 
 namespace backend.Controllers
@@ -32,14 +31,14 @@ namespace backend.Controllers
             }
 
             ssd.Likes = 0;
-            ssd.ProductType = "ssd";
-            return await CreateComponent<SSD<IFormFile>>(ssd, ["capacity"], "ssd");
+            ssd.ProductType = "SSD";
+            return await CreateComponent<SSD<IFormFile>>(ssd, ["capacity"], "ssds");
         }
 
         [HttpGet("getSsd/{id}")]
         public async Task<IActionResult> GetSsdById(int id)
         {
-            return await GetComponent<SSD<string>>(id, "power_unit", ["battery", "voltage"]);
+            return await GetComponent<SSD<string>>(id, "ssds_view", ["battery", "voltage"]);
         }
 
         [HttpPut("updateSsd/{id}")]
@@ -47,7 +46,7 @@ namespace backend.Controllers
         {
             ssd.ProductId = id;
             ssd.ProductType = "ssd";
-            return await UpdateComponent<SSD<IFormFile>>(ssd, isUpdated, "ssd", ["capacity"]);
+            return await UpdateComponent<SSD<IFormFile>>(ssd, isUpdated, "ssds", ["capacity"]);
         }
 
         [HttpDelete("deleteSsd/{id}")]
@@ -60,7 +59,7 @@ namespace backend.Controllers
         [HttpGet("getAllSsd")]
         public async Task<IActionResult> GetAllSsd(int limit, int offset)
         {
-            return await GetAllComponents<SSD<string>>(limit, offset, "processor", ["capacity"]);
+            return await GetAllComponents<SSD<string>>(limit, offset, "ssds_view", ["capacity"]);
         }
 
         [HttpGet("search")]

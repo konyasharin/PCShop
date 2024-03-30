@@ -1,6 +1,5 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
-using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
 using backend.Utils;
 using Dapper;
@@ -31,9 +30,9 @@ namespace backend.Controllers
             }
 
             motherBoard.Likes = 0;
-            motherBoard.ProductType = "mother_board";
+            motherBoard.ProductType = "motherBoard";
 
-            return await CreateComponent<MotherBoard<IFormFile>>(motherBoard, ["frequency", "socket", "chipset"], "mother_board");
+            return await CreateComponent<MotherBoard<IFormFile>>(motherBoard, ["frequency", "socket", "chipset"], "mother_boards");
         }
 
 
@@ -42,7 +41,7 @@ namespace backend.Controllers
         [HttpGet("getMotherBoard/{id}")]
         public async Task<IActionResult> GetComputerCaseById(int id)
         {
-            return await GetComponent<MotherBoard<string>>(id, "mother_board", ["frequency", "socket", "chipset"]);
+            return await GetComponent<MotherBoard<string>>(id, "mother_boards_view", ["frequency", "socket", "chipset"]);
         }
 
         [HttpPut("updateMotherBoard/{id}")]
@@ -50,7 +49,7 @@ namespace backend.Controllers
         {
             motherBoard.ProductId = id;
             motherBoard.ProductType = "mother_board";
-            return await UpdateComponent<MotherBoard<IFormFile>>(motherBoard, isUpdated, "mother_board", ["frequency", "socket", "chipset"]);
+            return await UpdateComponent<MotherBoard<IFormFile>>(motherBoard, isUpdated, "mother_boards", ["frequency", "socket", "chipset"]);
         }
 
         [HttpDelete("deleteMotherBoard/{id}")]
@@ -62,7 +61,7 @@ namespace backend.Controllers
         [HttpGet("getAllMotherBoards")]
         public async Task<IActionResult> GetAllMotherBoards(int limit, int offset)
         {
-            return await GetAllComponents<MotherBoard<string>>(limit, offset, "mother_board", ["frequency", "socket", "chipset"]);
+            return await GetAllComponents<MotherBoard<string>>(limit, offset, "mother_boards_view", ["frequency", "socket", "chipset"]);
         }
 
         [HttpGet("search")]

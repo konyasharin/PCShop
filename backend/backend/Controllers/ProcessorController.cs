@@ -1,6 +1,5 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
-using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
 using backend.Utils;
 using Dapper;
@@ -24,13 +23,13 @@ namespace backend.Controllers
         {
             processor.Likes = 0;
             processor.ProductType = "processor";
-            return await CreateComponent<Processor<IFormFile>>(processor, ["cores", "heat_dissipation", "clock_frequency", "turbo_frequency"], "processor");
+            return await CreateComponent<Processor<IFormFile>>(processor, ["cores", "heat_dissipation", "clock_frequency", "turbo_frequency"], "processors");
         }
 
         [HttpGet("getProcessor/{id}")]
         public async Task<IActionResult> GetProcessorById(int id)
         {
-            return await GetComponent<Processor<string>>(id, "power_unit", ["battery", "voltage"]);
+            return await GetComponent<Processor<string>>(id, "processors_view", ["battery", "voltage"]);
         }
 
         [HttpPut("updateProcessor/{id}")]
@@ -38,7 +37,7 @@ namespace backend.Controllers
         {
             processor.ProductId = id;
             processor.ProductType = "processor";
-            return await UpdateComponent<Processor<IFormFile>>(processor, isUpdated, "processor",
+            return await UpdateComponent<Processor<IFormFile>>(processor, isUpdated, "processors",
                 ["cores", "clock_frequency", "turbo_frequency", "heat_dissipation"]);
         }
 
@@ -51,7 +50,7 @@ namespace backend.Controllers
         [HttpGet("getAllProcessors")]
         public async Task<IActionResult> GetAllprocessors(int limit, int offset)
         {
-            return await GetAllComponents<Processor<string>>(limit, offset, "processor",
+            return await GetAllComponents<Processor<string>>(limit, offset, "processors_view",
                 ["cores", "clock_frequency", "turbo_frequency", "heat_dissipation"]);
         }
 

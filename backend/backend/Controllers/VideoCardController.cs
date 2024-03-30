@@ -1,6 +1,5 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
-using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
 using backend.Utils;
 using Dapper;

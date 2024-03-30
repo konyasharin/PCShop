@@ -1,6 +1,5 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
-using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
 using backend.Utils;
 using Dapper;
@@ -31,15 +30,15 @@ namespace backend.Controllers
             }
 
             powerunit.Likes = 0;
-            powerunit.ProductType = "power_unit";
+            powerunit.ProductType = "powerUnit";
 
-            return await CreateComponent<PowerUnit<IFormFile>>(powerunit, ["battery", "voltage"], "power_unit");
+            return await CreateComponent<PowerUnit<IFormFile>>(powerunit, ["battery", "voltage"], "power_units");
         }
 
         [HttpGet("getPowerUnit/{id}")]
         public async Task<IActionResult> GetPowerUnitById(int id)
         {
-            return await GetComponent<PowerUnit<string>>(id, "power_unit", ["battery", "voltage"]);
+            return await GetComponent<PowerUnit<string>>(id, "power_units_view", ["battery", "voltage"]);
         }
 
         [HttpPut("updatePowerUnit/{id}")]
@@ -47,7 +46,7 @@ namespace backend.Controllers
         {
             powerUnit.ProductId = id;
             powerUnit.ProductType = "power_unit";
-            return await UpdateComponent<PowerUnit<IFormFile>>(powerUnit, isUpdated, "power_unit", ["battery", "voltage"]);
+            return await UpdateComponent<PowerUnit<IFormFile>>(powerUnit, isUpdated, "power_units", ["battery", "voltage"]);
         }
 
         [HttpDelete("deletePowerUnit/{id}")]
@@ -59,7 +58,7 @@ namespace backend.Controllers
         [HttpGet("getAllPowerUnits")]
         public async Task<IActionResult> GetAllPowerUnits(int limit, int offset)
         {
-            return await GetAllComponents<PowerUnit<string>>(limit, offset, "power_unit", ["battery", "voltage"]);
+            return await GetAllComponents<PowerUnit<string>>(limit, offset, "power_units_view", ["battery", "voltage"]);
         }
 
         [HttpGet("search")]

@@ -1,6 +1,5 @@
 ﻿using backend.Entities;
 using backend.Entities.CommentEntities;
-using backend.Entities.ComponentsInfo;
 using backend.Entities.User;
 using backend.Utils;
 using Dapper;
@@ -34,7 +33,7 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Depth must be between 20 and 100" });
                 }
 
-                computerCase.ProductType = "computer_cases";
+                computerCase.ProductType = "computerCase";
                 computerCase.Likes = 0;
 
                 return await CreateComponent<ComputerCase<IFormFile>>(computerCase, ["material", "width", "height", "depth"], "computer_cases");
@@ -43,13 +42,13 @@ namespace backend.Controllers
         [HttpGet("getAllComputerCases")]
         public async Task<IActionResult> GetAllComputerCases(int limit, int offset)
         {
-            return await GetAllComponents<ComputerCase<string>>(limit, offset, "computer_cases", ["material", "width", "height", "depth"]);
+            return await GetAllComponents<ComputerCase<string>>(limit, offset, "computer_cases_view", ["material", "width", "height", "depth"]);
         }
 
         [HttpGet("getComputerCase/{id}")]
         public async Task<IActionResult> GetComputerCaseById (int id)
         {
-            return await GetComponent<ComputerCase<string>>(id, "computer_cases", ["material", "width", "height", "depth"]);
+            return await GetComponent<ComputerCase<string>>(id, "computer_cases_view", ["material", "width", "height", "depth"]);
         }
 
         [HttpPut("updateComputerCase/{id}")]

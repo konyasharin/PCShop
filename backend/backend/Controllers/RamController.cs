@@ -6,7 +6,6 @@ using Npgsql;
 using System.Runtime.Intrinsics.Arm;
 using backend.Entities.CommentEntities;
 using backend.Entities.User;
-using backend.Entities.ComponentsInfo;
 using System.Diagnostics;
 
 namespace backend.Controllers
@@ -42,14 +41,14 @@ namespace backend.Controllers
             }
 
             ram.Likes = 0;
-            ram.ProductType = "ram";
-            return await CreateComponent<RAM<IFormFile>>(ram, ["frequency", "timings", "capacity_db"], "ram");
+            ram.ProductType = "RAM";
+            return await CreateComponent<RAM<IFormFile>>(ram, ["frequency", "timings", "capacity_db"], "rams");
         }
 
         [HttpGet("getRam/{id}")]
         public async Task<IActionResult> GetRamById(int id)
         {
-            return await GetComponent<RAM<string>>(id, "power_unit", ["battery", "voltage"]);
+            return await GetComponent<RAM<string>>(id, "rams_view", ["battery", "voltage"]);
         }
 
         [HttpPut("updateRam/{id}")]
@@ -57,7 +56,7 @@ namespace backend.Controllers
         {
             ram.ProductId = id;
             ram.ProductType = "ram";
-            return await UpdateComponent<RAM<IFormFile>>(ram, isUpdated, "ram",
+            return await UpdateComponent<RAM<IFormFile>>(ram, isUpdated, "rams",
                 ["frequency", "timings", "capacity_db"]);
         }
 
@@ -70,7 +69,7 @@ namespace backend.Controllers
         [HttpGet("getAllRam")]
         public async Task<IActionResult> GetAllRams(int limit, int offset)
         {
-            return await GetAllComponents<RAM<string>>(limit, offset, "ram", ["frequency", "timings", "capacity_db"]);
+            return await GetAllComponents<RAM<string>>(limit, offset, "rams_view", ["frequency", "timings", "capacity_db"]);
         }
 
         [HttpGet("search")]

@@ -6,7 +6,6 @@ using Npgsql;
 using System.Drawing;
 using backend.Entities.CommentEntities;
 using backend.Entities.User;
-using backend.Entities.ComponentsInfo;
 
 namespace backend.Controllers
 {
@@ -42,7 +41,7 @@ namespace backend.Controllers
         [HttpGet("getCooler/{id}")]
         public async Task<IActionResult> GetCoolerById(int id)
         {
-            return await GetComponent<Cooler<string>>(id, "cooler", ["speed", "cooler_power"]);
+            return await GetComponent<Cooler<string>>(id, "coolers_view", ["speed", "cooler_power"]);
         }
 
         [HttpPut("updateCooler/{id}")]
@@ -50,7 +49,7 @@ namespace backend.Controllers
         {
             cooler.ProductId = id;
             cooler.ProductType = "cooler";
-            return await UpdateComponent<Cooler<IFormFile>>(cooler, isUpdated, "cooler", ["speed", "cooler_power"]);
+            return await UpdateComponent<Cooler<IFormFile>>(cooler, isUpdated, "coolers", ["speed", "cooler_power"]);
         }
 
         [HttpDelete("deleteCooler/{id}")]
