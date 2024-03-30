@@ -25,9 +25,9 @@ namespace backend.Controllers
         {
             
             videoCard.Likes = 0;
-            videoCard.ProductType = "video_card";
+            videoCard.ProductType = "videoCard";
 
-            return await CreateComponent<VideoCard<IFormFile>>(videoCard, ["memory_db", "memory_type"], "video_card");
+            return await CreateComponent<VideoCard<IFormFile>>(videoCard, ["memory_db", "memory_type"], "video_cards");
         }
 
         [HttpGet("getVideoCard/{id}")]
@@ -40,8 +40,8 @@ namespace backend.Controllers
         public async Task<IActionResult> UpdateVideoCard(int id, [FromForm] VideoCard<IFormFile> videoCard, [FromQuery] bool isUpdated)
         {
             videoCard.ProductId = id;
-            videoCard.ProductType = "video_card";
-            return await UpdateComponent<VideoCard<IFormFile>>(videoCard, isUpdated, "video_card",
+            videoCard.ProductType = "videoCard";
+            return await UpdateComponent<VideoCard<IFormFile>>(videoCard, isUpdated, "video_cards",
                 ["memory_db", "memory_type"]);
         }
 

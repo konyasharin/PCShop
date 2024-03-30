@@ -72,37 +72,6 @@ namespace backend.Controllers
             return await SearchComponent(keyword, limit, offset);
         }
 
-        [HttpGet("Filter")]
-        public async Task<IActionResult> FilterComputerCase(string country, string brand,
-            string model, int minPrice, int maxPrice,
-            int limit = 1, int offset = 0)
-        {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var computerCases = connection.Query<ComputerCase<string>>(@"SELECT * FROM public.computer_case " +
-                    "WHERE country = @Country AND brand = @Brand AND model = @Model " +
-                    "AND price >= @MinPrice AND price <= @MaxPrice " +
-                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Brand = brand, 
-                        Model = model, Limit = limit, MinPrice = minPrice, MaxPrice = maxPrice, Offset = offset });
-
-                    return Ok(new { computerCases });
-
-                }
-            }
-            catch(Exception ex)
-            {
-                logger.LogError("Error with country filter");
-                return BadRequest(new { error = ex.Message });
-            }
-        }
-
-        
-
         [HttpPost("addComment")]
         public async Task<IActionResult> AddComputerCaseComment(Comment computerCaseComment)
         {

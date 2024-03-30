@@ -71,35 +71,6 @@ namespace backend.Controllers
             return await SearchComponent(keyword, limit, offset);
         }
 
-        [HttpGet("Filter")]
-        public async Task<IActionResult> FilterCooler(string country, string brand, string model, int minPrice, 
-            int maxPrice, int minSpeed, int maxSpeed, int limit, int offset)
-        {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var coolers = connection.Query<Cooler<string>>(@"SELECT * FROM public.cooler " +
-                    "WHERE country = @Country AND brand = @Brand AND model = @Model " +
-                    "AND price >=  @MinPrice AND price <= @MaxPrice AND speed >=  @MinSpeed AND speed <= @MaxSpeed " +
-                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Brand = brand, Model = model,
-                        MinPrice = minPrice, MaxPrice = maxPrice, MinSpeed = minSpeed, MaxSpeed = maxSpeed,
-                        Limit = limit, Offset = offset });
-
-                    return Ok(new { coolers });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with country filter");
-                return BadRequest(new { error = ex.Message });
-            }
-        }
-
         [HttpPost("addComment")]
         public async Task<IActionResult> AddComputerCaseComment(Comment computerCaseComment)
         {

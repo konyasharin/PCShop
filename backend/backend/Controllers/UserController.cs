@@ -45,7 +45,7 @@ namespace backend.Controllers
                     };
 
                     connection.Open();
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.user (username, email, password, role," +
+                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO public.users (username, email, password, role," +
                         " balance) " +
                         "VALUES (@username, @email, @password, @role, @balance) RETURNING id", data);
 
@@ -78,7 +78,7 @@ namespace backend.Controllers
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     logger.LogInformation(requestData.Email);
-                    var userData = await connection.QueryFirstOrDefaultAsync<User>("SELECT * FROM public.user WHERE email = @email", new { requestData.Email });
+                    var userData = await connection.QueryFirstOrDefaultAsync<User>("SELECT * FROM public.users WHERE email = @email", new { requestData.Email });
 
                     if (userData == null)
                     {
@@ -131,7 +131,7 @@ namespace backend.Controllers
                     };
 
                     connection.Open();
-                    connection.Execute("UPDATE public.user SET username = @username, email = @email,"
+                    connection.Execute("UPDATE public.users SET username = @username, email = @email,"
                 + " password = @password, balance = @balance WHERE id = @id", data);
 
                     logger.LogInformation("User data updated in the database");
@@ -157,7 +157,7 @@ namespace backend.Controllers
                     
 
                     connection.Open();
-                    connection.Execute("DELETE FROM public.user WHERE Id = @id", new { id });
+                    connection.Execute("DELETE FROM public.users WHERE Id = @id", new { id });
 
                     logger.LogInformation("User data deleted in the database");
                     return Ok(new { id = id});

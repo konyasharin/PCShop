@@ -70,36 +70,6 @@ namespace backend.Controllers
         {
             return await SearchComponent(keyword, limit, offset);
         }
-
-        [HttpGet("Filter")]
-        public async Task<IActionResult> FilterMotherBoard(string country, string brand, string model, 
-            int minPrice, int maxPrice, int minFrequency, int maxFrequency, int limit, int offset)
-        {
-            try
-            {
-                await using var connection = new NpgsqlConnection(connectionString);
-                {
-                    connection.Open();
-                    logger.LogInformation("Connection started");
-
-                    var motherBoards = connection.Query<MotherBoard<string>>(@"SELECT * FROM public.mother_board " +
-                    "WHERE country = @Country AND brand = @Brand AND model = @Model " +
-                    "AND price >=  @MinPrice AND price <= @MaxPrice AND " +
-                    "frequency >=  @MinFrequency AND frequency <= @MaxFrequency " +
-                    "LIMIT @Limit OFFSET @Offset", new { Country = country, Brand = brand, Model = model, MinPrice = minPrice,
-                    MaxPrice = maxPrice, MinFrequency = minFrequency, MaxFrequency = maxFrequency,
-                        Limit = limit, Offset = offset });
-
-                    return Ok(new { motherBoards });
-
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error with country filter");
-                return BadRequest(new { error = ex.Message });
-            }
-        }
         
         [HttpPost("addComment")]
         public async Task<IActionResult> AddComputerCaseComment(Comment computerCaseComment)
