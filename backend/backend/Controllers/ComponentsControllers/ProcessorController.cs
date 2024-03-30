@@ -13,7 +13,7 @@ namespace backend.Controllers
     public class ProcessorController : ComponentController
     {
         
-        public ProcessorController(ILogger<ProcessorController> logger):base(logger)
+        public ProcessorController(ILogger<ProcessorController> logger):base(logger, "processor")
         {
            
         }
@@ -22,7 +22,7 @@ namespace backend.Controllers
         public async Task<IActionResult> CreateProcessor([FromForm] Processor<IFormFile> processor)
         {
             processor.Likes = 0;
-            processor.ProductType = "processor";
+            processor.ProductType = ComponentType;
             return await CreateComponent<Processor<IFormFile>>(processor, ["cores", "heat_dissipation", "clock_frequency", "turbo_frequency"], "processors");
         }
 

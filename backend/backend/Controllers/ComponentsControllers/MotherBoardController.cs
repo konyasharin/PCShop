@@ -16,7 +16,7 @@ namespace backend.Controllers
     public class MotherBoardController : ComponentController
     {
 
-        public MotherBoardController(ILogger<MotherBoardController> logger):base(logger)
+        public MotherBoardController(ILogger<MotherBoardController> logger):base(logger, "motherBoard")
         {
           
         }
@@ -30,7 +30,7 @@ namespace backend.Controllers
             }
 
             motherBoard.Likes = 0;
-            motherBoard.ProductType = "motherBoard";
+            motherBoard.ProductType = ComponentType;
 
             return await CreateComponent<MotherBoard<IFormFile>>(motherBoard, ["frequency", "socket", "chipset"], "mother_boards");
         }

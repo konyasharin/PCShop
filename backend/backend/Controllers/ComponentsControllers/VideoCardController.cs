@@ -15,7 +15,7 @@ namespace backend.Controllers
     public class VideoCardController : ComponentController
     {
         
-        public VideoCardController(ILogger<VideoCardController> logger) : base(logger)
+        public VideoCardController(ILogger<VideoCardController> logger) : base(logger, "videoCard")
         {
         }
 
@@ -24,7 +24,7 @@ namespace backend.Controllers
         {
             
             videoCard.Likes = 0;
-            videoCard.ProductType = "videoCard";
+            videoCard.ProductType = ComponentType;
 
             return await CreateComponent<VideoCard<IFormFile>>(videoCard, ["memory_db", "memory_type"], "video_cards");
         }

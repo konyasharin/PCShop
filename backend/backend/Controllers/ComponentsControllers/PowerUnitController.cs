@@ -15,24 +15,24 @@ namespace backend.Controllers
     public class PowerUnitController : ComponentController
     {
        
-        public PowerUnitController(ILogger<PowerUnitController> logger):base(logger)
+        public PowerUnitController(ILogger<PowerUnitController> logger):base(logger, "powerUnit")
         {
         }
 
         [HttpPost("createPowerUnit")]
-        public async Task<IActionResult> CreatePowerUnit([FromForm] PowerUnit<IFormFile> powerunit)
+        public async Task<IActionResult> CreatePowerUnit([FromForm] PowerUnit<IFormFile> powerUnit)
         {
 
 
-            if (powerunit.Voltage < 0 || powerunit.Voltage > 50000)
+            if (powerUnit.Voltage < 0 || powerUnit.Voltage > 50000)
             {
                 return BadRequest(new { error = "Voltage must be between 0 and 50000" });
             }
 
-            powerunit.Likes = 0;
-            powerunit.ProductType = "powerUnit";
+            powerUnit.Likes = 0;
+            powerUnit.ProductType = ComponentType;
 
-            return await CreateComponent<PowerUnit<IFormFile>>(powerunit, ["battery", "voltage"], "power_units");
+            return await CreateComponent<PowerUnit<IFormFile>>(powerUnit, ["battery", "voltage"], "power_units");
         }
 
         [HttpGet("getPowerUnit/{id}")]

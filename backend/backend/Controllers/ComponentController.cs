@@ -13,14 +13,16 @@ namespace backend.Controllers
     [ApiController]
     public class ComponentController : ProductController
     {
-        protected readonly ILogger<ComponentController> logger;
-        protected readonly string connectionString;
+        private readonly ILogger<ComponentController> _logger;
+        private readonly string _connectionString;
+        protected readonly string ComponentType;
         
-        public ComponentController(ILogger<ComponentController> logger) : base(logger)
+        public ComponentController(ILogger<ComponentController> logger, string componentType) : base(logger)
         {
-            this.logger = logger;
+            ComponentType = componentType;
+            _logger = logger;
             DotNetEnv.Env.Load();
-            connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+            _connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         }
 
         protected async Task<IActionResult> CreateComponent<T>(T component, string[] characteristics, string databaseName) where T: Component<IFormFile>
@@ -60,17 +62,17 @@ namespace backend.Controllers
                     }
                 }
 
-                requestData["product_type"] = databaseName;
-                await using var connection = new NpgsqlConnection(connectionString);
+                requestData["product_type"] = ComponentType;
+                await using var connection = new NpgsqlConnection(_connectionString);
                 connection.Open();
                 requestData["product_id"] = connection.QueryFirstOrDefault<int>($"INSERT INTO public.products ({TransformCharacteristicsToString(characteristicsBase)}) VALUES ({TransformCharacteristicsToString(characteristicsBase, "@")}) RETURNING product_id", requestData);
                 connection.QueryFirstOrDefault<int>($"INSERT INTO public.{databaseName} (product_id, {TransformCharacteristicsToString(characteristics)}) VALUES (@product_id, {TransformCharacteristicsToString(SnakeCasesToPascalCase(characteristics), "@")})", requestData);
-                logger.LogInformation($"Component data saved to database with id {requestData["product_id"]}");
+                _logger.LogInformation($"Component data saved to database with id {requestData["product_id"]}");
                 return Ok(new { id = requestData["product_id"], requestData });
             }
             catch (Exception ex)
             {
-                logger.LogError($"Component data failed to save in database. Exception: {ex}");
+                _logger.LogError($"Component data failed to save in database. Exception: {ex}");
                 return BadRequest(new { error = ex.Message});
             }
         }
@@ -81,7 +83,7 @@ namespace backend.Controllers
             string[] characteristicsBase = ["product_id AS productId", "brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type AS productType"];
             try
             {
-                await using var connection = new NpgsqlConnection(connectionString);
+                await using var connection = new NpgsqlConnection(_connectionString);
                 {
                     connection.Open();
                     var components = 
@@ -93,7 +95,7 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError($"Component data did not get from database. Exception: {ex}");
+                _logger.LogError($"Component data did not get from database. Exception: {ex}");
                 return NotFound(new { error = ex.Message });
             }
         }
@@ -104,7 +106,7 @@ namespace backend.Controllers
             
             try
             {
-                await using var connection = new NpgsqlConnection(connectionString);
+                await using var connection = new NpgsqlConnection(_connectionString);
                 {
                     connection.Open();
                     
@@ -113,19 +115,19 @@ namespace backend.Controllers
                     
                     if (component != null)
                     {
-                        logger.LogInformation($"Retrieved component with Id {componentId} from the database");
+                        _logger.LogInformation($"Retrieved component with Id {componentId} from the database");
                         return Ok(new { data = component });
                     }
                     else
                     {
-                        logger.LogInformation($"Component with Id {componentId} not found in the database");
+                        _logger.LogInformation($"Component with Id {componentId} not found in the database");
                         return NotFound(new {error = $"Not found component with {componentId}"});
                     }
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError($"Failed to retrieve component data from the database. \nException {ex}");
+                _logger.LogError($"Failed to retrieve component data from the database. \nException {ex}");
                 return StatusCode(500, new { error = ex.Message });
             }
         }
@@ -156,7 +158,7 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Likes must not be less than 0" });
                 }
 
-                await using var connection = new NpgsqlConnection(connectionString);
+                await using var connection = new NpgsqlConnection(_connectionString);
                 {
                     connection.Open();
                     string imagePath;
@@ -205,7 +207,7 @@ namespace backend.Controllers
                     }
                     connection.Execute($"UPDATE public.products SET {TransformCharacteristicsToSetString(characteristicsBase)} WHERE product_id = {component.ProductId}", response);
                     connection.Execute($"UPDATE public.{databaseName} SET {TransformCharacteristicsToSetString(characteristics)} WHERE product_id = {component.ProductId}", response);
-                    logger.LogInformation("Component data updated in the database");
+                    _logger.LogInformation("Component data updated in the database");
                     
                     return Ok(new { id = component.ProductId, data = response });
                 
@@ -213,7 +215,7 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError($"Failed to update component data in database. \nException: {ex}");
+                _logger.LogError($"Failed to update component data in database. \nException: {ex}");
                 return StatusCode(500, new { error = ex.Message });
             }
         }
@@ -223,7 +225,7 @@ namespace backend.Controllers
             try
             {
                 string filePath;
-                await using var connection = new NpgsqlConnection(connectionString);
+                await using var connection = new NpgsqlConnection(_connectionString);
                 {
                     connection.Open();
 
@@ -232,7 +234,7 @@ namespace backend.Controllers
 
                     connection.Execute($"DELETE FROM public.products WHERE product_id = {id}");
 
-                    logger.LogInformation("Component data deleted from the database");
+                    _logger.LogInformation("Component data deleted from the database");
 
                     return Ok(new {id = id});
                 }
@@ -240,7 +242,7 @@ namespace backend.Controllers
             }
             catch(Exception ex)
             {
-                logger.LogError($"Failed to delete component data in database. \nException: {ex}");
+                _logger.LogError($"Failed to delete component data in database. \nException: {ex}");
                 return StatusCode(500, new { error = ex.Message });
             }
         }
@@ -250,20 +252,20 @@ namespace backend.Controllers
             string[] filterCharacteristics = ["filter_name", "component_type", "filter_value"];
             try
             {
-                await using var connection = new NpgsqlConnection(connectionString);
+                await using var connection = new NpgsqlConnection(_connectionString);
                 {
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>(
                         $"INSERT INTO public.filters ({TransformCharacteristicsToString(filterCharacteristics)}) " +
                         $"VALUES ({TransformCharacteristicsToString(SnakeCasesToPascalCase(filterCharacteristics), "@")})", newFilter);
                     newFilter.Id = id;
-                    logger.LogInformation("Filter add success");
+                    _logger.LogInformation("Filter add success");
                     return Ok(newFilter);
                 }
             }
             catch (Exception err)
             {
-                logger.LogError($"Filter wasn't create: {err.Message}");
+                _logger.LogError($"Filter wasn't create: {err.Message}");
                 return BadRequest(new { error = err });
             }
         }
@@ -277,7 +279,7 @@ namespace backend.Controllers
             ];
             try
             {
-                await using var connection = new NpgsqlConnection(connectionString);
+                await using var connection = new NpgsqlConnection(_connectionString);
                 {
                     connection.Open();
                     var components =
@@ -293,9 +295,14 @@ namespace backend.Controllers
             }
             catch (Exception err)
             {
-                logger.LogError($"Filter wasn't do: {err.Message}");
+                _logger.LogError($"Filter wasn't do: {err.Message}");
                 return BadRequest(new { error = err });
             }
+        }
+
+        protected async Task<IActionResult> GetFilters()
+        {
+            
         }
         
         private string TransformFiltersToString(Filter[] filters)
@@ -401,10 +408,10 @@ namespace backend.Controllers
         {
             try
             {
-                await using var connection = new NpgsqlConnection(connectionString);
+                await using var connection = new NpgsqlConnection(_connectionString);
                 {
                     connection.Open();
-                    logger.LogInformation("Connection started");
+                    _logger.LogInformation("Connection started");
 
                     var component = connection.Query<VideoCard<string>>(@"SELECT * FROM public.products " +
                         "WHERE model LIKE @Keyword OR brand LIKE @Keyword " +
@@ -416,7 +423,7 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogError("Error with search");
+                _logger.LogError("Error with search");
                 return StatusCode(500, new { error = ex.Message });
             }
         }

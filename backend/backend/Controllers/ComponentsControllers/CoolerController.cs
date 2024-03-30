@@ -14,7 +14,7 @@ namespace backend.Controllers
     public class CoolerController : ComponentController
     {
 
-        public CoolerController(ILogger<CoolerController> logger):base(logger)
+        public CoolerController(ILogger<CoolerController> logger):base(logger, "cooler")
         { 
         }
 
@@ -32,7 +32,7 @@ namespace backend.Controllers
                 }
 
                 cooler.Likes = 0;
-                cooler.ProductType = "cooler";
+                cooler.ProductType = ComponentType;
 
             return await CreateComponent<Cooler<IFormFile>>(cooler, ["speed", "cooler_power"], "coolers");
 

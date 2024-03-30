@@ -12,8 +12,14 @@ import ProfilePage from './pages/ProfilePage/ProfilePage.tsx';
 import PCComponents from './pages/PCComponents/PCComponents.tsx';
 import BuildsPage from './pages/BuildsPage/BuildsPage.tsx';
 import ProductPage from './pages/ProductPage/ProductPage.tsx';
+import { useEffect, useRef } from 'react';
 
 function App() {
+  const isLoaded = useRef(false);
+  useEffect(() => {
+    if (isLoaded.current) return;
+    isLoaded.current = true;
+  }, []);
   return (
     <>
       <div className={'ellipses'}>

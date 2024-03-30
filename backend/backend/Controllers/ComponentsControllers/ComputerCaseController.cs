@@ -13,7 +13,7 @@ namespace backend.Controllers
     public class ComputerCaseController : ComponentController
     {
 
-        public ComputerCaseController(ILogger<ComputerCaseController> logger):base(logger)
+        public ComputerCaseController(ILogger<ComputerCaseController> logger):base(logger, "computerCase")
         {
         }
 
@@ -33,7 +33,7 @@ namespace backend.Controllers
                     return BadRequest(new { error = "Depth must be between 20 and 100" });
                 }
 
-                computerCase.ProductType = "computerCase";
+                computerCase.ProductType = ComponentType;
                 computerCase.Likes = 0;
 
                 return await CreateComponent<ComputerCase<IFormFile>>(computerCase, ["material", "width", "height", "depth"], "computer_cases");

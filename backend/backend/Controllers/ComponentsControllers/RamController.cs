@@ -15,7 +15,7 @@ namespace backend.Controllers
     public class RamController : ComponentController
     {
         
-        public RamController(ILogger<RamController> logger):base(logger)
+        public RamController(ILogger<RamController> logger):base(logger, "RAM")
         {
            
         }
@@ -41,7 +41,7 @@ namespace backend.Controllers
             }
 
             ram.Likes = 0;
-            ram.ProductType = "RAM";
+            ram.ProductType = ComponentType;
             return await CreateComponent<RAM<IFormFile>>(ram, ["frequency", "timings", "capacity_db"], "rams");
         }
 

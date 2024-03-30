@@ -17,7 +17,7 @@ namespace backend.Controllers
     public class SsdController : ComponentController
     {
        
-        public SsdController(ILogger<SsdController> logger) : base(logger)
+        public SsdController(ILogger<SsdController> logger) : base(logger, "SSD")
         {
         }
 
@@ -31,7 +31,7 @@ namespace backend.Controllers
             }
 
             ssd.Likes = 0;
-            ssd.ProductType = "SSD";
+            ssd.ProductType = ComponentType;
             return await CreateComponent<SSD<IFormFile>>(ssd, ["capacity"], "ssds");
         }
 
