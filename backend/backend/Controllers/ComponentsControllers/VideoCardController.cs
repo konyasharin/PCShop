@@ -75,6 +75,12 @@ namespace backend.Controllers
         {
             return await FilterComponents<VideoCard<string>>("video_cards_view", filters, ["memory_db AS memoryDb", "memory_type AS memoryType"]);
         }
+
+        [HttpGet("getFilters")]
+        public async Task<IActionResult> GetFilters()
+        {
+            return await GetComponentFilters<VideoCard<string>>();
+        }
         
         [HttpPost("addComment")]
         public async Task<IActionResult> AddComputerCaseComment(Comment videoCardComment)

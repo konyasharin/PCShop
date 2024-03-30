@@ -300,9 +300,48 @@ namespace backend.Controllers
             }
         }
 
-        protected async Task<IActionResult> GetFilters()
+        protected async Task<IActionResult> GetComponentFilters<T>() where T: Component<string>
         {
-            
+            string[] filterCharacteristics = ["id", "filter_name AS filterName", "component_type AS componentType", "filter_value AS filterValue"];
+            try
+            {
+                await using var connection = new NpgsqlConnection(_connectionString);
+                {
+                    connection.Open();
+                    var filters = connection.Query<Filter>($"SELECT {TransformCharacteristicsToString(filterCharacteristics)} FROM public.filters " +
+                                                           $"WHERE component_type = '{ComponentType}'");
+                    PropertyInfo[] properties = typeof(T).GetProperties();
+                    Dictionary<string, List<string>> response = new Dictionary<string, List<string>>();
+                    foreach (var property in properties)
+                    {
+                        foreach (var filter in filters)
+                        {
+                            if (filter.FilterName == char.ToLower(property.Name[0]) + property.Name.Substring(1))
+                            {
+                                if (!response.ContainsKey(property.Name))
+                                {
+                                    response.Add(property.Name, new List<string>());
+                                }
+                                response[property.Name].Add(filter.FilterValue);
+                            }
+                        }
+                    }
+
+                    Dictionary<string, List<string>> responseCamelCase = new Dictionary<string, List<string>>();
+                    foreach (var kvp in response)
+                    {
+                        string newKey = char.ToLower(kvp.Key[0]) + kvp.Key.Substring(1);
+                        responseCamelCase[newKey] = response[kvp.Key];
+                    }
+
+                    return Ok(responseCamelCase);
+                }
+            }
+            catch (Exception err)
+            {
+                _logger.LogError($"Filter wasn't get: {err.Message}");
+                return NotFound(new { error = err });
+            }
         }
         
         private string TransformFiltersToString(Filter[] filters)
