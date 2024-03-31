@@ -1,9 +1,9 @@
 const componentTypes = {
   videoCard: 'Видеокарта',
   processor: 'Процессор',
+  motherBoard: 'Материнска плата',
   /*cooling = 'cooling',
   RAM = 'RAM',
-  motherBoard = 'motherBoard',
   HDD = 'HDD',
   SSD = 'SSD',
   case = 'case',

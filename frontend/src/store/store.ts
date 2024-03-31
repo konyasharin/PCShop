@@ -2,7 +2,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import loadingReducer from './slices/loadingSlice.ts';
 import windowSearchReducer from './slices/windowSearchSlice.ts';
 import filterReducer from './slices/filtersSlice.ts';
-import chooseComponentsReducer from './slices/chooseComponentsSlice.ts';
 import profileReducer from './slices/profileSlice.ts';
 
 export const store = configureStore({
@@ -10,7 +9,6 @@ export const store = configureStore({
     loading: loadingReducer,
     windowSearch: windowSearchReducer,
     filters: filterReducer,
-    chooseComponents: chooseComponentsReducer,
     profile: profileReducer,
   },
 });

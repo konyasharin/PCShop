@@ -3,65 +3,39 @@ import TCheckBox from 'types/TCheckBox.ts';
 import TVideoCardFilters from 'types/components/TVideoCardFilters.ts';
 import TProcessorFilters from 'types/components/TProcessorFilters.ts';
 import componentTypes from 'enums/componentTypes.ts';
-
-export type TFilter = {
-  text: string;
-  filters: TCheckBox[];
-};
+import TMotherBoardFilters from 'types/components/TMotherBoardFilters.ts';
 
 export type TComponentFilterKeys<T> = {
-  [key in keyof T]: TFilter;
+  [key in keyof T]: TCheckBox[];
 };
 
 export type TFilters = {
   videoCard: TComponentFilterKeys<TVideoCardFilters>;
   processor: TComponentFilterKeys<TProcessorFilters>;
+  motherBoard: TComponentFilterKeys<TMotherBoardFilters>;
 };
 
 const initialState: TFilters = {
   videoCard: {
-    brand: {
-      text: 'Производитель',
-      filters: [],
-    },
-    model: {
-      text: 'Модель',
-      filters: [],
-    },
-    memoryType: {
-      text: 'Тип видеопамяти',
-      filters: [],
-    },
-    memoryDb: {
-      text: 'Количество видеопамяти',
-      filters: [],
-    },
+    brand: [],
+    model: [],
+    memoryType: [],
+    memoryDb: [],
   },
   processor: {
-    brand: {
-      text: 'Производитель',
-      filters: [],
-    },
-    model: {
-      text: 'Модель',
-      filters: [],
-    },
-    cores: {
-      text: 'Ядра',
-      filters: [],
-    },
-    clockFrequency: {
-      text: 'Частота',
-      filters: [],
-    },
-    turboFrequency: {
-      text: 'Частота в турбо режиме',
-      filters: [],
-    },
-    heatDissipation: {
-      text: 'Рассеиваемая мощность',
-      filters: [],
-    },
+    brand: [],
+    model: [],
+    cores: [],
+    clockFrequency: [],
+    turboFrequency: [],
+    heatDissipation: [],
+  },
+  motherBoard: {
+    brand: [],
+    model: [],
+    frequency: [],
+    socket: [],
+    chipset: [],
   },
 };
 
@@ -84,7 +58,7 @@ const filtersSlice = createSlice({
         action.payload.filters[key].forEach(filterText => {
           newFilters.push({ text: filterText });
         });
-        state[action.payload.componentType][key].filters = newFilters;
+        state[action.payload.componentType][key] = newFilters;
       }
     },
   },

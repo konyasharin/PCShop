@@ -8,6 +8,8 @@ const productCharacteristics = {
   clockFrequency: 'Частота',
   turboFrequency: 'Частота в турбо режиме',
   heatDissipation: 'Рассеиваемая мощность',
+  chipset: 'Чипсет',
+  socket: 'Сокет',
 } as const;
 
 export default productCharacteristics;

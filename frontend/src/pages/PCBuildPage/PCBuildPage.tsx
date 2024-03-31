@@ -20,6 +20,7 @@ function PCBuildPage() {
     price,
     power,
     errors,
+    setIsActive,
   } = useBuild();
   const errorsBlocks = errors.map(error => {
     return (
@@ -45,6 +46,7 @@ function PCBuildPage() {
         <ChooseComponents
           components={components}
           setComponent={setComponent}
+          setIsActive={setIsActive}
           key={0}
         />
         <PowerOfBuild power={power} price={`${price}$`} />

@@ -5,6 +5,7 @@ import Radio from 'components/Radio/Radio.tsx';
 import styles from './EditProductInfo.module.css';
 import Input from 'components/inputs/Input/Input.tsx';
 import TComponentFiltersKeys from 'types/components/TComponentFiltersKeys.ts';
+import productCharacteristics from 'enums/characteristics/productCharacteristics.ts';
 
 type EditProductInfoProps = {
   type: keyof typeof componentTypes;
@@ -32,26 +33,24 @@ const EditProductInfo: React.FC<EditProductInfoProps> = props => {
     props.filters,
   ) as (keyof typeof props.filters)[];
   filterKeys.forEach(filterKey => {
-    const filterElements = props.filters[filterKey].filters.map(
-      (filterElem, i) => {
-        return (
-          <Radio
-            text={filterElem.text}
-            isActive={filterElem.isActive}
-            onChange={() => {
-              props.setRadioIsActive(filterKey, i);
-            }}
-            className={styles.filterElement}
-          />
-        );
-      },
-    );
+    const filterElements = props.filters[filterKey].map((filterElem, i) => {
+      return (
+        <Radio
+          text={filterElem.text}
+          isActive={filterElem.isActive}
+          onChange={() => {
+            props.setRadioIsActive(filterKey, i);
+          }}
+          className={styles.filterElement}
+        />
+      );
+    });
     filtersBlocks.push(
       <EditFilterBlock
         filterBlock={
           <div className={styles.filterElements}>{...filterElements}</div>
         }
-        title={props.filters[filterKey].text}
+        title={productCharacteristics[filterKey]}
         className={styles.filterBlock}
       />,
     );

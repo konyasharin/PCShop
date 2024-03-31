@@ -34,6 +34,10 @@ type ChooseComponentsProps = {
     newProduct: TProduct | null,
     componentType: keyof typeof componentTypes,
   ) => void;
+  setIsActive: (
+    componentType: keyof typeof componentTypes,
+    newIsActive: boolean,
+  ) => void;
 };
 
 const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
@@ -41,6 +45,8 @@ const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
     useComponents<TVideoCard<string>>('/VideoCard/getAllVideoCards');
   const { components: processors, getComponents: getProcessors } =
     useComponents<TProcessor<string>>('/Processor/getAllProcessors');
+  const { components: motherBoards, getComponents: getMotherBoards } =
+    useComponents<TProcessor<string>>('/MotherBoard/getAllMotherBoards');
   const dispatch = useDispatch();
   const isLoaded = useRef(false);
 
@@ -49,6 +55,7 @@ const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
       dispatch(setIsLoading(true));
       await getVideoCards();
       await getProcessors();
+      await getMotherBoards();
       dispatch(setIsLoading(false));
     }
     if (isLoaded.current) return;
@@ -71,6 +78,8 @@ const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
         }}
         currentProduct={props.components.videoCard.currentProduct}
         setCurrentProduct={props.setComponent}
+        isActive={props.components.videoCard.isActive}
+        setIsActive={props.setIsActive}
       />
       <ChooseComponent
         img={processorIcon}
@@ -86,6 +95,25 @@ const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
         }}
         currentProduct={props.components.processor.currentProduct}
         setCurrentProduct={props.setComponent}
+        isActive={props.components.processor.isActive}
+        setIsActive={props.setIsActive}
+      />
+      <ChooseComponent
+        img={processorIcon}
+        type={'motherBoard'}
+        title={'Материнская плата'}
+        isImportant={true}
+        errorType={props.components.motherBoard.currentErrorType}
+        searchTitle={'Выберите материнскую плату'}
+        products={convertToTProduct(motherBoards)}
+        onShowMore={() => {
+          dispatch(setIsLoading(true));
+          getProcessors().then(() => dispatch(setIsLoading(false)));
+        }}
+        currentProduct={props.components.processor.currentProduct}
+        setCurrentProduct={props.setComponent}
+        isActive={props.components.motherBoard.isActive}
+        setIsActive={props.setIsActive}
       />
     </section>
   );

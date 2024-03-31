@@ -4,11 +4,14 @@ import componentTypes from 'enums/componentTypes.ts';
 import EBuildBlockErrors from 'enums/EBuildBlockErrors.ts';
 import useBorderValues from 'hooks/useBorderValues.ts';
 
+type TUseBuildComponent = {
+  currentProduct: TProduct | null;
+  currentErrorType: EBuildBlockErrors;
+  isActive: boolean;
+};
+
 export type TUseBuildComponents = {
-  [componentType in keyof typeof componentTypes]: {
-    currentProduct: TProduct | null;
-    currentErrorType: EBuildBlockErrors;
-  };
+  [componentType in keyof typeof componentTypes]: TUseBuildComponent;
 };
 
 export type TUseBuildError = {
@@ -23,16 +26,8 @@ export const errorDetailedTypes = {
 } as const;
 
 function useBuild() {
-  const [components, setComponents] = useState<TUseBuildComponents>({
-    videoCard: {
-      currentProduct: null,
-      currentErrorType: EBuildBlockErrors.Error,
-    },
-    processor: {
-      currentProduct: null,
-      currentErrorType: EBuildBlockErrors.Error,
-    },
-  });
+  const [components, setComponents] =
+    useState<TUseBuildComponents>(initBuild());
   const [progressOfBuild, setProgressOfBuild] = useBorderValues(0, 0, 100);
   const [price, setPrice] = useBorderValues(0, 0);
   const [power, setPower] = useBorderValues(0, 0, 10);
@@ -44,6 +39,21 @@ function useBuild() {
     calculatePower();
     updateErrors();
   }, [components]);
+
+  function initBuild() {
+    let key: keyof typeof componentTypes;
+    const newComponents: {
+      [key: string]: TUseBuildComponent;
+    } = {};
+    for (key in componentTypes) {
+      newComponents[key] = {
+        currentProduct: null,
+        currentErrorType: EBuildBlockErrors.Error,
+        isActive: false,
+      };
+    }
+    return newComponents as TUseBuildComponents;
+  }
 
   function setComponent(
     newProduct: TProduct | null,
@@ -112,6 +122,19 @@ function useBuild() {
     setErrors(newErrors);
   }
 
+  function setIsActive(
+    componentType: keyof typeof componentTypes,
+    newIsActive: boolean,
+  ) {
+    setComponents({
+      ...components,
+      [componentType]: {
+        ...components[componentType],
+        isActive: newIsActive,
+      },
+    });
+  }
+
   return {
     setComponent,
     components,
@@ -119,6 +142,7 @@ function useBuild() {
     price,
     power,
     errors,
+    setIsActive,
   };
 }
 

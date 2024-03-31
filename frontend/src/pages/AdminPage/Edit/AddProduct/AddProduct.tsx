@@ -9,14 +9,13 @@ import Btn from 'components/btns/Btn/Btn.tsx';
 import createProduct from 'api/components/createProduct.ts';
 import useFilters from 'hooks/useFilters.ts';
 import TCheckBox from 'types/TCheckBox.ts';
-import { TFilter } from 'store/slices/filtersSlice.ts';
 import TVideoCard from 'types/components/TVideoCard.ts';
 import useBorderValues from 'hooks/useBorderValues.ts';
 import TProcessor from 'types/components/TProcessor.ts';
 
-function searchActiveFromFilter(filter: TFilter): TCheckBox | null {
+function searchActiveFromFilter(filter: TCheckBox[]): TCheckBox | null {
   let result: null | TCheckBox = null;
-  filter.filters.forEach(filterElem => {
+  filter.forEach(filterElem => {
     if (filterElem.isActive) {
       result = filterElem;
     }

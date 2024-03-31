@@ -10,6 +10,7 @@ import TProduct from 'types/TProduct.ts';
 import config from '../../../../../../config.ts';
 import CheckBox from 'components/CheckBox/CheckBox.tsx';
 import createClassNames from 'utils/createClassNames.ts';
+import productCharacteristics from 'enums/characteristics/productCharacteristics.ts';
 
 type AddWindowProps = {
   type: keyof typeof componentTypes;
@@ -33,7 +34,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
     filters,
   ) as (keyof typeof filters)[]; // Нужно для сохранения ссылок на ключи при их передаче в компонент
   filterKeys.forEach(filterKey => {
-    const filtersBlocks = filters[filterKey].filters.map((filterBlock, i) => {
+    const filtersBlocks = filters[filterKey].map((filterBlock, i) => {
       return (
         <CheckBox
           text={filterBlock.text}
@@ -53,7 +54,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
             styles.filterBlockElementTitle,
           ])}
         >
-          {filters[filterKey].text}
+          {productCharacteristics[filterKey]}
         </h6>
         {...filtersBlocks}
       </div>,
@@ -87,7 +88,6 @@ const AddWindow: React.FC<AddWindowProps> = props => {
   );
 
   const cards = props.products.map(product => {
-    console.log(product);
     return (
       <ChooseComponentCard
         name={product.name}

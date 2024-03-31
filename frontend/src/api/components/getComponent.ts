@@ -17,6 +17,9 @@ async function getComponent(
     case 'processor':
       url = '/Processor/getProcessor';
       break;
+    case 'motherBoard':
+      url = '/MotherBoard/getMotherBoard';
+      break;
   }
   return await axios.get(config.apiUrl + url + `/${id}`);
 }

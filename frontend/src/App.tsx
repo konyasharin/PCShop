@@ -40,6 +40,16 @@ function App() {
           );
         },
       );
+      await getFilters<TProcessor<string>>('/MotherBoard/getFilters').then(
+        response => {
+          dispatch(
+            setFilters({
+              componentType: 'motherBoard',
+              filters: response.data,
+            }),
+          );
+        },
+      );
       dispatch(setIsLoading(false));
     }
     if (isLoaded.current) return;

@@ -4,9 +4,6 @@ import ErrorCorner from './ErrorCorner/ErrorCorner.tsx';
 import createClassNames from 'utils/createClassNames.ts';
 import AddWindow from './AddWindow/AddWindow.tsx';
 import componentTypes from 'enums/componentTypes.ts';
-import { useDispatch, useSelector } from 'react-redux';
-import { setIsActive } from 'store/slices/chooseComponentsSlice.ts';
-import { RootState } from 'store/store.ts';
 import TProduct from 'types/TProduct.ts';
 
 type ChooseComponentProps = {
@@ -24,13 +21,14 @@ type ChooseComponentProps = {
     newProduct: TProduct | null,
     componentType: keyof typeof componentTypes,
   ) => void;
+  isActive: boolean;
+  setIsActive: (
+    componentType: keyof typeof componentTypes,
+    newIsActive: boolean,
+  ) => void;
 };
 
 const ChooseComponent: React.FC<ChooseComponentProps> = props => {
-  const dispatch = useDispatch();
-  const isActive = useSelector(
-    (state: RootState) => state.chooseComponents[props.type].isActive,
-  );
   return (
     <div className={styles.fullBlock}>
       <div className={createClassNames([styles.block, props.className])}>
@@ -44,9 +42,7 @@ const ChooseComponent: React.FC<ChooseComponentProps> = props => {
         </div>
         <div
           className={styles.componentName}
-          onClick={() =>
-            dispatch(setIsActive({ type: props.type, newIsActive: !isActive }))
-          }
+          onClick={() => props.setIsActive(props.type, !props.isActive)}
         >
           {props.currentProduct ? props.currentProduct.name : 'Выбрать'}
         </div>
@@ -55,7 +51,7 @@ const ChooseComponent: React.FC<ChooseComponentProps> = props => {
       <AddWindow
         type={props.type}
         searchTitle={props.searchTitle}
-        isActive={isActive}
+        isActive={props.isActive}
         products={props.products}
         onShowMore={props.onShowMore}
         setCurrentProduct={props.setCurrentProduct}

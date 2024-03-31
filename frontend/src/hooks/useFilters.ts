@@ -26,7 +26,7 @@ function useFilters(
       JSON.stringify(initFilters),
     ) as TComponentFiltersKeys; // Создание глубокой копии
     for (k in initFilters) {
-      newFilters[k].filters = newFilters[k].filters.map(filter => {
+      newFilters[k] = newFilters[k].map(filter => {
         return {
           ...filter,
           isActive: false,
@@ -43,15 +43,12 @@ function useFilters(
   ) {
     const newFilters = {
       ...filters,
-      [nameBlock]: {
-        ...filters[nameBlock],
-        filters: filters[nameBlock].filters.map((filter, i) => {
-          if (i === index && type.current === 'checkBox') {
-            filter.isActive = newIsActive;
-          }
-          return filter;
-        }),
-      },
+      [nameBlock]: filters[nameBlock].map((filter, i) => {
+        if (i === index && type.current === 'checkBox') {
+          filter.isActive = newIsActive;
+        }
+        return filter;
+      }),
     };
     setFilters(newFilters);
   }
@@ -62,15 +59,12 @@ function useFilters(
   ) {
     const newFilters = {
       ...filters,
-      [nameBlock]: {
-        ...filters[nameBlock],
-        filters: filters[nameBlock].filters.map((filter, i) => {
-          if (type.current === 'radio') {
-            filter.isActive = index === i;
-          }
-          return filter;
-        }),
-      },
+      [nameBlock]: filters[nameBlock].map((filter, i) => {
+        if (type.current === 'radio') {
+          filter.isActive = index === i;
+        }
+        return filter;
+      }),
     };
     setFilters(newFilters);
   }
@@ -79,7 +73,7 @@ function useFilters(
     nameBlock: keyof TComponentFiltersKeys,
     filterText: string,
   ): null | number {
-    filters[nameBlock].filters.map((filter, i) => {
+    filters[nameBlock].map((filter, i) => {
       if (filter.text === filterText) {
         return i;
       }

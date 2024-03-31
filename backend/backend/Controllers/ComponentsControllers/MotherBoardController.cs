@@ -24,15 +24,10 @@ namespace backend.Controllers
         [HttpPost("createMotherBoard")]
         public async Task<IActionResult> CreateMotherBoard([FromForm] MotherBoard<IFormFile> motherBoard)
         {
-            if (motherBoard.Frequency < 0 || motherBoard.Frequency > 100000)
-            {
-                return BadRequest(new { error = "Frequency must be between 0 and 100000" });
-            }
-
             motherBoard.Likes = 0;
             motherBoard.ProductType = ComponentType;
 
-            return await CreateComponent<MotherBoard<IFormFile>>(motherBoard, ["frequency", "socket", "chipset"], "mother_boards");
+            return await CreateComponent<MotherBoard<IFormFile>>(motherBoard, ["socket", "chipset"], "mother_boards");
         }
 
 
@@ -41,7 +36,7 @@ namespace backend.Controllers
         [HttpGet("getMotherBoard/{id}")]
         public async Task<IActionResult> GetComputerCaseById(int id)
         {
-            return await GetComponent<MotherBoard<string>>(id, "mother_boards_view", ["frequency", "socket", "chipset"]);
+            return await GetComponent<MotherBoard<string>>(id, "mother_boards_view", ["socket", "chipset"]);
         }
 
         [HttpPut("updateMotherBoard/{id}")]
@@ -49,7 +44,7 @@ namespace backend.Controllers
         {
             motherBoard.ProductId = id;
             motherBoard.ProductType = "mother_board";
-            return await UpdateComponent<MotherBoard<IFormFile>>(motherBoard, isUpdated, "mother_boards", ["frequency", "socket", "chipset"]);
+            return await UpdateComponent<MotherBoard<IFormFile>>(motherBoard, isUpdated, "mother_boards", ["socket", "chipset"]);
         }
 
         [HttpDelete("deleteMotherBoard/{id}")]
@@ -61,13 +56,32 @@ namespace backend.Controllers
         [HttpGet("getAllMotherBoards")]
         public async Task<IActionResult> GetAllMotherBoards(int limit, int offset)
         {
-            return await GetAllComponents<MotherBoard<string>>(limit, offset, "mother_boards_view", ["frequency", "socket", "chipset"]);
+            return await GetAllComponents<MotherBoard<string>>(limit, offset, "mother_boards_view", ["socket", "chipset"]);
         }
 
         [HttpGet("search")]
         public async Task<IActionResult> SearchMotherBoard(string keyword, int limit = 1, int offset = 0)
         {
             return await SearchComponent(keyword, limit, offset);
+        }
+        
+        [HttpPost("addFilter")]
+        public async Task<IActionResult> AddMotherBoardFilter(Filter newFilter)
+        {
+            newFilter.ComponentType = "motherBoard";
+            return await AddFilter(newFilter);
+        }
+
+        [HttpPost("filter")]
+        public async Task<IActionResult> Filter(Filter[] filters)
+        {
+            return await FilterComponents<MotherBoard<string>>("mother_boards_view", filters, ["chipset", "socket"]);
+        }
+
+        [HttpGet("getFilters")]
+        public async Task<IActionResult> GetFilters()
+        {
+            return await GetComponentFilters<MotherBoard<string>>();
         }
         
         [HttpPost("addComment")]
