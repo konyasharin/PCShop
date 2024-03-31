@@ -2,51 +2,67 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Container from 'components/Container/Container.tsx';
 import styles from './ProductPage.module.css';
 import ProductMain from './ProductMain/ProductMain.tsx';
-import { useEffect } from 'react';
-import productImg from 'assets/videocard.jpg';
+import { useEffect, useState } from 'react';
 import ProductCharacteristics from './ProductCharacteristics/ProductCharacteristics.tsx';
-import EComponentTypes from 'enums/componentTypes.ts';
-import EProductCharacteristics from 'enums/characteristics/EProductCharacteristics.ts';
+import componentTypes from 'enums/componentTypes.ts';
+import productCharacteristics from 'enums/characteristics/productCharacteristics.ts';
 import ProductComments from './ProductComments/ProductComments.tsx';
+import getComponent from 'api/components/getComponent.ts';
+import TVideoCard from 'types/components/TVideoCard.ts';
+import TProcessor from 'types/components/TProcessor.ts';
+import config from '../../../config.ts';
 
 type TProductParams = {
   productId: string;
-  productCategory: EComponentTypes;
+  productCategory: keyof typeof componentTypes;
 };
 
 export type TProductCharacteristic = {
-  characteristicName: EProductCharacteristics;
-  value: string;
+  characteristicName: string;
+  value: string | number;
 };
 
 function ProductPage() {
   const { productId, productCategory } = useParams<TProductParams>();
-  const product = {
-    brand: '1',
-    model: '123',
-    memoryDb: '4GB',
-    memoryType: 'GDDR5',
-  };
+  const [product, setProduct] = useState<
+    TVideoCard<string> | TProcessor<string> | null
+  >(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // получение продукта
+    let key: keyof typeof componentTypes;
+    let isProduct = false;
+    for (key in componentTypes) {
+      if (key == productCategory && productId) {
+        isProduct = true;
+        getComponent(key, +productId).then(response => {
+          setProduct(response.data);
+        });
+        break;
+      }
+    }
+    if (!isProduct) {
+      navigate('/');
+    }
   }, []);
-  let key: keyof typeof product;
   const characteristics: TProductCharacteristic[] = [];
-  for (key in product) {
-    characteristics.push({
-      characteristicName: EProductCharacteristics[key],
-      value: product[key],
-    });
+  if (product) {
+    let key: keyof typeof product;
+    for (key in product) {
+      if (key in productCharacteristics)
+        characteristics.push({
+          characteristicName:
+            productCharacteristics[key as keyof typeof productCharacteristics],
+          value: product[key],
+        });
+    }
   }
   return (
     <Container className={styles.container}>
       <ProductMain
-        img={productImg}
-        name={'Видеокарта'}
-        description={
-          '8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак 8GB, здесь типо какие-то характеристики здесь типо какие-то характеристики, здесь типо какие-то харак'
-        }
+        img={product ? `${config.backupUrl}/${product.image}` : ''}
+        name={product ? `${product.brand} ${product.model}` : ''}
+        description={product ? product.description : ''}
         mark={4.75}
       />
       <ProductCharacteristics characteristics={characteristics} />

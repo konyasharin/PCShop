@@ -2,8 +2,6 @@ import FiltersPanel from 'components/FiltersPanel/FiltersPanel.tsx';
 import React, { ReactNode, useState } from 'react';
 import componentTypes from 'enums/componentTypes.ts';
 import useFilters from 'hooks/useFilters.ts';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store/store.ts';
 import styles from './AddWindow.module.css';
 import Input from 'components/inputs/Input/Input.tsx';
 import ChooseComponentCard from 'components/cards/ChooseComponentCard/ChooseComponentCard.tsx';
@@ -27,11 +25,7 @@ type AddWindowProps = {
 
 const AddWindow: React.FC<AddWindowProps> = props => {
   const [searchString, setSearchString] = useState('');
-  const { filters, setCheckBoxIsActive } = useFilters(
-    useSelector((state: RootState) => state.filters),
-    'checkBox',
-    props.type,
-  );
+  const { filters, setCheckBoxIsActive } = useFilters('checkBox', props.type);
   const [priceFrom, setPriceFrom] = useState('');
   const [priceTo, setPriceTo] = useState('');
   const checkBoxes: ReactNode[] = [];
@@ -93,6 +87,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
   );
 
   const cards = props.products.map(product => {
+    console.log(product);
     return (
       <ChooseComponentCard
         name={product.name}
@@ -100,6 +95,7 @@ const AddWindow: React.FC<AddWindowProps> = props => {
         img={`${config.backupUrl}/${product.img}`}
         text={product.description}
         className={styles.card}
+        url={`/product/${props.type}/${product.productId}`}
         onClick={() => {
           props.setCurrentProduct(product, props.type);
         }}

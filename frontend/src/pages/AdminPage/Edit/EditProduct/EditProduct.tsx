@@ -7,8 +7,6 @@ import EditProductInfo from '../EditProductInfo/EditProductInfo.tsx';
 import Btn from 'components/btns/Btn/Btn.tsx';
 import CategoriesBlocks from '../CategoriesBlocks/CategoriesBlocks.tsx';
 import useFilters from 'hooks/useFilters.ts';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store/store.ts';
 import useBorderValues from 'hooks/useBorderValues.ts';
 import SearchInput from 'components/inputs/SearchInput/SearchInput.tsx';
 import getComponent from 'api/components/getComponent.ts';
@@ -25,19 +23,14 @@ function EditProduct() {
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useBorderValues(0, 0);
   const [power, setPower] = useBorderValues(0, 0, 10);
-  const allFiltersState = useSelector((state: RootState) => state.filters);
   const [activeCategory, setActiveCategory] =
     useState<keyof typeof componentTypes>('videoCard');
   const [img, setImg] = useState(emptyImg);
-  const {
-    filters,
-    setRadioIsActive,
-    setComponentTypeHandle,
-    findIndexOfFilter,
-  } = useFilters(allFiltersState, 'radio', activeCategory);
+  const { filters, setRadioIsActive, setComponentType, findIndexOfFilter } =
+    useFilters('radio', activeCategory);
   const [productIsGot, setProductIsGot] = useState(false);
   useEffect(() => {
-    setComponentTypeHandle(activeCategory);
+    setComponentType(activeCategory);
   }, [activeCategory]);
   return (
     <div className={styles.block}>

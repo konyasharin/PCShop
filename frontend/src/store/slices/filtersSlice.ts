@@ -1,7 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import TCheckBox from 'types/TCheckBox.ts';
 import TVideoCardFilters from 'types/components/TVideoCardFilters.ts';
 import TProcessorFilters from 'types/components/TProcessorFilters.ts';
+import componentTypes from 'enums/componentTypes.ts';
 
 export type TFilter = {
   text: string;
@@ -21,49 +22,45 @@ const initialState: TFilters = {
   videoCard: {
     brand: {
       text: 'Производитель',
-      filters: [{ text: 'Asrock' }, { text: 'ASUS' }, { text: 'Gigabyte' }],
+      filters: [],
     },
     model: {
       text: 'Модель',
-      filters: [
-        { text: 'RTX 3090' },
-        { text: 'RTX 3080' },
-        { text: 'RTX 4060' },
-      ],
+      filters: [],
     },
     memoryType: {
       text: 'Тип видеопамяти',
-      filters: [{ text: 'DDR4' }, { text: 'DDR5' }],
+      filters: [],
     },
     memoryDb: {
       text: 'Количество видеопамяти',
-      filters: [{ text: '1GB' }, { text: '2GB' }],
+      filters: [],
     },
   },
   processor: {
     brand: {
       text: 'Производитель',
-      filters: [{ text: 'Intel' }, { text: 'AMD' }],
+      filters: [],
     },
     model: {
       text: 'Модель',
-      filters: [{ text: 'Ryzen 5 2600' }, { text: 'Ryzen 5 3600X' }],
+      filters: [],
     },
     cores: {
       text: 'Ядра',
-      filters: [{ text: '1' }, { text: '2' }],
+      filters: [],
     },
     clockFrequency: {
       text: 'Частота',
-      filters: [{ text: '0-2.7 ГГц' }, { text: '2.7-3.1 ГГц' }],
+      filters: [],
     },
     turboFrequency: {
       text: 'Частота в турбо режиме',
-      filters: [{ text: '0-2.7 ГГц' }, { text: '2.7-3.1 ГГц' }],
+      filters: [],
     },
     heatDissipation: {
       text: 'Рассеиваемая мощность',
-      filters: [{ text: '0-50 Вт' }, { text: '50-70 Вт' }],
+      filters: [],
     },
   },
 };
@@ -71,7 +68,27 @@ const initialState: TFilters = {
 const filtersSlice = createSlice({
   name: 'filters',
   initialState,
-  reducers: {},
+  reducers: {
+    setFilters: (
+      state,
+      action: PayloadAction<{
+        componentType: keyof typeof componentTypes;
+        filters: {
+          [key in keyof (TVideoCardFilters | TProcessorFilters)]: string[];
+        };
+      }>,
+    ) => {
+      let key: keyof typeof action.payload.filters;
+      for (key in action.payload.filters) {
+        const newFilters: TCheckBox[] = [];
+        action.payload.filters[key].forEach(filterText => {
+          newFilters.push({ text: filterText });
+        });
+        state[action.payload.componentType][key].filters = newFilters;
+      }
+    },
+  },
 });
 
 export default filtersSlice.reducer;
+export const { setFilters } = filtersSlice.actions;

@@ -1,7 +1,7 @@
 import TComponentFilters from 'types/components/TComponentFilters.ts';
 
 type TComponent<T extends File | string> = TComponentFilters & {
-  id: number;
+  productId: number;
   country: string;
   price: number;
   description: string;

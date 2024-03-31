@@ -10,6 +10,7 @@ type ChooseComponentCard = {
   img: string;
   onClick?: () => void;
   className?: string;
+  url: string;
 };
 
 const ChooseComponentCard: React.FC<ChooseComponentCard> = props => {
@@ -19,6 +20,7 @@ const ChooseComponentCard: React.FC<ChooseComponentCard> = props => {
       className={props.className}
       name={props.name}
       text={props.text}
+      url={props.url}
       bottomBlock={
         <MainBtn className={styles.btn} onClick={props.onClick}>
           Добавить

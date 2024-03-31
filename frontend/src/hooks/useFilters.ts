@@ -1,25 +1,24 @@
-import { useRef, useState } from 'react';
-import { TFilters } from 'store/slices/filtersSlice.ts';
+import { useEffect, useRef, useState } from 'react';
 import componentTypes from 'enums/componentTypes.ts';
 import TComponentFiltersKeys from 'types/components/TComponentFiltersKeys.ts';
+import { useSelector } from 'react-redux';
+import { RootState } from 'store/store.ts';
 
 function useFilters(
-  filtersState: TFilters,
   initialType: 'radio' | 'checkBox',
   initialComponentType: keyof typeof componentTypes,
 ) {
   const type = useRef(initialType);
-  const componentType = useRef(initialComponentType);
-  const [filters, setFilters] = useState<TComponentFiltersKeys>(
-    initFilters(filtersState[componentType.current]),
+  const [componentType, setComponentType] = useState(initialComponentType);
+  const filtersState = useSelector(
+    (state: RootState) => state.filters[componentType],
   );
-
-  function setComponentTypeHandle(
-    newComponentType: keyof typeof componentTypes,
-  ) {
-    componentType.current = newComponentType;
-    setFilters(initFilters(filtersState[componentType.current]));
-  }
+  const [filters, setFilters] = useState<TComponentFiltersKeys>(
+    initFilters(filtersState),
+  );
+  useEffect(() => {
+    setFilters(initFilters(filtersState));
+  }, [filtersState]);
 
   function initFilters(initFilters: TComponentFiltersKeys) {
     let k: keyof TComponentFiltersKeys;
@@ -92,8 +91,8 @@ function useFilters(
     filters,
     setCheckBoxIsActive,
     setRadioIsActive,
-    setComponentTypeHandle,
     findIndexOfFilter,
+    setComponentType,
   };
 }
 

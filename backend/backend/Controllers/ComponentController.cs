@@ -116,7 +116,7 @@ namespace backend.Controllers
                     if (component != null)
                     {
                         _logger.LogInformation($"Retrieved component with Id {componentId} from the database");
-                        return Ok(new { data = component });
+                        return Ok(component);
                     }
                     else
                     {

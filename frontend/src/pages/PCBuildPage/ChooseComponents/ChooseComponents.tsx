@@ -18,7 +18,7 @@ function convertToTProduct<
 >(components: T[]): TProduct[] {
   return components.map(component => {
     return {
-      id: component.id,
+      productId: component.productId,
       img: component.image,
       name: `${component.brand} ${component.model}`,
       description: component.description,

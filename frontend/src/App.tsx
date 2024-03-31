@@ -13,11 +13,37 @@ import PCComponents from './pages/PCComponents/PCComponents.tsx';
 import BuildsPage from './pages/BuildsPage/BuildsPage.tsx';
 import ProductPage from './pages/ProductPage/ProductPage.tsx';
 import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { setIsLoading } from 'store/slices/loadingSlice.ts';
+import getFilters from 'api/filters/getFilters.ts';
+import TVideoCard from 'types/components/TVideoCard.ts';
+import { setFilters } from 'store/slices/filtersSlice.ts';
+import TProcessor from 'types/components/TProcessor.ts';
 
 function App() {
   const isLoaded = useRef(false);
+  const dispatch = useDispatch();
   useEffect(() => {
+    async function getAllFilters() {
+      dispatch(setIsLoading(true));
+      await getFilters<TVideoCard<string>>('/VideoCard/getFilters').then(
+        response => {
+          dispatch(
+            setFilters({ componentType: 'videoCard', filters: response.data }),
+          );
+        },
+      );
+      await getFilters<TProcessor<string>>('/Processor/getFilters').then(
+        response => {
+          dispatch(
+            setFilters({ componentType: 'processor', filters: response.data }),
+          );
+        },
+      );
+      dispatch(setIsLoading(false));
+    }
     if (isLoaded.current) return;
+    void getAllFilters();
     isLoaded.current = true;
   }, []);
   return (

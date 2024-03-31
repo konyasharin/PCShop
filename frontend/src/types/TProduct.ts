@@ -1,5 +1,5 @@
 type TProduct = {
-  id: number;
+  productId: number;
   img: string;
   name: string;
   description: string;

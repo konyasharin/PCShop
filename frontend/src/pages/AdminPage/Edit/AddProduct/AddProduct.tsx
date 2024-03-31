@@ -7,8 +7,6 @@ import EditProductInfo from '../EditProductInfo/EditProductInfo.tsx';
 import emptyImg from 'assets/empty-img.png';
 import Btn from 'components/btns/Btn/Btn.tsx';
 import createProduct from 'api/components/createProduct.ts';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store/store.ts';
 import useFilters from 'hooks/useFilters.ts';
 import TCheckBox from 'types/TCheckBox.ts';
 import { TFilter } from 'store/slices/filtersSlice.ts';
@@ -44,14 +42,12 @@ function AddProduct() {
   const [amount, setAmount] = useBorderValues(0, 0);
   const [power, setPower] = useBorderValues(0, 0, 10);
   const imgFile: React.MutableRefObject<null | File> = useRef(null);
-  const allFiltersState = useSelector((state: RootState) => state.filters);
-  const { filters, setRadioIsActive, setComponentTypeHandle } = useFilters(
-    allFiltersState,
+  const { filters, setRadioIsActive, setComponentType } = useFilters(
     'radio',
     activeCategory,
   );
   useEffect(() => {
-    setComponentTypeHandle(activeCategory);
+    setComponentType(activeCategory);
   }, [activeCategory]);
 
   return (

@@ -29,7 +29,8 @@ namespace backend.Controllers
         [HttpGet("getProcessor/{id}")]
         public async Task<IActionResult> GetProcessorById(int id)
         {
-            return await GetComponent<Processor<string>>(id, "processors_view", ["battery", "voltage"]);
+            return await GetComponent<Processor<string>>(id, "processors_view",
+                ["cores", "heat_dissipation AS heatDissipation", "clock_frequency AS clockFrequency", "turbo_frequency AS turboFrequency"]);
         }
 
         [HttpPut("updateProcessor/{id}")]
@@ -52,6 +53,26 @@ namespace backend.Controllers
         {
             return await GetAllComponents<Processor<string>>(limit, offset, "processors_view",
                 ["cores", "clock_frequency", "turbo_frequency", "heat_dissipation"]);
+        }
+        
+        [HttpPost("addFilter")]
+        public async Task<IActionResult> AddProcessorFilter(Filter newFilter)
+        {
+            newFilter.ComponentType = "processor";
+            return await AddFilter(newFilter);
+        }
+
+        [HttpPost("filter")]
+        public async Task<IActionResult> Filter(Filter[] filters)
+        {
+            return await FilterComponents<Processor<string>>("processors_view", filters, 
+                ["cores","clock_frequency AS clockFrequency", "turbo_frequency AS turboFrequency", "heat_dissipation AS heatDissipation"]);
+        }
+
+        [HttpGet("getFilters")]
+        public async Task<IActionResult> GetFilters()
+        {
+            return await GetComponentFilters<Processor<string>>();
         }
 
         [HttpGet("search")]
