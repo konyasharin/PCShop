@@ -11,6 +11,7 @@ function useRadios(radiosState: TCheckBox[]) {
       }),
     );
   }
+
   return { radios, setRadioIsActive };
 }
 

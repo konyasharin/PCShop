@@ -4,8 +4,8 @@ import EditFilterBlock from '../EditFilterBlock/EditFilterBlock.tsx';
 import Radio from 'components/Radio/Radio.tsx';
 import styles from './EditProductInfo.module.css';
 import Input from 'components/inputs/Input/Input.tsx';
-import TComponentFiltersKeys from 'types/components/TComponentFiltersKeys.ts';
 import productCharacteristics from 'enums/characteristics/productCharacteristics.ts';
+import { TComponentFilterKeys } from 'hooks/useAllFilters.ts';
 
 type EditProductInfoProps = {
   type: keyof typeof componentTypes;
@@ -20,41 +20,43 @@ type EditProductInfoProps = {
   amount: number;
   power: number;
   setPower: (newValue: number) => void;
-  filters: TComponentFiltersKeys;
+  filters: TComponentFilterKeys | null;
   setRadioIsActive: (
-    nameBlock: keyof TComponentFiltersKeys,
+    nameBlock: keyof TComponentFilterKeys,
     index: number,
   ) => void;
 };
 
 const EditProductInfo: React.FC<EditProductInfoProps> = props => {
   const filtersBlocks: ReactNode[] = [];
-  const filterKeys = Object.keys(
-    props.filters,
-  ) as (keyof typeof props.filters)[];
-  filterKeys.forEach(filterKey => {
-    const filterElements = props.filters[filterKey].map((filterElem, i) => {
-      return (
-        <Radio
-          text={filterElem.text}
-          isActive={filterElem.isActive}
-          onChange={() => {
-            props.setRadioIsActive(filterKey, i);
-          }}
-          className={styles.filterElement}
-        />
+  if (props.filters != null) {
+    const filterKeys = Object.keys(
+      props.filters,
+    ) as (keyof typeof props.filters)[];
+    filterKeys.forEach(filterKey => {
+      const filterElements = props.filters![filterKey].map((filterElem, i) => {
+        return (
+          <Radio
+            text={filterElem.text}
+            isActive={filterElem.isActive}
+            onChange={() => {
+              props.setRadioIsActive(filterKey, i);
+            }}
+            className={styles.filterElement}
+          />
+        );
+      });
+      filtersBlocks.push(
+        <EditFilterBlock
+          filterBlock={
+            <div className={styles.filterElements}>{...filterElements}</div>
+          }
+          title={productCharacteristics[filterKey]}
+          className={styles.filterBlock}
+        />,
       );
     });
-    filtersBlocks.push(
-      <EditFilterBlock
-        filterBlock={
-          <div className={styles.filterElements}>{...filterElements}</div>
-        }
-        title={productCharacteristics[filterKey]}
-        className={styles.filterBlock}
-      />,
-    );
-  });
+  }
 
   return (
     <>

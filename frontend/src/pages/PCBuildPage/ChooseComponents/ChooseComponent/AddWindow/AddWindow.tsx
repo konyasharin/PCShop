@@ -1,5 +1,5 @@
 import FiltersPanel from 'components/FiltersPanel/FiltersPanel.tsx';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useContext, useState } from 'react';
 import componentTypes from 'enums/componentTypes.ts';
 import useFilters from 'hooks/useFilters.ts';
 import styles from './AddWindow.module.css';
@@ -11,12 +11,13 @@ import config from '../../../../../../config.ts';
 import CheckBox from 'components/CheckBox/CheckBox.tsx';
 import createClassNames from 'utils/createClassNames.ts';
 import productCharacteristics from 'enums/characteristics/productCharacteristics.ts';
+import { FiltersContext } from '../../../../../App.tsx';
 
 type AddWindowProps = {
   type: keyof typeof componentTypes;
   searchTitle: string;
   isActive: boolean;
-  products: TProduct[];
+  products: TProduct[] | null;
   onShowMore: () => void;
   setCurrentProduct: (
     newProduct: TProduct | null,
@@ -26,40 +27,48 @@ type AddWindowProps = {
 
 const AddWindow: React.FC<AddWindowProps> = props => {
   const [searchString, setSearchString] = useState('');
-  const { filters, setCheckBoxIsActive } = useFilters('checkBox', props.type);
+  const allFilters = useContext(FiltersContext);
+  const { filters, setCheckBoxIsActive } = useFilters(
+    'checkBox',
+    props.type,
+    allFilters,
+  );
   const [priceFrom, setPriceFrom] = useState('');
   const [priceTo, setPriceTo] = useState('');
   const checkBoxes: ReactNode[] = [];
-  const filterKeys: (keyof typeof filters)[] = Object.keys(
-    filters,
-  ) as (keyof typeof filters)[]; // Нужно для сохранения ссылок на ключи при их передаче в компонент
-  filterKeys.forEach(filterKey => {
-    const filtersBlocks = filters[filterKey].map((filterBlock, i) => {
-      return (
-        <CheckBox
-          text={filterBlock.text}
-          isActive={filterBlock.isActive}
-          onChange={() => {
-            setCheckBoxIsActive(filterKey, i, !filterBlock.isActive);
-          }}
-          className={styles.filterBlockElement}
-        />
+
+  if (filters) {
+    const filterKeys: (keyof typeof filters)[] = Object.keys(
+      filters ? filters : {},
+    ) as (keyof typeof filters)[]; // Нужно для сохранения ссылок на ключи при их передаче в компонент
+    filterKeys.forEach(filterKey => {
+      const filtersBlocks = filters[filterKey].map((filterBlock, i) => {
+        return (
+          <CheckBox
+            text={filterBlock.text}
+            isActive={filterBlock.isActive}
+            onChange={() => {
+              setCheckBoxIsActive(filterKey, i, !filterBlock.isActive);
+            }}
+            className={styles.filterBlockElement}
+          />
+        );
+      });
+      checkBoxes.push(
+        <div>
+          <h6
+            className={createClassNames([
+              styles.filterBlockElement,
+              styles.filterBlockElementTitle,
+            ])}
+          >
+            {productCharacteristics[filterKey]}
+          </h6>
+          {...filtersBlocks}
+        </div>,
       );
     });
-    checkBoxes.push(
-      <div>
-        <h6
-          className={createClassNames([
-            styles.filterBlockElement,
-            styles.filterBlockElementTitle,
-          ])}
-        >
-          {productCharacteristics[filterKey]}
-        </h6>
-        {...filtersBlocks}
-      </div>,
-    );
-  });
+  }
   const inputs: ReactNode = (
     <div>
       <h6
@@ -87,21 +96,23 @@ const AddWindow: React.FC<AddWindowProps> = props => {
     </div>
   );
 
-  const cards = props.products.map(product => {
-    return (
-      <ChooseComponentCard
-        name={product.name}
-        price={product.price}
-        img={`${config.backupUrl}/${product.img}`}
-        text={product.description}
-        className={styles.card}
-        url={`/product/${props.type}/${product.productId}`}
-        onClick={() => {
-          props.setCurrentProduct(product, props.type);
-        }}
-      />
-    );
-  });
+  const cards = props.products
+    ? props.products.map(product => {
+        return (
+          <ChooseComponentCard
+            name={product.name}
+            price={product.price}
+            img={`${config.backupUrl}/${product.img}`}
+            text={product.description}
+            className={styles.card}
+            url={`/product/${props.type}/${product.productId}`}
+            onClick={() => {
+              props.setCurrentProduct(product, props.type);
+            }}
+          />
+        );
+      })
+    : [];
   return (
     <div className={props.isActive ? styles.window : styles.windowDisable}>
       <FiltersPanel blocks={[...checkBoxes, inputs]} />

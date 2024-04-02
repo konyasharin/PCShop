@@ -8,17 +8,16 @@ using Npgsql;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/processor")]
     [ApiController]
     public class ProcessorController : ComponentController
     {
-        
         public ProcessorController(ILogger<ProcessorController> logger):base(logger, "processor")
         {
            
         }
 
-        [HttpPost("createProcessor")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateProcessor([FromForm] Processor<IFormFile> processor)
         {
             processor.Likes = 0;
@@ -26,14 +25,14 @@ namespace backend.Controllers
             return await CreateComponent<Processor<IFormFile>>(processor, ["cores", "heat_dissipation", "clock_frequency", "turbo_frequency"], "processors");
         }
 
-        [HttpGet("getProcessor/{id}")]
+        [HttpGet("get/{id}")]
         public async Task<IActionResult> GetProcessorById(int id)
         {
             return await GetComponent<Processor<string>>(id, "processors_view",
                 ["cores", "heat_dissipation AS heatDissipation", "clock_frequency AS clockFrequency", "turbo_frequency AS turboFrequency"]);
         }
 
-        [HttpPut("updateProcessor/{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateProcessor(int id, [FromForm] Processor<IFormFile> processor, [FromQuery] bool isUpdated)
         {
             processor.ProductId = id;
@@ -42,13 +41,13 @@ namespace backend.Controllers
                 ["cores", "clock_frequency", "turbo_frequency", "heat_dissipation"]);
         }
 
-        [HttpDelete("deleteProcessor/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteProcessor(int id)
         {
             return await DeleteComponent(id);
         }
 
-        [HttpGet("getAllProcessors")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAllprocessors(int limit, int offset)
         {
             return await GetAllComponents<Processor<string>>(limit, offset, "processors_view",
@@ -111,7 +110,7 @@ namespace backend.Controllers
             return await GetComment(productId, commentId, "processor");
         }
 
-        [HttpPut("likeProcessor/{id}")]
+        [HttpPut("like/{id}")]
         public async Task<IActionResult> LikeProcessor(int id, User user)
         {
             return await LikeComponent(id, user, "processor");

@@ -14,7 +14,7 @@ type ChooseComponentProps = {
   errorType: 'Error' | 'Warning' | 'Success';
   className?: string;
   searchTitle: string;
-  products: TProduct[];
+  products: TProduct[] | null;
   onShowMore: () => void;
   currentProduct: TProduct | null;
   setCurrentProduct: (

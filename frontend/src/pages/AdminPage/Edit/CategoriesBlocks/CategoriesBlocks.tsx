@@ -19,13 +19,11 @@ const CategoriesBlocks: React.FC<CategoriesBlocksProps> = props => {
         isActive={category.isActive}
         onChange={() => {
           props.setCategoryIsActive(i);
-          switch (category.text) {
-            case 'Видеокарты':
-              props.setActiveCategory('videoCard');
-              break;
-            case 'Процессоры':
-              props.setActiveCategory('processor');
-              break;
+          let key: keyof typeof componentTypes;
+          for (key in componentTypes) {
+            if (componentTypes[key] === category.text) {
+              props.setActiveCategory(key);
+            }
           }
         }}
         className={styles.checkBox}

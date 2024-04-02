@@ -1,17 +1,17 @@
 import CategoriesBlocks from '../CategoriesBlocks/CategoriesBlocks.tsx';
 import useRadios from 'hooks/useRadios.ts';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import componentTypes from 'enums/componentTypes.ts';
 import styles from './AddProduct.module.css';
 import EditProductInfo from '../EditProductInfo/EditProductInfo.tsx';
 import emptyImg from 'assets/empty-img.png';
 import Btn from 'components/btns/Btn/Btn.tsx';
-import createProduct from 'api/components/createProduct.ts';
+import createComponent from 'api/components/createComponent.ts';
 import useFilters from 'hooks/useFilters.ts';
 import TCheckBox from 'types/TCheckBox.ts';
-import TVideoCard from 'types/components/TVideoCard.ts';
 import useBorderValues from 'hooks/useBorderValues.ts';
-import TProcessor from 'types/components/TProcessor.ts';
+import initCategories from '../initCategories.ts';
+import { FiltersContext } from '../../../../App.tsx';
 
 function searchActiveFromFilter(filter: TCheckBox[]): TCheckBox | null {
   let result: null | TCheckBox = null;
@@ -23,16 +23,10 @@ function searchActiveFromFilter(filter: TCheckBox[]): TCheckBox | null {
   return result;
 }
 
-function handleCreateProduct<T>(url: string, object: Omit<T, 'id'>) {
-  return createProduct<Omit<T, 'id'>>(url, object);
-}
-
 function AddProduct() {
+  const allFilters = useContext(FiltersContext);
   const { radios: categories, setRadioIsActive: setCategoryIsActive } =
-    useRadios([
-      { text: 'Видеокарты', isActive: true },
-      { text: 'Процессоры', isActive: false },
-    ]);
+    useRadios(initCategories());
   const [activeCategory, setActiveCategory] =
     useState<keyof typeof componentTypes>('videoCard');
   const [price, setPrice] = useBorderValues(1, 1);
@@ -44,6 +38,7 @@ function AddProduct() {
   const { filters, setRadioIsActive, setComponentType } = useFilters(
     'radio',
     activeCategory,
+    allFilters,
   );
   useEffect(() => {
     setComponentType(activeCategory);
@@ -75,39 +70,28 @@ function AddProduct() {
       />
       <Btn
         onClick={() => {
-          const filtersObject = Object.keys(filters).reduce(
-            (acc, key) => {
-              const active = searchActiveFromFilter(
-                filters[key as keyof typeof filters],
-              );
-              acc[key as keyof typeof filters] = active ? active.text : '';
-              return acc;
-            },
-            {} as { [key in keyof typeof filters]: string },
-          );
-          const requestData = {
-            ...filtersObject,
-            country: 'Russia',
-            price: price,
-            description: description,
-            image: imgFile.current,
-            amount: amount,
-            power: power,
-          };
-          if (imgFile.current != null) {
-            switch (activeCategory) {
-              case 'videoCard':
-                handleCreateProduct<TVideoCard<File>>(
-                  '/VideoCard/createVideoCard',
-                  requestData as TVideoCard<File>,
+          if (filters) {
+            const filtersObject = Object.keys(filters).reduce(
+              (acc, key) => {
+                const active = searchActiveFromFilter(
+                  filters[key as keyof typeof filters],
                 );
-                break;
-              case 'processor':
-                handleCreateProduct<TProcessor<File>>(
-                  'Processor/createProcessor',
-                  requestData as TProcessor<File>,
-                );
-                break;
+                acc[key as keyof typeof filters] = active ? active.text : '';
+                return acc;
+              },
+              {} as { [key in keyof typeof filters]: string },
+            );
+            if (imgFile.current != null) {
+              const requestData = {
+                ...filtersObject,
+                country: 'Russia',
+                price: price,
+                description: description,
+                image: imgFile.current,
+                amount: amount,
+                power: power,
+              };
+              void createComponent(activeCategory, requestData);
             }
           }
         }}

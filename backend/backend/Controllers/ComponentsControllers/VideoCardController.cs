@@ -10,16 +10,15 @@ using System.Runtime.Intrinsics.Arm;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/videoCard")]
     [ApiController]
     public class VideoCardController : ComponentController
     {
-        
         public VideoCardController(ILogger<VideoCardController> logger) : base(logger, "videoCard")
         {
         }
 
-        [HttpPost("createVideoCard")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateVideoCard([FromForm] VideoCard<IFormFile> videoCard)
         {
             
@@ -29,28 +28,28 @@ namespace backend.Controllers
             return await CreateComponent<VideoCard<IFormFile>>(videoCard, ["memory_db", "memory_type"], "video_cards");
         }
 
-        [HttpGet("getVideoCard/{id}")]
+        [HttpGet("get/{id}")]
         public async Task<IActionResult> GetVideoCardById(int id)
         {
             return await GetComponent<VideoCard<string>>(id, "video_cards_view", ["memory_db AS memoryDb", "memory_type AS memoryType"]);
         }
 
-        [HttpPut("updateVideoCard/{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateVideoCard(int id, [FromForm] VideoCard<IFormFile> videoCard, [FromQuery] bool isUpdated)
         {
             videoCard.ProductId = id;
-            videoCard.ProductType = "videoCard";
+            videoCard.ProductType = ComponentType;
             return await UpdateComponent<VideoCard<IFormFile>>(videoCard, isUpdated, "video_cards",
                 ["memory_db", "memory_type"]);
         }
 
-        [HttpDelete("deleteVideoCard/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteVideoCard(int id)
         {
             return await DeleteComponent(id);
         }
 
-        [HttpGet("getAllVideoCards")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAllComputerCases(int limit, int offset)
         {
             return await GetAllComponents<VideoCard<string>>(limit, offset, "video_cards_view",
@@ -66,7 +65,7 @@ namespace backend.Controllers
         [HttpPost("addFilter")]
         public async Task<IActionResult> AddVideoCardFilter(Filter newFilter)
         {
-            newFilter.ComponentType = "videoCard";
+            newFilter.ComponentType = ComponentType;
             return await AddFilter(newFilter);
         }
 
@@ -112,7 +111,7 @@ namespace backend.Controllers
             return await GetComment(productId, commentId, "video_card");
         }
 
-        [HttpPut("likeVideoCard/{id}")]
+        [HttpPut("like/{id}")]
         public async Task<IActionResult> LikeVideoCard(int id, User user)
         {
             return await LikeComponent(id, user, "video_card");

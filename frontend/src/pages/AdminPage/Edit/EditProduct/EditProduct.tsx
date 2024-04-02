@@ -1,7 +1,7 @@
 import useRadios from 'hooks/useRadios.ts';
 import styles from './EditProduct.module.css';
 import componentTypes from 'enums/componentTypes.ts';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import emptyImg from 'assets/empty-img.png';
 import EditProductInfo from '../EditProductInfo/EditProductInfo.tsx';
 import Btn from 'components/btns/Btn/Btn.tsx';
@@ -10,13 +10,13 @@ import useFilters from 'hooks/useFilters.ts';
 import useBorderValues from 'hooks/useBorderValues.ts';
 import SearchInput from 'components/inputs/SearchInput/SearchInput.tsx';
 import getComponent from 'api/components/getComponent.ts';
+import initCategories from '../initCategories.ts';
+import { FiltersContext } from '../../../../App.tsx';
 
 function EditProduct() {
+  const allFilters = useContext(FiltersContext);
   const { radios: categories, setRadioIsActive: setCategoryIsActive } =
-    useRadios([
-      { text: 'Видеокарты', isActive: true },
-      { text: 'Процессоры', isActive: false },
-    ]);
+    useRadios(initCategories());
   const [productId, setProductId] = useState('');
   const [price, setPrice] = useBorderValues(1, 1);
   const imgFile: React.MutableRefObject<null | File> = useRef(null);
@@ -27,7 +27,7 @@ function EditProduct() {
     useState<keyof typeof componentTypes>('videoCard');
   const [img, setImg] = useState(emptyImg);
   const { filters, setRadioIsActive, setComponentType, findIndexOfFilter } =
-    useFilters('radio', activeCategory);
+    useFilters('radio', activeCategory, allFilters);
   const [productIsGot, setProductIsGot] = useState(false);
   useEffect(() => {
     setComponentType(activeCategory);
@@ -54,11 +54,13 @@ function EditProduct() {
             setDescription(response.data.description);
             setAmount(response.data.amount);
             setPower(response.data.power);
-            let key: keyof typeof filters;
-            for (key in filters) {
-              const index = findIndexOfFilter(key, response.data[key]);
-              if (index) {
-                setRadioIsActive(key, index);
+            if (filters) {
+              let key: keyof typeof filters;
+              for (key in filters) {
+                const index = findIndexOfFilter(key, response.data[key]);
+                if (index) {
+                  setRadioIsActive(key, index);
+                }
               }
             }
           });

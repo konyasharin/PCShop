@@ -10,66 +10,65 @@ using System.Diagnostics;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/RAM")]
     [ApiController]
     public class RamController : ComponentController
     {
-        
         public RamController(ILogger<RamController> logger):base(logger, "RAM")
-        {
-           
-        }
+        { }
 
-        [HttpPost("createRam")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateRam([FromForm] RAM<IFormFile> ram)
         {
-
-           
-            if (ram.Frequency < 0 || ram.Frequency > 100000)
-            {
-                return BadRequest(new { error = "Frequency must be between 0 and 100000" });
-            }
-
-            if (ram.Timings < 0 || ram.Timings > 10000)
-            {
-                return BadRequest(new { error = "Timings must be between 0 and 10000" });
-            }
-
-            if (ram.Capacity_db < 0 || ram.Capacity_db > 10000)
-            {
-                return BadRequest(new { error = "Capacity_db must be between 0 and 10000" });
-            }
-
             ram.Likes = 0;
             ram.ProductType = ComponentType;
-            return await CreateComponent<RAM<IFormFile>>(ram, ["frequency", "timings", "capacity_db"], "rams");
+            return await CreateComponent<RAM<IFormFile>>(ram, ["frequency", "timings", "ram_db"], "rams");
         }
 
-        [HttpGet("getRam/{id}")]
+        [HttpGet("get/{id}")]
         public async Task<IActionResult> GetRamById(int id)
         {
-            return await GetComponent<RAM<string>>(id, "rams_view", ["battery", "voltage"]);
+            return await GetComponent<RAM<string>>(id, "rams_view", ["frequency", "timings", "ram_db AS RAMDb"]);
         }
 
-        [HttpPut("updateRam/{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateRam(int id, [FromForm] RAM<IFormFile> ram, [FromQuery] bool isUpdated)
         {
             ram.ProductId = id;
-            ram.ProductType = "ram";
+            ram.ProductType = ComponentType;
             return await UpdateComponent<RAM<IFormFile>>(ram, isUpdated, "rams",
-                ["frequency", "timings", "capacity_db"]);
+                ["frequency", "timings", "ram_db"]);
         }
 
-        [HttpDelete("deleteRam/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteRam(int id)
         {
             return await DeleteComponent(id);
         }
 
-        [HttpGet("getAllRam")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAllRams(int limit, int offset)
         {
-            return await GetAllComponents<RAM<string>>(limit, offset, "rams_view", ["frequency", "timings", "capacity_db"]);
+            return await GetAllComponents<RAM<string>>(limit, offset, "rams_view", ["frequency", "timings", "ram_db AS RAMDb"]);
+        }
+        
+        [HttpPost("addFilter")]
+        public async Task<IActionResult> AddVideoCardFilter(Filter newFilter)
+        {
+            newFilter.ComponentType = ComponentType;
+            return await AddFilter(newFilter);
+        }
+
+        [HttpPost("filter")]
+        public async Task<IActionResult> Filter(Filter[] filters)
+        {
+            return await FilterComponents<RAM<string>>("rams_view", filters, ["frequency", "timings", "ram_db AS RAMDb"]);
+        }
+
+        [HttpGet("getFilters")]
+        public async Task<IActionResult> GetFilters()
+        {
+            return await GetComponentFilters<RAM<string>>();
         }
 
         [HttpGet("search")]
@@ -108,7 +107,7 @@ namespace backend.Controllers
             return await GetComment(productId, commentId, "ram");
         }
 
-        [HttpPut("likeRam/{id}")]
+        [HttpPut("like/{id}")]
         public async Task<IActionResult> LikeRam(int id, User user)
         {
             return await LikeComponent(id, user, "ram");

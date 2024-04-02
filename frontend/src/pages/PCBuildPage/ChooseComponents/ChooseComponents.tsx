@@ -3,19 +3,15 @@ import videoCardIcon from 'assets/videocard-white-icon.png';
 import processorIcon from 'assets/cpu-white-icon.png';
 import styles from './ChooseComponents.module.css';
 import componentTypes from 'enums/componentTypes.ts';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import TProduct from 'types/TProduct.ts';
-import TVideoCard from 'types/components/TVideoCard.ts';
 import useComponents from 'hooks/useComponents.ts';
 import { useDispatch } from 'react-redux';
 import { setIsLoading } from 'store/slices/loadingSlice.ts';
-import TComputerCase from 'types/components/TComputerCase.ts';
-import TProcessor from 'types/components/TProcessor.ts';
 import { TUseBuildComponents } from 'hooks/useBuild.ts';
+import TOneOfComponents from 'types/components/TOneOfComponents.ts';
 
-function convertToTProduct<
-  T extends TVideoCard<string> | TComputerCase<string> | TProcessor<string>,
->(components: T[]): TProduct[] {
+function convertToTProduct(components: TOneOfComponents<string>[]): TProduct[] {
   return components.map(component => {
     return {
       productId: component.productId,
@@ -41,27 +37,8 @@ type ChooseComponentsProps = {
 };
 
 const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
-  const { components: videoCards, getComponents: getVideoCards } =
-    useComponents<TVideoCard<string>>('/VideoCard/getAllVideoCards');
-  const { components: processors, getComponents: getProcessors } =
-    useComponents<TProcessor<string>>('/Processor/getAllProcessors');
-  const { components: motherBoards, getComponents: getMotherBoards } =
-    useComponents<TProcessor<string>>('/MotherBoard/getAllMotherBoards');
+  const { components, getComponents } = useComponents();
   const dispatch = useDispatch();
-  const isLoaded = useRef(false);
-
-  useEffect(() => {
-    async function getComponents() {
-      dispatch(setIsLoading(true));
-      await getVideoCards();
-      await getProcessors();
-      await getMotherBoards();
-      dispatch(setIsLoading(false));
-    }
-    if (isLoaded.current) return;
-    void getComponents();
-    isLoaded.current = true;
-  }, []);
   return (
     <section className={styles.blocks}>
       <ChooseComponent
@@ -71,10 +48,12 @@ const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
         isImportant={true}
         errorType={props.components.videoCard.currentErrorType}
         searchTitle={'Выберите видеокарту'}
-        products={convertToTProduct(videoCards)}
+        products={
+          components ? convertToTProduct(components.videoCard.components) : null
+        }
         onShowMore={() => {
           dispatch(setIsLoading(true));
-          getVideoCards().then(() => dispatch(setIsLoading(false)));
+          getComponents('videoCard').then(() => dispatch(setIsLoading(false)));
         }}
         currentProduct={props.components.videoCard.currentProduct}
         setCurrentProduct={props.setComponent}
@@ -88,10 +67,12 @@ const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
         isImportant={true}
         errorType={props.components.processor.currentErrorType}
         searchTitle={'Выберите процессор'}
-        products={convertToTProduct(processors)}
+        products={
+          components ? convertToTProduct(components.processor.components) : null
+        }
         onShowMore={() => {
           dispatch(setIsLoading(true));
-          getProcessors().then(() => dispatch(setIsLoading(false)));
+          getComponents('processor').then(() => dispatch(setIsLoading(false)));
         }}
         currentProduct={props.components.processor.currentProduct}
         setCurrentProduct={props.setComponent}
@@ -105,10 +86,16 @@ const ChooseComponents: React.FC<ChooseComponentsProps> = props => {
         isImportant={true}
         errorType={props.components.motherBoard.currentErrorType}
         searchTitle={'Выберите материнскую плату'}
-        products={convertToTProduct(motherBoards)}
+        products={
+          components
+            ? convertToTProduct(components.motherBoard.components)
+            : null
+        }
         onShowMore={() => {
           dispatch(setIsLoading(true));
-          getProcessors().then(() => dispatch(setIsLoading(false)));
+          getComponents('motherBoard').then(() =>
+            dispatch(setIsLoading(false)),
+          );
         }}
         currentProduct={props.components.processor.currentProduct}
         setCurrentProduct={props.setComponent}

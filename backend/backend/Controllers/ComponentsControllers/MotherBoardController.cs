@@ -11,7 +11,7 @@ using System.Drawing;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/motherBoard")]
     [ApiController]
     public class MotherBoardController : ComponentController
     {
@@ -21,7 +21,7 @@ namespace backend.Controllers
           
         }
 
-        [HttpPost("createMotherBoard")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateMotherBoard([FromForm] MotherBoard<IFormFile> motherBoard)
         {
             motherBoard.Likes = 0;
@@ -30,16 +30,13 @@ namespace backend.Controllers
             return await CreateComponent<MotherBoard<IFormFile>>(motherBoard, ["socket", "chipset"], "mother_boards");
         }
 
-
-    
-
-        [HttpGet("getMotherBoard/{id}")]
+        [HttpGet("get/{id}")]
         public async Task<IActionResult> GetComputerCaseById(int id)
         {
             return await GetComponent<MotherBoard<string>>(id, "mother_boards_view", ["socket", "chipset"]);
         }
 
-        [HttpPut("updateMotherBoard/{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateMotherBoard(int id, [FromForm] MotherBoard<IFormFile> motherBoard, [FromQuery] bool isUpdated)
         {
             motherBoard.ProductId = id;
@@ -47,13 +44,13 @@ namespace backend.Controllers
             return await UpdateComponent<MotherBoard<IFormFile>>(motherBoard, isUpdated, "mother_boards", ["socket", "chipset"]);
         }
 
-        [HttpDelete("deleteMotherBoard/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteMotherBoard(int id)
         {
             return await DeleteComponent(id);
         }
 
-        [HttpGet("getAllMotherBoards")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAllMotherBoards(int limit, int offset)
         {
             return await GetAllComponents<MotherBoard<string>>(limit, offset, "mother_boards_view", ["socket", "chipset"]);
@@ -114,7 +111,7 @@ namespace backend.Controllers
             return await GetComment(productId, commentId, "mother_board");
         }
 
-        [HttpPut("likeMotherBoard/{id}")]
+        [HttpPut("like/{id}")]
         public async Task<IActionResult> LikeMotherBoard(int id, User user)
         {
             return await LikeComponent(id, user, "mother_board");
