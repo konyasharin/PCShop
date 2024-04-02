@@ -28,7 +28,7 @@ namespace backend.Controllers
         [HttpGet("get/{id}")]
         public async Task<IActionResult> GetRamById(int id)
         {
-            return await GetComponent<RAM<string>>(id, "rams_view", ["frequency", "timings", "ram_db AS RAMDb"]);
+            return await GetComponent<RAM<string>>(id, "rams_view", ["frequency", "timings", "ram_db AS ramDb"]);
         }
 
         [HttpPut("update/{id}")]
@@ -49,11 +49,11 @@ namespace backend.Controllers
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAllRams(int limit, int offset)
         {
-            return await GetAllComponents<RAM<string>>(limit, offset, "rams_view", ["frequency", "timings", "ram_db AS RAMDb"]);
+            return await GetAllComponents<RAM<string>>(limit, offset, "rams_view", ["frequency", "timings", "ram_db AS ramDb"]);
         }
         
         [HttpPost("addFilter")]
-        public async Task<IActionResult> AddVideoCardFilter(Filter newFilter)
+        public async Task<IActionResult> AddRAMFilter(Filter newFilter)
         {
             newFilter.ComponentType = ComponentType;
             return await AddFilter(newFilter);
@@ -62,7 +62,7 @@ namespace backend.Controllers
         [HttpPost("filter")]
         public async Task<IActionResult> Filter(Filter[] filters)
         {
-            return await FilterComponents<RAM<string>>("rams_view", filters, ["frequency", "timings", "ram_db AS RAMDb"]);
+            return await FilterComponents<RAM<string>>("rams_view", filters, ["frequency", "timings", "ram_db AS ramDb"]);
         }
 
         [HttpGet("getFilters")]

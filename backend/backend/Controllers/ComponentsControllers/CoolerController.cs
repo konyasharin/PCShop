@@ -9,7 +9,7 @@ using backend.Entities.User;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/cooler")]
     [ApiController]
     public class CoolerController : ComponentController
     {
@@ -18,56 +18,64 @@ namespace backend.Controllers
         { 
         }
 
-        [HttpPost("createCooler")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateCooler([FromForm] Cooler<IFormFile> cooler)
         {
-                if (cooler.Speed <= 0 || cooler.Speed > 10000)
-                {
-                    return BadRequest(new { error = "Speed must be between 0 and 10000" });
-                }
-
-                if (cooler.cooler_power < 0 || cooler.cooler_power > 10000)
-                {
-                    return BadRequest(new { error = "Cooler_power must be between 0 and 10000" });
-                }
-
                 cooler.Likes = 0;
                 cooler.ProductType = ComponentType;
 
             return await CreateComponent<Cooler<IFormFile>>(cooler, ["speed", "cooler_power"], "coolers");
-
         }
 
-        [HttpGet("getCooler/{id}")]
+        [HttpGet("get/{id}")]
         public async Task<IActionResult> GetCoolerById(int id)
         {
-            return await GetComponent<Cooler<string>>(id, "coolers_view", ["speed", "cooler_power"]);
+            return await GetComponent<Cooler<string>>(id, "coolers_view", ["speed", "cooler_power AS coolerPower"]);
         }
 
-        [HttpPut("updateCooler/{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateCooler(int id, [FromForm] Cooler<IFormFile> cooler, [FromQuery] bool isUpdated)
         {
             cooler.ProductId = id;
-            cooler.ProductType = "cooler";
+            cooler.ProductType = ComponentType;
             return await UpdateComponent<Cooler<IFormFile>>(cooler, isUpdated, "coolers", ["speed", "cooler_power"]);
         }
 
-        [HttpDelete("deleteCooler/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteCooler(int id)
         {
             return await DeleteComponent(id);
         }
 
-        [HttpGet("getAllCoolers")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAllCoolers(int limit, int offset)
         {
-            return await GetAllComponents<Cooler<string>>(limit, offset, "cooler", ["speed", "cooler_power"]);
+            return await GetAllComponents<Cooler<string>>(limit, offset, "coolers_view", ["speed", "cooler_power AS coolerPower"]);
         }
 
         [HttpGet("search")]
         public async Task<IActionResult> SearchCooler(string keyword, int limit = 1, int offset = 0)
         {
             return await SearchComponent(keyword, limit, offset);
+        }
+        
+        [HttpPost("addFilter")]
+        public async Task<IActionResult> AddCoolerFilter(Filter newFilter)
+        {
+            newFilter.ComponentType = ComponentType;
+            return await AddFilter(newFilter);
+        }
+
+        [HttpPost("filter")]
+        public async Task<IActionResult> Filter(Filter[] filters)
+        {
+            return await FilterComponents<Cooler<string>>("coolers_view", filters, ["speed", "cooler_power AS coolerPower"]);
+        }
+
+        [HttpGet("getFilters")]
+        public async Task<IActionResult> GetFilters()
+        {
+            return await GetComponentFilters<Cooler<string>>();
         }
 
         [HttpPost("addComment")]

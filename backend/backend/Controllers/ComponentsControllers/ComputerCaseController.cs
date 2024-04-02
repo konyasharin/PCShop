@@ -17,49 +17,36 @@ namespace backend.Controllers
         {
         }
 
-        [HttpPost("createComputerCase")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateCreateCase([FromForm] ComputerCase<IFormFile> computerCase)
         {
-                if (computerCase.Width < 10 || computerCase.Width > 100)
-                {
-                    return BadRequest(new { error = "Width must be between 10 and 100" });
-                }
-                if (computerCase.Height < 30 || computerCase.Height > 150)
-                {
-                    return BadRequest(new { error = "Height must be between 30 and 150" });
-                }
-                if (computerCase.Depth < 20 || computerCase.Depth > 100)
-                {
-                    return BadRequest(new { error = "Depth must be between 20 and 100" });
-                }
-
                 computerCase.ProductType = ComponentType;
                 computerCase.Likes = 0;
 
                 return await CreateComponent<ComputerCase<IFormFile>>(computerCase, ["material", "width", "height", "depth"], "computer_cases");
         }
 
-        [HttpGet("getAllComputerCases")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAllComputerCases(int limit, int offset)
         {
             return await GetAllComponents<ComputerCase<string>>(limit, offset, "computer_cases_view", ["material", "width", "height", "depth"]);
         }
 
-        [HttpGet("getComputerCase/{id}")]
+        [HttpGet("get/{id}")]
         public async Task<IActionResult> GetComputerCaseById (int id)
         {
             return await GetComponent<ComputerCase<string>>(id, "computer_cases_view", ["material", "width", "height", "depth"]);
         }
 
-        [HttpPut("updateComputerCase/{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateComputerCase(int id, [FromForm] ComputerCase<IFormFile> computerCase, [FromQuery] bool isUpdated)
         {
             computerCase.ProductId = id;
-            computerCase.ProductType = "computer_cases";
+            computerCase.ProductType = ComponentType;
             return await UpdateComponent<ComputerCase<IFormFile>>(computerCase, isUpdated, "computer_cases", ["material", "width", "height", "depth"]);
         }
 
-        [HttpDelete("deleteComputerCase/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteComputerCase(int id)
         {
             return await DeleteComponent(id);
@@ -69,6 +56,25 @@ namespace backend.Controllers
         public async Task<IActionResult> SearchComputerCase(string keyword, int limit = 1, int offset = 0)
         {
             return await SearchComponent(keyword, limit, offset);
+        }
+        
+        [HttpPost("addFilter")]
+        public async Task<IActionResult> AddComputerCaseFilter(Filter newFilter)
+        {
+            newFilter.ComponentType = ComponentType;
+            return await AddFilter(newFilter);
+        }
+
+        [HttpPost("filter")]
+        public async Task<IActionResult> Filter(Filter[] filters)
+        {
+            return await FilterComponents<ComputerCase<string>>("computer_cases_view", filters, ["height", "width", "depth", "material"]);
+        }
+
+        [HttpGet("getFilters")]
+        public async Task<IActionResult> GetFilters()
+        {
+            return await GetComponentFilters<ComputerCase<string>>();
         }
 
         [HttpPost("addComment")]
@@ -101,7 +107,7 @@ namespace backend.Controllers
             return await GetComment(productId, commentId, "computer_case");
         }
 
-        [HttpPut("likeComputerCase/{id}")]
+        [HttpPut("like/{id}")]
         public async Task<IActionResult> LikeComputerCase(int id, User user)
         {
             return await LikeComponent(id, user, "computer_case");

@@ -7,7 +7,7 @@ namespace backend.Entities
     {
       
         public string Battery { get; set; }
-        public int Voltage { get; set; }
+        public string Voltage { get; set; }
        
 
     }

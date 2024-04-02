@@ -7,6 +7,6 @@ namespace backend.Entities
     {
         public string Frequency { get; set; }
         public string Timings { get; set; }
-        public string RAMDb { get; set; }
+        public string RamDb { get; set; }
     }
 }

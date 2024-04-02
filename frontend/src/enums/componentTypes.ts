@@ -2,12 +2,11 @@ const componentTypes = {
   videoCard: 'Видеокарта',
   processor: 'Процессор',
   motherBoard: 'Материнска плата',
-  /*cooling = 'cooling',
-  RAM = 'RAM',
-  HDD = 'HDD',
-  SSD = 'SSD',
-  case = 'case',
-  powerSupply = 'powerSupply',*/
+  RAM: 'Оперативная память',
+  computerCase: 'Корпус',
+  cooler: 'Кулер',
+  powerUnit: 'Блок питания',
+  SSD: 'SSD',
 } as const;
 
 export default componentTypes;

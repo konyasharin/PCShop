@@ -65,8 +65,12 @@ namespace backend.Controllers
                 requestData["product_type"] = ComponentType;
                 await using var connection = new NpgsqlConnection(_connectionString);
                 connection.Open();
-                requestData["product_id"] = connection.QueryFirstOrDefault<int>($"INSERT INTO public.products ({TransformCharacteristicsToString(characteristicsBase)}) VALUES ({TransformCharacteristicsToString(characteristicsBase, "@")}) RETURNING product_id", requestData);
-                connection.QueryFirstOrDefault<int>($"INSERT INTO public.{databaseName} (product_id, {TransformCharacteristicsToString(characteristics)}) VALUES (@product_id, {TransformCharacteristicsToString(SnakeCasesToPascalCase(characteristics), "@")})", requestData);
+                requestData["product_id"] = connection.QueryFirstOrDefault<int>($"INSERT INTO public.products " +
+                    $"({DatabaseRequestsHelper.TransformCharacteristicsToString(characteristicsBase)}) " +
+                    $"VALUES ({DatabaseRequestsHelper.TransformCharacteristicsToString(characteristicsBase, "@")}) RETURNING product_id", requestData);
+                connection.QueryFirstOrDefault<int>($"INSERT INTO public.{databaseName} " +
+                                                    $"(product_id, {DatabaseRequestsHelper.TransformCharacteristicsToString(characteristics)}) " +
+                                                    $"VALUES (@product_id, {DatabaseRequestsHelper.TransformCharacteristicsToString(DatabaseRequestsHelper.SnakeCasesToPascalCase(characteristics), "@")})", requestData);
                 _logger.LogInformation($"Component data saved to database with id {requestData["product_id"]}");
                 return Ok(new { id = requestData["product_id"], requestData });
             }
@@ -87,7 +91,7 @@ namespace backend.Controllers
                 {
                     connection.Open();
                     var components = 
-                        connection.Query<T>($"SELECT {TransformCharacteristicsToString(characteristicsBase.Concat(characteristics).ToArray())} " +
+                        connection.Query<T>($"SELECT {DatabaseRequestsHelper.TransformCharacteristicsToString(characteristicsBase.Concat(characteristics).ToArray())} " +
                                                             $"FROM public.{viewName} " +
                                                             $"LIMIT {limit} OFFSET {offset}");
                     return Ok(new { data = components });
@@ -110,7 +114,7 @@ namespace backend.Controllers
                 {
                     connection.Open();
                     
-                    var component = connection.QueryFirstOrDefault<T>($"SELECT {TransformCharacteristicsToString(characteristicsBase.Concat(characteristics).ToArray())} FROM public.{viewName} " +
+                    var component = connection.QueryFirstOrDefault<T>($"SELECT {DatabaseRequestsHelper.TransformCharacteristicsToString(characteristicsBase.Concat(characteristics).ToArray())} FROM public.{viewName} " +
                         $"WHERE product_id = {componentId}");
                     
                     if (component != null)
@@ -179,7 +183,7 @@ namespace backend.Controllers
                     Dictionary<string, object> componentCharacteristics = new Dictionary<string, object>();
                     foreach (var property in properties)
                     {
-                        bool isContain = characteristicsBase.Any(characteristic => SnakeCaseToPascalCase(characteristic) == property.Name);
+                        bool isContain = characteristicsBase.Any(characteristic => DatabaseRequestsHelper.SnakeCaseToPascalCase(characteristic) == property.Name);
                         if (isContain)
                         {
                             if (property.Name == "Image")
@@ -205,8 +209,10 @@ namespace backend.Controllers
                     {
                         response[elem.Key] = elem.Value;
                     }
-                    connection.Execute($"UPDATE public.products SET {TransformCharacteristicsToSetString(characteristicsBase)} WHERE product_id = {component.ProductId}", response);
-                    connection.Execute($"UPDATE public.{databaseName} SET {TransformCharacteristicsToSetString(characteristics)} WHERE product_id = {component.ProductId}", response);
+                    connection.Execute($"UPDATE public.products SET {DatabaseRequestsHelper.TransformCharacteristicsToSetString(characteristicsBase)} " +
+                                       $"WHERE product_id = {component.ProductId}", response);
+                    connection.Execute($"UPDATE public.{databaseName} SET {DatabaseRequestsHelper.TransformCharacteristicsToSetString(characteristics)} " +
+                                       $"WHERE product_id = {component.ProductId}", response);
                     _logger.LogInformation("Component data updated in the database");
                     
                     return Ok(new { id = component.ProductId, data = response });
@@ -256,8 +262,8 @@ namespace backend.Controllers
                 {
                     connection.Open();
                     int id = connection.QueryFirstOrDefault<int>(
-                        $"INSERT INTO public.filters ({TransformCharacteristicsToString(filterCharacteristics)}) " +
-                        $"VALUES ({TransformCharacteristicsToString(SnakeCasesToPascalCase(filterCharacteristics), "@")})", newFilter);
+                        $"INSERT INTO public.filters ({DatabaseRequestsHelper.TransformCharacteristicsToString(filterCharacteristics)}) " +
+                        $"VALUES ({DatabaseRequestsHelper.TransformCharacteristicsToString(DatabaseRequestsHelper.SnakeCasesToPascalCase(filterCharacteristics), "@")})", newFilter);
                     newFilter.Id = id;
                     _logger.LogInformation("Filter add success");
                     return Ok(newFilter);
@@ -284,7 +290,8 @@ namespace backend.Controllers
                     connection.Open();
                     var components =
                         connection.Query(
-                            $"SELECT {TransformCharacteristicsToString(characteristicsBase.Concat(characteristics).ToArray())} FROM public.{viewName} WHERE {TransformFiltersToString(filters)}");
+                            $"SELECT {DatabaseRequestsHelper.TransformCharacteristicsToString(characteristicsBase.Concat(characteristics).ToArray())} " +
+                            $"FROM public.{viewName} WHERE {TransformFiltersToString(filters)}");
                     if (components != null)
                     {
                         return Ok(new { components });    
@@ -308,7 +315,8 @@ namespace backend.Controllers
                 await using var connection = new NpgsqlConnection(_connectionString);
                 {
                     connection.Open();
-                    var filters = connection.Query<Filter>($"SELECT {TransformCharacteristicsToString(filterCharacteristics)} FROM public.filters " +
+                    var filters = connection.Query<Filter>($"SELECT {DatabaseRequestsHelper.TransformCharacteristicsToString(filterCharacteristics)} " +
+                                                           $"FROM public.filters " +
                                                            $"WHERE component_type = '{ComponentType}'");
                     PropertyInfo[] properties = typeof(T).GetProperties();
                     Dictionary<string, List<string>> response = new Dictionary<string, List<string>>();
@@ -351,96 +359,15 @@ namespace backend.Controllers
             {
                 if (i != 0)
                 {
-                    filtersString += $" OR {PascalCaseToSnakeCase(filters[i].FilterName)} = '{filters[i].FilterValue}'";
+                    filtersString += $" OR {DatabaseRequestsHelper.PascalCaseToSnakeCase(filters[i].FilterName)} = '{filters[i].FilterValue}'";
                 }
                 else
                 {
-                    filtersString += $"{PascalCaseToSnakeCase(filters[i].FilterName)} = '{filters[i].FilterValue}'";
+                    filtersString += $"{DatabaseRequestsHelper.PascalCaseToSnakeCase(filters[i].FilterName)} = '{filters[i].FilterValue}'";
                 }
             }
 
             return filtersString;
-        }
-
-        private static string TransformCharacteristicsToString(string[] characteristics, string prev = "")
-        {
-            string stringOfCharacteristics = "";
-            for (int i = 0; i < characteristics.Length; i++)
-            {
-                if (i != 0)
-                {
-                    stringOfCharacteristics += $", {prev + characteristics[i]}";
-                }
-                else
-                {
-                    stringOfCharacteristics += prev + characteristics[i];
-                }
-            }
-
-            return stringOfCharacteristics;
-        }
-
-        private static string TransformCharacteristicsToSetString(string[] characteristics)
-        {
-            string stringOfValues = "";
-            for (int i = 0; i < characteristics.Length; i++)
-            {
-                if (i != 0)
-                {
-                    stringOfValues += $", {characteristics[i]} = @{SnakeCaseToPascalCase(characteristics[i])}";   
-                }
-                else
-                {
-                    stringOfValues += $"{characteristics[i]} = @{SnakeCaseToPascalCase(characteristics[i])}"; 
-                }
-            }
-
-            return stringOfValues;
-        }
-        
-        private static string SnakeCaseToPascalCase(string snakeCase)
-        {
-            string[] words = snakeCase.Split('_');
-            for (int i = 0; i < words.Length; i++)
-            {
-                words[i] = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(words[i]);
-            }
-            return string.Concat(words);
-        }
-
-        private static string[] SnakeCasesToPascalCase(string[] snakeCases)
-        {
-            string[] pascalCases = new string[snakeCases.Length];
-            for (int i = 0; i < snakeCases.Length; i++)
-            {
-                pascalCases[i] = SnakeCaseToPascalCase(snakeCases[i]);
-            }
-
-            return pascalCases;
-        }
-
-        static string PascalCaseToSnakeCase(string input)
-        {
-            StringBuilder result = new StringBuilder();
-            bool isFirst = true;
-
-            foreach (char c in input)
-            {
-                if (char.IsUpper(c))
-                {
-                    if (!isFirst)
-                    {
-                        result.Append('_');
-                    }
-                    result.Append(char.ToLower(c));
-                }
-                else
-                {
-                    result.Append(c);
-                }
-                isFirst = false;
-            }
-            return result.ToString();
         }
 
         protected async Task<IActionResult> SearchComponent(string keyword, int limit = 1, int offset = 0)

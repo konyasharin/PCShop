@@ -5,6 +5,6 @@ namespace backend.Entities
 {
     public class SSD<T> : Component<T>
     {
-        public int Capacity { get; set; }
+        public string Capacity { get; set; }
     }
 }

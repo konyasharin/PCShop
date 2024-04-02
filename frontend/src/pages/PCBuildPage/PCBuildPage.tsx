@@ -21,6 +21,7 @@ function PCBuildPage() {
     power,
     errors,
     setIsActive,
+    createBuild,
   } = useBuild();
   const errorsBlocks = errors.map(error => {
     return (
@@ -50,7 +51,9 @@ function PCBuildPage() {
           key={0}
         />
         <PowerOfBuild power={power} price={`${price}$`} />
-        <Btn className={styles.button}>Cоздать пк</Btn>
+        <Btn className={styles.button} onClick={() => createBuild()}>
+          Cоздать пк
+        </Btn>
       </Container>
     </div>
   );

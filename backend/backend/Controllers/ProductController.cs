@@ -17,7 +17,7 @@ namespace backend.Controllers
         {
             this.logger = logger;
             DotNetEnv.Env.Load();
-            Environment.GetEnvironmentVariable("ConnectionString");
+            connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         }
 
         protected async Task<IActionResult> AddComment(Comment comment)

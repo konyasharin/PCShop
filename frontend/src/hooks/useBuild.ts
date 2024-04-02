@@ -3,6 +3,10 @@ import TProduct from 'types/TProduct.ts';
 import componentTypes from 'enums/componentTypes.ts';
 import EBuildBlockErrors from 'enums/EBuildBlockErrors.ts';
 import useBorderValues from 'hooks/useBorderValues.ts';
+import createAssembly from 'api/createAssembly.ts';
+import TAssembly from 'types/TAssembly.ts';
+import { useDispatch } from 'react-redux';
+import { setIsLoading } from 'store/slices/loadingSlice.ts';
 
 type TUseBuildComponent = {
   currentProduct: TProduct | null;
@@ -32,6 +36,7 @@ function useBuild() {
   const [price, setPrice] = useBorderValues(0, 0);
   const [power, setPower] = useBorderValues(0, 0, 10);
   const [errors, setErrors] = useState<TUseBuildError[]>([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     calculateProgressOfBuild();
@@ -53,6 +58,31 @@ function useBuild() {
       };
     }
     return newComponents as TUseBuildComponents;
+  }
+  async function createBuild() {
+    let key: keyof typeof componentTypes;
+    let isFill = true;
+    for (key in componentTypes) {
+      if (components[key].currentProduct === null) {
+        isFill = false;
+        console.log('Ну типо не выбран компонент');
+        break;
+      }
+    }
+    if (isFill) {
+      const idsObject: { [key: string]: number } = {};
+      for (key in componentTypes) {
+        idsObject[`${key}Id`] = components[key].currentProduct!.productId;
+      }
+      dispatch(setIsLoading(true));
+      await createAssembly({
+        price: price,
+        power: power,
+        name: 'test',
+        ...idsObject,
+      } as Omit<TAssembly, 'id'>);
+      dispatch(setIsLoading(false));
+    }
   }
 
   function setComponent(
@@ -104,7 +134,7 @@ function useBuild() {
         ? components[key].currentProduct!.power
         : 0;
     }
-    setPower(sumPower / countComponents);
+    setPower(Math.round(sumPower / countComponents));
   }
   function updateErrors() {
     const newErrors: TUseBuildError[] = [];
@@ -143,6 +173,7 @@ function useBuild() {
     power,
     errors,
     setIsActive,
+    createBuild,
   };
 }
 

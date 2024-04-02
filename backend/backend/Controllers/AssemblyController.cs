@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/assembly")]
     [ApiController]
     public class AssemblyController : ProductController
     {
@@ -20,106 +20,28 @@ namespace backend.Controllers
         {
         }
 
-        [HttpPost("createAssembly")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateAssembly(Entities.Assembly assembly)
         {
+            string[] characteristics =
+            [
+                "name", "price", "computer_case_id", "cooler_id", "mother_board_id",
+                "processor_id", "ram_id", "ssd_id", "video_card_id", "power_unit_id", "likes", "creation_time", "power"
+            ];
             try
             {
-
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
-
-                    var computerCasePrice = await connection
-                        .ExecuteScalarAsync<int>("SELECT price FROM computer_case WHERE Id = @Id", new { Id = assembly.ComputerCaseId });
-
-                    var coolerPrice = await connection
-                        .ExecuteScalarAsync<int>("SELECT price FROM cooler WHERE Id = @Id", new { Id = assembly.CoolerId });
-
-                    var motherBoardPrice = await connection
-                        .ExecuteScalarAsync<int>("SELECT price FROM mother_board WHERE Id = @Id", new { Id = assembly.MotherBoardId });
-
-                    var processorPrice = await connection
-                        .ExecuteScalarAsync<int>("SELECT price FROM processor WHERE Id = @Id", new { Id = assembly.ProcessorId });
-
-                    var ramPrice = await connection
-                        .ExecuteScalarAsync<int>("SELECT price FROM ram WHERE Id = @Id", new { Id = assembly.RamId });
-
-                    var ssdPrice = await connection
-                        .ExecuteScalarAsync<int>("SELECT price FROM ssd WHERE Id = @Id", new { Id = assembly.SsdId });
-
-                    var videoCardPrice = await connection
-                        .ExecuteScalarAsync<int>("SELECT price FROM mother_board WHERE Id = @Id", new { Id = assembly.VideoCardId });
-
-                    var powerUnitPrice = await connection
-                        .ExecuteScalarAsync<int>("SELECT price FROM power_unit WHERE Id = @Id", new { Id = assembly.PowerUnitId });
-
-                    int assembly_price = computerCasePrice + coolerPrice + motherBoardPrice + processorPrice + ramPrice 
-                        + ssdPrice + videoCardPrice + powerUnitPrice + 3000;
-
-                    var computerCasePower = await connection
-                        .ExecuteScalarAsync<int>("SELECT power FROM computer_case WHERE Id = @Id", new { Id = assembly.ComputerCaseId });
-
-                    var coolerPower = await connection
-                        .ExecuteScalarAsync<int>("SELECT power FROM cooler WHERE Id = @Id", new { Id = assembly.CoolerId });
-
-                    var motherBoardPower = await connection
-                        .ExecuteScalarAsync<int>("SELECT power FROM mother_board WHERE Id = @Id", new { Id = assembly.MotherBoardId });
-
-                    var processorPower = await connection
-                        .ExecuteScalarAsync<int>("SELECT power FROM processor WHERE Id = @Id", new { Id = assembly.ProcessorId });
-
-                    var ramPower = await connection
-                        .ExecuteScalarAsync<int>("SELECT power FROM ram WHERE Id = @Id", new { Id = assembly.RamId });
-
-                    var ssdPower = await connection
-                        .ExecuteScalarAsync<int>("SELECT power FROM ssd WHERE Id = @Id", new { Id = assembly.SsdId });
-
-                    var videoCardPower = await connection
-                        .ExecuteScalarAsync<int>("SELECT power FROM mother_board WHERE Id = @Id", new { Id = assembly.VideoCardId });
-
-                    var powerUnitPower = await connection
-                        .ExecuteScalarAsync<int>("SELECT power FROM power_unit WHERE Id = @Id", new { Id = assembly.PowerUnitId });
-
-                    int assembly_power = (int)Math.Round((double)(computerCasePower + coolerPower + motherBoardPower + processorPower + ramPower
-                        + ssdPower + videoCardPower + powerUnitPower) / 8);
-
-                    assembly.Price = assembly_price;
                     assembly.Likes = 0;
-
                     assembly.CreationTime = DateTime.Now;
 
-                    if (assembly.Amount < 0)
-                    {
-                        return BadRequest(new { error = "Amount must be less than 0" });
-                    }
-
-                    var data = new
-                    {
-                        name = assembly.Name,
-                        price = assembly.Price,
-                        computerCaseId = assembly.ComputerCaseId,
-                        coolerId = assembly.CoolerId,
-                        motherBoardId = assembly.MotherBoardId,
-                        processorId = assembly.ProcessorId,
-                        ramId = assembly.RamId,
-                        ssdId = assembly.SsdId,
-                        videoCardId = assembly.VideoCardId,
-                        powerUnitId = assembly.PowerUnitId,
-                        likes = assembly.Likes,
-                        creationTime = assembly.CreationTime,
-                        amount = assembly.Amount,
-                        power = assembly_power,
-                    };
-
-                    int id = connection.QueryFirstOrDefault<int>("INSERT INTO assembly (name, price, computercase_id, cooler_id," +
-                        " motherboard_id, processor_id, ram_id, ssd_id, videocard_id," +
-                        " powerunit_id, likes, creation_time, amount, power) " +
-                                      "VALUES (@name, @price, @computerCaseId, @coolerId, @motherBoardId," +
-                                      " @processorId, @ramId, @ssdId, @videocardId, @powerunitId," +
-                                      " @likes, @creationTime, @amount, @power) RETURN id", data);
+                    assembly.Id = connection.QueryFirstOrDefault<int>($"INSERT INTO public.assemblies " +
+                                                                      $"({DatabaseRequestsHelper.TransformCharacteristicsToString(characteristics)}) " +
+                                                                      $"VALUES({DatabaseRequestsHelper.TransformCharacteristicsToString(DatabaseRequestsHelper.SnakeCasesToPascalCase(characteristics), "@")}) " +
+                                                                      $"RETURNING id", assembly);
                     logger.LogInformation("Assembly data saved to database");
-                    return Ok(new { id = id, data });
+                    return Ok(new { assembly});
                 }
             }
 
@@ -204,11 +126,7 @@ namespace backend.Controllers
                 {
                     return BadRequest(new { error = "Price must not be less than 0" });
                 }
-
-                if (updatedAssembly.Amount < 0)
-                {
-                    return BadRequest(new { error = "Amount must be less than 0" });
-                }
+                
 
                 if(updatedAssembly.Likes < 0)
                 {
@@ -231,7 +149,6 @@ namespace backend.Controllers
                         videoCardId = updatedAssembly.VideoCardId,
                         powerUnitId = updatedAssembly.PowerUnitId,
                         creation_time = updatedAssembly.CreationTime,
-                        amount = updatedAssembly.Amount,
                         power = updatedAssembly.Power,
 
                     };

@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/SSD")]
     [ApiController]
     public class SsdController : ComponentController
     {
@@ -21,42 +21,36 @@ namespace backend.Controllers
         {
         }
 
-        [HttpPost("createSsd")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateSsd([FromForm] SSD<IFormFile> ssd)
         {
-            
-            if (ssd.Capacity < 0 || ssd.Capacity > 10000)
-            {
-                return BadRequest(new { error = "Capacity must be between 0 and 10000" });
-            }
-
             ssd.Likes = 0;
             ssd.ProductType = ComponentType;
             return await CreateComponent<SSD<IFormFile>>(ssd, ["capacity"], "ssds");
         }
 
-        [HttpGet("getSsd/{id}")]
+        [HttpGet("get/{id}")]
         public async Task<IActionResult> GetSsdById(int id)
         {
-            return await GetComponent<SSD<string>>(id, "ssds_view", ["battery", "voltage"]);
+            return await GetComponent<SSD<string>>(id, "ssds_view", ["capacity"]);
         }
 
-        [HttpPut("updateSsd/{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateSsd(int id, [FromForm] SSD<IFormFile> ssd, [FromQuery] bool isUpdated)
         {
             ssd.ProductId = id;
-            ssd.ProductType = "ssd";
+            ssd.ProductType = ComponentType;
             return await UpdateComponent<SSD<IFormFile>>(ssd, isUpdated, "ssds", ["capacity"]);
         }
 
-        [HttpDelete("deleteSsd/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteSsd(int id)
         {
             return await DeleteComponent(id);
         }
 
 
-        [HttpGet("getAllSsd")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAllSsd(int limit, int offset)
         {
             return await GetAllComponents<SSD<string>>(limit, offset, "ssds_view", ["capacity"]);
@@ -66,6 +60,25 @@ namespace backend.Controllers
         public async Task<IActionResult> SearchSsd(string keyword, int limit = 1, int offset = 0)
         {
             return await SearchComponent(keyword, limit, offset);
+        }
+        
+        [HttpPost("addFilter")]
+        public async Task<IActionResult> AddSSDFilter(Filter newFilter)
+        {
+            newFilter.ComponentType = ComponentType;
+            return await AddFilter(newFilter);
+        }
+
+        [HttpPost("filter")]
+        public async Task<IActionResult> Filter(Filter[] filters)
+        {
+            return await FilterComponents<SSD<string>>("ssds_view", filters, ["capacity"]);
+        }
+
+        [HttpGet("getFilters")]
+        public async Task<IActionResult> GetFilters()
+        {
+            return await GetComponentFilters<SSD<string>>();
         }
         
         [HttpPost("addComment")]
@@ -98,7 +111,7 @@ namespace backend.Controllers
             return await GetComment(productId, commentId, "ssd");
         }
 
-        [HttpPut("likeSsd/{id}")]
+        [HttpPut("like/{id}")]
         public async Task<IActionResult> LikeSsd(int id, User user)
         {
             return await LikeComponent(id, user, "ssd");

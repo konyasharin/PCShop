@@ -8,8 +8,8 @@ import componentTypes from 'enums/componentTypes.ts';
 import productCharacteristics from 'enums/characteristics/productCharacteristics.ts';
 import ProductComments from './ProductComments/ProductComments.tsx';
 import getComponent from 'api/components/getComponent.ts';
-import TVideoCard from 'types/components/TVideoCard.ts';
-import TProcessor from 'types/components/TProcessor.ts';
+import TVideoCard from 'types/components/videoCard/TVideoCard.ts';
+import TProcessor from 'types/components/processor/TProcessor.ts';
 import config from '../../../config.ts';
 
 type TProductParams = {

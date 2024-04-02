@@ -2,9 +2,7 @@
 {
     public class Cooler<T> : Component<T>
     {
-       
-        public int Speed { get; set; }
-        public int cooler_power { get; set; }
-       
+        public string Speed { get; set; }
+        public string CoolerPower { get; set; }
     }
 }

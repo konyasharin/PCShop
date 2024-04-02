@@ -10,6 +10,18 @@ const productCharacteristics = {
   heatDissipation: 'Рассеиваемая мощность',
   chipset: 'Чипсет',
   socket: 'Сокет',
+  timings: 'Тайминги',
+  ramDb: 'Объем оперативной памяти',
+  frequency: 'Частота',
+  height: 'Высота',
+  width: 'Ширина',
+  material: 'Материал',
+  depth: 'Глубина',
+  speed: 'Скорость',
+  coolerPower: 'Сила кулера',
+  voltage: 'Вольтаж',
+  battery: 'Батарея',
+  capacity: 'Объем хранилища',
 } as const;
 
 export default productCharacteristics;
