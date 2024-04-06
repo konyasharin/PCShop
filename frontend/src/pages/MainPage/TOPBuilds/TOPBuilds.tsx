@@ -13,7 +13,6 @@ type TOPBuildsProps = {
 };
 
 const TOPBuilds: React.FC<TOPBuildsProps> = props => {
-  console.log(props.TOPBuilds);
   const TOPBuildsBlocks = props.TOPBuilds.map((block, i) => {
     let prizeImg = goldPrizeImg;
     switch (i) {

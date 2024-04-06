@@ -7,6 +7,12 @@
     display: block;
 }
 
+.img{
+    object-fit: cover;
+    height: 250px;
+    width: 367px;
+}
+
 .mainImg{
     border-radius: 50px 50px 0 0;
     overflow: hidden;

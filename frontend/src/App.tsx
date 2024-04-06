@@ -44,16 +44,7 @@ function App() {
               />
             }
           />
-          <Route
-            path={'/builds'}
-            element={
-              <BuildsPage
-                type={'videoCard'}
-                searchTitle={'Выберите видеокарту'}
-                products={[]}
-              />
-            }
-          />
+          <Route path={'/builds'} element={<BuildsPage />} />
           <Route
             path={'/product/:productCategory/:productId'}
             element={<ProductPage />}

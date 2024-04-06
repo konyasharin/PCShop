@@ -1,5 +1,5 @@
 import axios from 'api/axios.ts';
-import config from '../../config.ts';
+import config from '../../../config.ts';
 import TAssembly from 'types/TAssembly.ts';
 import { AxiosResponse } from 'axios';
 

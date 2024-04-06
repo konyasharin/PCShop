@@ -3,7 +3,7 @@ import TProduct from 'types/TProduct.ts';
 import componentTypes from 'enums/componentTypes.ts';
 import EBuildBlockErrors from 'enums/EBuildBlockErrors.ts';
 import useBorderValues from 'hooks/useBorderValues.ts';
-import createAssembly from 'api/createAssembly.ts';
+import createAssembly from 'api/assemblies/createAssembly.ts';
 import TAssembly from 'types/TAssembly.ts';
 import { useDispatch } from 'react-redux';
 import { setIsLoading } from 'store/slices/loadingSlice.ts';

@@ -1,11 +1,9 @@
 import styles from './TOPBuildsBlock.module.css';
 import Like from 'components/Like/Like.tsx';
 import TAssembly from 'types/TAssembly.ts';
-import React, { useEffect, useState } from 'react';
-import getComponent from 'api/components/getComponent.ts';
-import TOneOfComponents from 'types/components/TOneOfComponents.ts';
+import React from 'react';
 import config from '../../../../../config.ts';
-import useLike from 'hooks/useLike.ts';
+import useBuildCard from 'hooks/useBuildCard.ts';
 
 type TOPBuildsBlockProps = {
   prizeImg: string;
@@ -14,28 +12,16 @@ type TOPBuildsBlockProps = {
 };
 
 const TOPBuildsBlock: React.FC<TOPBuildsBlockProps> = props => {
-  const [videoCard, setVideoCard] = useState<TOneOfComponents<string> | null>(
-    null,
-  );
-  const [processor, setProcessor] = useState<TOneOfComponents<string> | null>(
-    null,
-  );
-  const [RAM, setRAM] = useState<TOneOfComponents<string> | null>(null);
-  const [cooler, setCooler] = useState<TOneOfComponents<string> | null>(null);
-  const { likes, isActive, setIsActiveHandle } = useLike(props.assembly.likes);
-  useEffect(() => {
-    async function getMainComponents() {
-      setVideoCard(
-        (await getComponent('videoCard', props.assembly.videoCardId)).data,
-      );
-      setProcessor(
-        (await getComponent('processor', props.assembly.processorId)).data,
-      );
-      setRAM((await getComponent('RAM', props.assembly.ramId)).data);
-      setCooler((await getComponent('cooler', props.assembly.coolerId)).data);
-    }
-    void getMainComponents();
-  }, []);
+  const {
+    videoCard,
+    RAM,
+    processor,
+    cooler,
+    likes,
+    likeIsActive,
+    setLikeIsActive,
+  } = useBuildCard(props.assembly);
+
   return (
     <div className={`${styles.base} ${props.className}`}>
       <div className={styles.backgroundLight}></div>
@@ -45,8 +31,8 @@ const TOPBuildsBlock: React.FC<TOPBuildsBlockProps> = props => {
           className={styles.like}
           onClick={() => console.log('отключаем')}
           count={likes}
-          isActive={isActive}
-          setIsActive={setIsActiveHandle}
+          isActive={likeIsActive}
+          setIsActive={setLikeIsActive}
         />
         <div className={styles.wrapperUpColor}></div>
         <img

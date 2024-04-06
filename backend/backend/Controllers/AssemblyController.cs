@@ -81,13 +81,70 @@ namespace backend.Controllers
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
-                    logger.LogInformation("Connection started");
-        
                     var assemblies = await connection.QueryAsync<Assembly<string>>($"SELECT {DatabaseRequestsHelper.TransformCharacteristicsToString(characteristics)} " +
                         $"FROM public.assemblies ORDER BY likes DESC LIMIT 3");
         
                     logger.LogInformation("Retrieved all Assembly data from the database");
+                    return Ok(new { assemblies });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Assembly data did not get from database. Exception: {ex}");
+                return NotFound(new {error = ex.Message});
+            }
+        }
+
+        [HttpGet("getLast")]
+        public async Task<IActionResult> GetLastBuilds(int offset)
+        {
+            string[] characteristics =
+            [
+                "id", "name", "price", "computer_case_id AS computerCaseId", "cooler_id AS coolerId", "mother_board_id AS motherBoardId",
+                "processor_id AS processorId", "ram_id AS ramId", "ssd_id AS ssdId", "video_card_id AS videoCardId", "power_unit_id AS powerUnitId", 
+                "likes", "creation_time AS creationTime", "power", "image"
+            ];
+
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    var assemblies =
+                        await connection.QueryAsync<Assembly<string>>(
+                            $"SELECT {DatabaseRequestsHelper.TransformCharacteristicsToString(characteristics)} " +
+                            $"FROM public.assemblies ORDER BY creation_time DESC LIMIT 3 OFFSET {offset}");
+                    logger.LogInformation("Retrieved all Assembly data from the database");
+                    return Ok(new { assemblies });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Assembly data did not get from database. Exception: {ex}");
+                return NotFound(new {error = ex.Message});
+            }
+        }
         
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetBuilds(int offset, int limit)
+        {
+            string[] characteristics =
+            [
+                "id", "name", "price", "computer_case_id AS computerCaseId", "cooler_id AS coolerId", "mother_board_id AS motherBoardId",
+                "processor_id AS processorId", "ram_id AS ramId", "ssd_id AS ssdId", "video_card_id AS videoCardId", "power_unit_id AS powerUnitId", 
+                "likes", "creation_time AS creationTime", "power", "image"
+            ];
+
+            try
+            {
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                    connection.Open();
+                    var assemblies =
+                        await connection.QueryAsync<Assembly<string>>(
+                            $"SELECT {DatabaseRequestsHelper.TransformCharacteristicsToString(characteristics)} " +
+                            $"FROM public.assemblies LIMIT {limit} OFFSET {offset}");
+                    logger.LogInformation("Retrieved all Assembly data from the database");
                     return Ok(new { assemblies });
                 }
             }
