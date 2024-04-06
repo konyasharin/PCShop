@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { addLike, deleteLike } from '../api/likes.ts';
 import { setIsLoading } from '../store/slices/loadingSlice.ts';
 
-function useLike() {
-  const [likes, setLikes] = useState(0);
+function useLike(initialLikes: number) {
+  const [likes, setLikes] = useState(initialLikes);
   const [isActive, setIsActive] = useState(false);
   const dispatch = useDispatch();
 

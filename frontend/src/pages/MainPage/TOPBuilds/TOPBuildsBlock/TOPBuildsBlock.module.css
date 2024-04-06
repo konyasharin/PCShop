@@ -91,3 +91,11 @@
     cursor: pointer;
     z-index: 2;
 }
+
+.img{
+    width: 367px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 15px 0 0 15px;
+    overflow: hidden;
+}

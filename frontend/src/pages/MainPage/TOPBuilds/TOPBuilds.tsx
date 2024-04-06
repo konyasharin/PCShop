@@ -6,13 +6,14 @@ import bronzePrizeImg from 'assets/bprize.png';
 import mainPrize from 'assets/mainPrize.png';
 import Container from 'components/Container/Container.tsx';
 import React from 'react';
-import TBuildPreview from 'types/TBuildPreview.ts';
+import TAssembly from 'types/TAssembly.ts';
 
 type TOPBuildsProps = {
-  TOPBuilds: TBuildPreview[];
+  TOPBuilds: TAssembly<string>[];
 };
 
 const TOPBuilds: React.FC<TOPBuildsProps> = props => {
+  console.log(props.TOPBuilds);
   const TOPBuildsBlocks = props.TOPBuilds.map((block, i) => {
     let prizeImg = goldPrizeImg;
     switch (i) {
@@ -29,10 +30,8 @@ const TOPBuilds: React.FC<TOPBuildsProps> = props => {
     return (
       <TOPBuildsBlock
         className={styles.block}
-        description={block.description}
-        img={block.img}
+        assembly={block}
         prizeImg={prizeImg}
-        name={block.name}
       />
     );
   });

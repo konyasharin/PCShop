@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Entities
 {
-    public class Assembly
+    public class Assembly<T>
     {
         public int? Id { get; set; }
         public string Name { get; set; }
@@ -19,5 +19,6 @@ namespace backend.Entities
         public int RamId { get; set; }
         public int SsdId { get; set; }
         public int VideoCardId { get; set; }
+        public T Image { get; set; }
     }
 }

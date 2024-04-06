@@ -6,6 +6,7 @@ import styles from './EditProductInfo.module.css';
 import Input from 'components/inputs/Input/Input.tsx';
 import productCharacteristics from 'enums/characteristics/productCharacteristics.ts';
 import { TComponentFilterKeys } from 'hooks/useAllFilters.ts';
+import SelectImg from 'components/SelectImg/SelectImg.tsx';
 
 type EditProductInfoProps = {
   type: keyof typeof componentTypes;
@@ -60,21 +61,14 @@ const EditProductInfo: React.FC<EditProductInfoProps> = props => {
 
   return (
     <>
-      <input
-        type="file"
-        id={'editProductImg'}
-        className={styles.inputImg}
-        onChange={e => {
-          if (e.target.files) {
-            props.setImg(URL.createObjectURL(e.target.files[0]));
-            props.imgFileRef.current = e.target.files[0];
-          }
+      <SelectImg
+        img={props.img}
+        setImg={imgFile => {
+          props.setImg(URL.createObjectURL(imgFile));
+          props.imgFileRef.current = imgFile;
         }}
-        accept={'image/*'}
+        className={styles.img}
       />
-      <label htmlFor="editProductImg">
-        <img src={props.img} alt="componentImg" className={styles.img} />
-      </label>
       <EditFilterBlock
         title={'Цена'}
         filterBlock={

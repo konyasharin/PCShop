@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TProduct from 'types/TProduct.ts';
 import componentTypes from 'enums/componentTypes.ts';
 import EBuildBlockErrors from 'enums/EBuildBlockErrors.ts';
@@ -7,6 +7,7 @@ import createAssembly from 'api/createAssembly.ts';
 import TAssembly from 'types/TAssembly.ts';
 import { useDispatch } from 'react-redux';
 import { setIsLoading } from 'store/slices/loadingSlice.ts';
+import emptyImg from 'assets/empty-img.png';
 
 type TUseBuildComponent = {
   currentProduct: TProduct | null;
@@ -36,6 +37,9 @@ function useBuild() {
   const [price, setPrice] = useBorderValues(0, 0);
   const [power, setPower] = useBorderValues(0, 0, 10);
   const [errors, setErrors] = useState<TUseBuildError[]>([]);
+  const [name, setName] = useState('');
+  const [img, setImg] = useState(emptyImg);
+  const imgFileRef = useRef<null | File>(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -78,9 +82,10 @@ function useBuild() {
       await createAssembly({
         price: price,
         power: power,
-        name: 'test',
+        name: name,
+        image: imgFileRef.current,
         ...idsObject,
-      } as Omit<TAssembly, 'id'>);
+      } as Omit<TAssembly<File>, 'id' | 'creationTime' | 'likes'>);
       dispatch(setIsLoading(false));
     }
   }
@@ -174,6 +179,11 @@ function useBuild() {
     errors,
     setIsActive,
     createBuild,
+    name,
+    setName,
+    img,
+    setImg,
+    imgFileRef,
   };
 }
 
