@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import componentTypes from 'enums/componentTypes.ts';
 import { TComponentFilterKeys, TFilters } from 'hooks/useAllFilters.ts';
+import TCheckBox from 'types/TCheckBox.ts';
 
 function useFilters(
   initialType: 'radio' | 'checkBox',
@@ -77,13 +78,36 @@ function useFilters(
     filterText: string,
   ): null | number {
     if (filters != null) {
-      filters[nameBlock].forEach((filter, i) => {
-        if (filter.text === filterText) {
+      for (let i = 0; i < filters[nameBlock].length; i++) {
+        if (filters[nameBlock][i].text === filterText) {
           return i;
         }
-      });
+      }
     }
     return null;
+  }
+
+  function searchActiveFromFilter(filter: TCheckBox[]): TCheckBox | null {
+    let result: null | TCheckBox = null;
+    filter.forEach(filterElem => {
+      if (filterElem.isActive) {
+        result = filterElem;
+      }
+    });
+    return result;
+  }
+
+  function searchActivesFilters(filters: TComponentFilterKeys) {
+    return Object.keys(filters).reduce(
+      (acc, key) => {
+        const active = searchActiveFromFilter(
+          filters[key as keyof typeof filters],
+        );
+        acc[key as keyof typeof filters] = active ? active.text : '';
+        return acc;
+      },
+      {} as { [key in keyof typeof filters]: string },
+    );
   }
 
   return {
@@ -92,6 +116,8 @@ function useFilters(
     setRadioIsActive,
     findIndexOfFilter,
     setComponentType,
+    searchActiveFromFilter,
+    searchActivesFilters,
   };
 }
 

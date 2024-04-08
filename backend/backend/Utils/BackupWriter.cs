@@ -15,9 +15,9 @@ namespace backend.Utils
 
         public static void Delete(string filePath)
         {
-            if (File.Exists(filePath))
+            if (File.Exists(Path.Combine(@"./backup", filePath)))
             {
-                File.Delete(filePath);
+                File.Delete(Path.Combine(@"./backup", filePath));
             }
         }
 

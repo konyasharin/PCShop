@@ -8,20 +8,9 @@ import emptyImg from 'assets/empty-img.png';
 import Btn from 'components/btns/Btn/Btn.tsx';
 import createComponent from 'api/components/createComponent.ts';
 import useFilters from 'hooks/useFilters.ts';
-import TCheckBox from 'types/TCheckBox.ts';
 import useBorderValues from 'hooks/useBorderValues.ts';
 import initCategories from '../initCategories.ts';
 import { FiltersContext } from '../../../../App.tsx';
-
-function searchActiveFromFilter(filter: TCheckBox[]): TCheckBox | null {
-  let result: null | TCheckBox = null;
-  filter.forEach(filterElem => {
-    if (filterElem.isActive) {
-      result = filterElem;
-    }
-  });
-  return result;
-}
 
 function AddProduct() {
   const allFilters = useContext(FiltersContext);
@@ -35,11 +24,12 @@ function AddProduct() {
   const [amount, setAmount] = useBorderValues(0, 0);
   const [power, setPower] = useBorderValues(0, 0, 10);
   const imgFile: React.MutableRefObject<null | File> = useRef(null);
-  const { filters, setRadioIsActive, setComponentType } = useFilters(
-    'radio',
-    activeCategory,
-    allFilters,
-  );
+  const {
+    filters,
+    setRadioIsActive,
+    setComponentType,
+    searchActiveFromFilter,
+  } = useFilters('radio', activeCategory, allFilters);
   useEffect(() => {
     setComponentType(activeCategory);
   }, [activeCategory]);

@@ -12,6 +12,12 @@ import SearchInput from 'components/inputs/SearchInput/SearchInput.tsx';
 import getComponent from 'api/components/getComponent.ts';
 import initCategories from '../initCategories.ts';
 import { FiltersContext } from '../../../../App.tsx';
+import config from '../../../../../config.ts';
+import editComponent from 'api/components/editComponent.ts';
+import getImage from 'api/getImage.ts';
+import { useDispatch } from 'react-redux';
+import { setIsLoading } from 'store/slices/loadingSlice.ts';
+import deleteComponent from 'api/components/deleteComponent.ts';
 
 function EditProduct() {
   const allFilters = useContext(FiltersContext);
@@ -26,9 +32,16 @@ function EditProduct() {
   const [activeCategory, setActiveCategory] =
     useState<keyof typeof componentTypes>('videoCard');
   const [img, setImg] = useState(emptyImg);
-  const { filters, setRadioIsActive, setComponentType, findIndexOfFilter } =
-    useFilters('radio', activeCategory, allFilters);
+  const imgIsUpdated = useRef(false);
+  const {
+    filters,
+    setRadioIsActive,
+    setComponentType,
+    findIndexOfFilter,
+    searchActivesFilters,
+  } = useFilters('radio', activeCategory, allFilters);
   const [productIsGot, setProductIsGot] = useState(false);
+  const dispatch = useDispatch();
   useEffect(() => {
     setComponentType(activeCategory);
   }, [activeCategory]);
@@ -46,14 +59,23 @@ function EditProduct() {
         placeholder={'Введите id товара'}
         onChange={newValue => setProductId(newValue)}
         className={styles.input}
-        type={'number'}
         onSearch={() => {
           getComponent(activeCategory, +productId).then(response => {
             setPrice(response.data.price);
-            setImg(response.data.image);
+            setImg(`${config.backupUrl}/${response.data.image}`);
             setDescription(response.data.description);
             setAmount(response.data.amount);
             setPower(response.data.power);
+            getImage(response.data.image).then(
+              image =>
+                (imgFile.current = new File(
+                  [image.data.file],
+                  response.data.image,
+                  {
+                    type: image.data.file.type,
+                  },
+                )),
+            );
             if (filters) {
               let key: keyof typeof filters;
               for (key in filters) {
@@ -63,6 +85,7 @@ function EditProduct() {
                 }
               }
             }
+            setProductIsGot(true);
           });
         }}
       />
@@ -82,9 +105,43 @@ function EditProduct() {
           setPower={setPower}
           filters={filters}
           setRadioIsActive={setRadioIsActive}
+          imgIsUpdated={imgIsUpdated}
         />
-        <Btn>Редактировать</Btn>
-        <h5 className={styles.delete}>Удалить товар</h5>
+        <Btn
+          onClick={() => {
+            if (filters && imgFile.current) {
+              const activeFilters = searchActivesFilters(filters);
+              dispatch(setIsLoading(true));
+              editComponent(
+                activeCategory,
+                productId,
+                {
+                  country: 'Russia',
+                  price: price,
+                  description: description,
+                  image: imgFile.current,
+                  amount: amount,
+                  power: power,
+                  ...activeFilters,
+                },
+                imgIsUpdated.current,
+              ).then(response => {
+                console.log(response.data);
+                dispatch(setIsLoading(false));
+              });
+            }
+          }}
+        >
+          Редактировать
+        </Btn>
+        <h5
+          className={styles.delete}
+          onClick={() => {
+            deleteComponent(activeCategory, +productId);
+          }}
+        >
+          Удалить товар
+        </h5>
       </div>
     </div>
   );
