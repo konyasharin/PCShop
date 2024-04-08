@@ -3,6 +3,12 @@ import componentTypes from 'enums/componentTypes.ts';
 import { TComponentFilterKeys, TFilters } from 'hooks/useAllFilters.ts';
 import TCheckBox from 'types/TCheckBox.ts';
 
+/**
+ * Хук для фильтрации компонентов определенного типа
+ * @param initialType начальный тип чекбокса
+ * @param initialComponentType начальный тип компонента
+ * @param allFilters все фильтры для компонентов всех типов
+ */
 function useFilters(
   initialType: 'radio' | 'checkBox',
   initialComponentType: keyof typeof componentTypes,

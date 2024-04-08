@@ -4,6 +4,10 @@ import TAssembly from 'types/TAssembly.ts';
 import useLike from 'hooks/useLike.ts';
 import getComponent from 'api/components/getComponent.ts';
 
+/**
+ * Хук для хранения информации для карточки со сборкой
+ * @param assembly сборка
+ */
 function useBuildCard(assembly: TAssembly<string>) {
   const [videoCard, setVideoCard] = useState<TOneOfComponents<string> | null>(
     null,

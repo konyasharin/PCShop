@@ -3,6 +3,11 @@ import config from '../../../config.ts';
 import componentTypes from 'enums/componentTypes.ts';
 import { AxiosResponse } from 'axios';
 
+/**
+ * Удаляет компонент
+ * @param componentType тип компонента
+ * @param productId id компонента в списке продуктов
+ */
 function deleteComponent(
   componentType: keyof typeof componentTypes,
   productId: number,

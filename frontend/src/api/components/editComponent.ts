@@ -4,6 +4,13 @@ import componentTypes from 'enums/componentTypes.ts';
 import TOneOfComponents from 'types/components/TOneOfComponents.ts';
 import { AxiosResponse } from 'axios';
 
+/**
+ * Изменяет компонента
+ * @param componentType тип компонента
+ * @param id id компонента в списке продуктов
+ * @param data новая информация о компоненте
+ * @param isUpdated показывает обновлено ли изображение компонента
+ */
 function editComponent(
   componentType: keyof typeof componentTypes,
   id: string,
