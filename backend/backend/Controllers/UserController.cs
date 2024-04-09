@@ -20,7 +20,12 @@ namespace backend.Controllers
             DotNetEnv.Env.Load();
             Environment.GetEnvironmentVariable("ConnectionString");
         }
-
+        
+        /// <summary>
+        /// Метод для регистрации нового пользователя.
+        /// </summary>
+        /// <param name="user">Пользователь для регистрации.</param>
+        /// <returns>Результат операции регистрации пользователя.</returns>
         [HttpPost("signUp")]
         public async Task<IActionResult> SignUpUser(User user)
         {
@@ -69,7 +74,12 @@ namespace backend.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
-
+        
+        /// <summary>
+        /// Метод для входа зарегистрированного пользователя.
+        /// </summary>
+        /// <param name="requestData">Данные для входа пользователя.</param>
+        /// <returns>Результат операции входа пользователя.</returns>
         [HttpPost("signIn")]
         public async Task<IActionResult> SignInUser(UserLogin requestData)
         {
@@ -100,7 +110,13 @@ namespace backend.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
-
+        
+        /// <summary>
+        /// Метод для обновления профиля пользователя.
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя.</param>
+        /// <param name="updatedUser">Обновленные данные пользователя.</param>
+        /// <returns>Результат операции обновления профиля пользователя.</returns>
         [HttpPut("edit/{id}")]
         public async Task<IActionResult> UpdateProfile (int id, User updatedUser)
         {
@@ -145,7 +161,12 @@ namespace backend.Controllers
                 return StatusCode(500, new {error = ex.Message });
             }
         }
-
+        
+        /// <summary>
+        /// Метод для удаления профиля пользователя.
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя.</param>
+        /// <returns>Результат операции удаления профиля пользователя.</returns>
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteProfile (int id)
         {

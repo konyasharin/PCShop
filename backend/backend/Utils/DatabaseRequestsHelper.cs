@@ -4,7 +4,13 @@ using System.Text;
 namespace backend.Utils;
 
 public static class DatabaseRequestsHelper
-{
+{       
+        /// <summary>
+        /// Преобразует массив характеристик в строку, разделенную запятыми, с возможностью добавления префикса к каждой характеристике.
+        /// </summary>
+        /// <param name="characteristics">Массив характеристик для преобразования в строку.</param>
+        /// <param name="prev">Префикс, который будет добавлен к каждой характеристике (по умолчанию - пустая строка).</param>
+        /// <returns>Строка, содержащая перечисление характеристик, разделенных запятыми, с добавленным префиксом.</returns>
         public static string TransformCharacteristicsToString(string[] characteristics, string prev = "")
         {
             string stringOfCharacteristics = "";
@@ -22,7 +28,13 @@ public static class DatabaseRequestsHelper
 
             return stringOfCharacteristics;
         }
-
+        
+        
+        /// <summary>
+        /// Преобразует массив характеристик в строку для SET выражения в SQL, где каждая характеристика представлена в формате "характеристика = @Параметр".
+        /// </summary>
+        /// <param name="characteristics">Массив характеристик для преобразования в строку SET выражения.</param>
+        /// <returns>Строка, содержащая SET выражение для SQL запроса.</returns>
         public static string TransformCharacteristicsToSetString(string[] characteristics)
         {
             string stringOfValues = "";
@@ -41,6 +53,11 @@ public static class DatabaseRequestsHelper
             return stringOfValues;
         }
         
+        /// <summary>
+        /// Преобразует строку в формате "snake_case" в формат "PascalCase".
+        /// </summary>
+        /// <param name="snakeCase">Строка в формате "snake_case".</param>
+        /// <returns>Строка в формате "PascalCase".</returns>
         public static string SnakeCaseToPascalCase(string snakeCase)
         {
             string[] words = snakeCase.Split('_');
@@ -50,7 +67,13 @@ public static class DatabaseRequestsHelper
             }
             return string.Concat(words);
         }
-
+        
+        
+        /// <summary>
+        /// Преобразует массив строк из формата "snake_case" в формат "PascalCase".
+        /// </summary>
+        /// <param name="snakeCases">Массив строк в формате "snake_case".</param>
+        /// <returns>Массив строк в формате "PascalCase".</returns>
         public static string[] SnakeCasesToPascalCase(string[] snakeCases)
         {
             string[] pascalCases = new string[snakeCases.Length];
@@ -61,7 +84,13 @@ public static class DatabaseRequestsHelper
 
             return pascalCases;
         }
-
+        
+        
+        /// <summary>
+        /// Преобразует строку из формата "PascalCase" в формат "snake_case".
+        /// </summary>
+        /// <param name="input">Входная строка в формате "PascalCase".</param>
+        /// <returns>Строка в формате "snake_case".</returns>
         public static string PascalCaseToSnakeCase(string input)
         {
             StringBuilder result = new StringBuilder();

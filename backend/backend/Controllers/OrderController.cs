@@ -107,7 +107,6 @@ namespace backend.Controllers
         [HttpGet("getOrder/{orderId}")]
         public async Task<IActionResult> GetOrder(int orderId)
         {
-            logger.LogInformation(orderId.ToString());
             try
             {
                 await using (var connection = new NpgsqlConnection(connectionString))
@@ -116,7 +115,6 @@ namespace backend.Controllers
 
                     var order = connection.QueryFirstOrDefault<Orders>(
                         $"SELECT order_id AS OrderId, order_status AS OrderStatus, user_id AS UserId FROM public.orders WHERE order_id = {orderId}" );
-                    logger.LogInformation(order.OrderStatus);
 
                     if (order == null)
                     {

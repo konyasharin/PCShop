@@ -19,7 +19,13 @@ namespace backend.Controllers
         public AssemblyController(ILogger<AssemblyController> logger) : base(logger)
         {
         }
-
+        
+        
+        /// <summary>
+        /// Метод для создания сборки в базе данных.
+        /// </summary>
+        /// <param name="assembly">Сборка, которую необходимо создать.</param>
+        /// <returns>Результат операции создания сборки в базе данных.</returns>
         [HttpPost("create")]
         public async Task<IActionResult> CreateAssembly([FromForm] Assembly<IFormFile> assembly)
         {
@@ -67,6 +73,10 @@ namespace backend.Controllers
             }
         }
         
+        /// <summary>
+        /// Метод для получения популярных сборок из базы данных.
+        /// </summary>
+        /// <returns>Результат операции получения популярных сборок из базы данных.</returns>
         [HttpGet("getPopular")]
         public async Task<IActionResult> GetPopularAssemblies()
         {
@@ -94,7 +104,12 @@ namespace backend.Controllers
                 return NotFound(new {error = ex.Message});
             }
         }
-
+        
+        /// <summary>
+        /// Метод для получения последних сборок из базы данных с учетом смещения.
+        /// </summary>
+        /// <param name="offset">Смещение для запроса последних сборок.</param>
+        /// <returns>Результат операции получения последних сборок из базы данных.</returns>
         [HttpGet("getLast")]
         public async Task<IActionResult> GetLastBuilds(int offset)
         {
@@ -125,6 +140,12 @@ namespace backend.Controllers
             }
         }
         
+        /// <summary>
+        /// Метод для получения всех сборок из базы данных с учетом смещения и лимита.
+        /// </summary>
+        /// <param name="offset">Смещение для запроса сборок.</param>
+        /// <param name="limit">Максимальное количество сборок, которые требуется вернуть.</param>
+        /// <returns>Результат операции получения всех сборок из базы данных.</returns>
         [HttpGet("getAll")]
         public async Task<IActionResult> GetBuilds(int offset, int limit)
         {
