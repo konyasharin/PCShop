@@ -1,3 +1,7 @@
+/**
+ * преобразовывает массив с названиями классов в одну строку
+ * @param classNamesList массив имен классов
+ */
 function createClassNames(classNamesList: Array<string | undefined>) {
   let classNames = '';
   classNamesList.forEach((className, i) => {

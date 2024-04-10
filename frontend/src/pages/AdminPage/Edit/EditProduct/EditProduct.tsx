@@ -137,7 +137,10 @@ function EditProduct() {
         <h5
           className={styles.delete}
           onClick={() => {
-            deleteComponent(activeCategory, +productId);
+            dispatch(setIsLoading(true));
+            deleteComponent(activeCategory, +productId).then(() =>
+              dispatch(setIsLoading(false)),
+            );
           }}
         >
           Удалить товар

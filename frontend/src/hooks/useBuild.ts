@@ -30,6 +30,9 @@ export const errorDetailedTypes = {
   empty: 'empty',
 } as const;
 
+/**
+ * Хук для создания сборки
+ */
 function useBuild() {
   const [components, setComponents] =
     useState<TUseBuildComponents>(initBuild());

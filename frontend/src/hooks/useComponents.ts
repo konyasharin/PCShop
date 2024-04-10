@@ -12,6 +12,9 @@ export type TUseComponents = {
   };
 };
 
+/**
+ * Хук для хранения всех подгруженных компонентов
+ */
 function useComponents() {
   const [components, setComponents] = useState<TUseComponents | null>(null);
   const dispatch = useDispatch();

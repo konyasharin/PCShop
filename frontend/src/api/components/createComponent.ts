@@ -4,6 +4,11 @@ import componentTypes from 'enums/componentTypes.ts';
 import config from '../../../config.ts';
 import TOneOfComponents from 'types/components/TOneOfComponents.ts';
 
+/**
+ * Создает компонент компьютера
+ * @param componentType тип компонента
+ * @param data информация о компоненте (его характеристики)
+ */
 async function createComponent(
   componentType: keyof typeof componentTypes,
   data: Omit<TOneOfComponents<File>, 'productId'>,

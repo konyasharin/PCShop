@@ -3,6 +3,10 @@ import config from '../../../config.ts';
 import TAssembly from 'types/TAssembly.ts';
 import { AxiosResponse } from 'axios';
 
+/**
+ * Создает сборку
+ * @param data содержит информацию о сборке
+ */
 async function createAssembly(
   data: Omit<TAssembly<File>, 'id' | 'likes' | 'creationTime'>,
 ): Promise<AxiosResponse<TAssembly<string>>> {

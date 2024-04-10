@@ -13,12 +13,14 @@ namespace backend.Controllers
     {
         protected readonly ILogger<UserController> logger;
         protected readonly string connectionString;
-        
+        private readonly JwtProvider _jwtProvider;
+
         public UserController(ILogger<UserController> logger)
         {
             this.logger = logger;
             DotNetEnv.Env.Load();
             Environment.GetEnvironmentVariable("ConnectionString");
+            _jwtProvider = new JwtProvider();
         }
         
         /// <summary>
@@ -88,7 +90,14 @@ namespace backend.Controllers
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     logger.LogInformation(requestData.Email);
-                    var userData = await connection.QueryFirstOrDefaultAsync<User>("SELECT * FROM public.users WHERE email = @email", new { requestData.Email });
+
+                    if (!requestData.Email.Contains("@"))
+                    {
+                        return BadRequest(new { error = "Invalid email" });
+                    }
+
+                    var userData = await connection.QueryFirstOrDefaultAsync<User>("SELECT * FROM public.users WHERE email = @email",
+                        new { requestData.Email });
 
                     if (userData == null)
                     {
@@ -100,8 +109,11 @@ namespace backend.Controllers
                         return BadRequest(new { error = "Incorrect password" });
                     }
 
+                    var token = _jwtProvider.GenerateToken(userData);
+
+
                     logger.LogInformation($"User with email {requestData.Email} signed in successfully");
-                    return Ok(new { data = userData });
+                    return Ok(new { data = token });
                 }
             }
             catch(Exception ex)

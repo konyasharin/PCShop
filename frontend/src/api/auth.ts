@@ -7,6 +7,12 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import TUser from 'types/auth/TUser.ts';
 import { setIsAuth, setUserData } from 'store/slices/profileSlice.ts';
 
+/**
+ * Производит аутентификацию пользователя
+ * @param data
+ * @param url
+ * @param dispatch
+ */
 async function auth<T extends TRegistrationData | TLoginData>(
   data: T,
   url: string,
