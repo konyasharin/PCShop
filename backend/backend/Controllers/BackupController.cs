@@ -6,6 +6,11 @@ namespace backend.Controllers;
 [ApiController]
 public class BackupController: ControllerBase
 {
+    /// <summary>
+    /// Метод для получения изображения из резервной копии.
+    /// </summary>
+    /// <param name="imageName">Имя изображения.</param>
+    /// <returns>Изображение в формате blob.</returns>
     [HttpGet("getImage")]
     public IActionResult GetImage(string imageName)
     {
