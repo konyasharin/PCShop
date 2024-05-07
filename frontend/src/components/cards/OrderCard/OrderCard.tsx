@@ -8,12 +8,14 @@ type OrderCardProps = {
   name: string;
   text: string;
   price: number;
+  url: string;
   className?: string;
 };
 
 const OrderCard: React.FC<OrderCardProps> = props => {
   return (
     <Card
+      url={props.url}
       img={props.img}
       text={props.text}
       name={props.name}

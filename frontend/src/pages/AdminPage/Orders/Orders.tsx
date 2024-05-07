@@ -1,11 +1,14 @@
 import Input from 'components/inputs/Input/Input.tsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './Orders.module.css';
 import CheckBox from 'components/CheckBox/CheckBox.tsx';
 import useCheckBoxes from 'hooks/useCheckBoxes.ts';
 import OrderBlock from './OrderBlock/OrderBlock.tsx';
-import EOrderStatuses from 'enums/EOrderStatuses.ts';
 import ShowMoreBtn from 'components/btns/ShowMoreBtn/ShowMoreBtn.tsx';
+import getOrders from 'api/orders/getOrders.ts';
+import TOrder from 'types/orders/TOrder.ts';
+import { useDispatch } from 'react-redux';
+import { setIsLoading } from 'store/slices/loadingSlice.ts';
 
 function Orders() {
   const [id, setId] = useState('');
@@ -25,6 +28,25 @@ function Orders() {
       />
     );
   });
+  const [orders, setOrders] = useState<TOrder[]>([]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setIsLoading(true));
+    getOrders(3, 0).then(response => {
+      setOrders(response.data.orders);
+      dispatch(setIsLoading(false));
+    });
+  }, []);
+
+  const ordersBlocks = orders.map(order => {
+    return (
+      <OrderBlock
+        className={styles.order}
+        orderNumber={order.orderId}
+        status={order.orderStatus}
+      />
+    );
+  });
   return (
     <div className={styles.orders}>
       <Input
@@ -34,16 +56,7 @@ function Orders() {
         type={'number'}
       />
       <div className={styles.filters}>{...checkBoxesBlock}</div>
-      <OrderBlock
-        className={styles.order}
-        orderNumber={123456}
-        status={EOrderStatuses.accepted}
-      />
-      <OrderBlock
-        className={styles.order}
-        orderNumber={123454}
-        status={EOrderStatuses.delivered}
-      />
+      {...ordersBlocks}
       <ShowMoreBtn>Показать еще...</ShowMoreBtn>
     </div>
   );

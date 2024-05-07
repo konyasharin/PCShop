@@ -33,7 +33,7 @@ namespace backend.Controllers
         /// <param name="databaseName">Название таблицы в базе данных, в которой будет храниться информация о компоненте.</param>
         /// <typeparam name="T">Тип компонента, производный от класса Component с типом IFormFile.</typeparam>
         /// <returns>Результат операции создания компонента в базе данных.</returns>
-        protected async Task<IActionResult> CreateComponent<T>(T component, string[] characteristics, string databaseName) where T: Component<IFormFile>
+        protected async Task<IActionResult> CreateComponent<T>(T component, string[] characteristics, string databaseName) where T: Product<IFormFile>
         {
             try
             {
@@ -90,7 +90,7 @@ namespace backend.Controllers
         }
 
         protected async Task<IActionResult> GetAllComponents<T>(int limit, int offset, string viewName,
-            string[] characteristics) where T: Component<string>
+            string[] characteristics) where T: Product<string>
         {
             string[] characteristicsBase = ["product_id AS productId", "brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type AS productType"];
             try
@@ -120,7 +120,7 @@ namespace backend.Controllers
         /// <param name="characteristics">Характеристики компонента, которые также необходимо получить из базы данных.</param>
         /// <typeparam name="T">Тип компонента, производный от класса Component с типом IFormFile.</typeparam>
         /// <returns>Результат операции получения компонента из базы данных.</returns>
-        protected async Task<IActionResult> GetComponent<T>(int componentId, string viewName, string[] characteristics) where T: Component<string>
+        protected async Task<IActionResult> GetComponent<T>(int componentId, string viewName, string[] characteristics) where T: Product<string>
         {
             string[] characteristicsBase = ["product_id AS productId", "brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type AS productType"];
             
@@ -162,7 +162,7 @@ namespace backend.Controllers
         /// <typeparam name="T">Тип компонента, производный от класса Component с типом IFormFile.</typeparam>
         /// <returns>Результат операции обновления данных компонента в базе данных.</returns>
         protected async Task<IActionResult> UpdateComponent<T>(T component, bool isUpdated, string databaseName,
-            string[] characteristics) where T: Component<IFormFile>
+            string[] characteristics) where T: Product<IFormFile>
         {
             string[] characteristicsBase = ["brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type"];
             try
@@ -319,7 +319,7 @@ namespace backend.Controllers
         /// <param name="characteristics">Характеристики компонентов, которые также будут извлечены из базы данных.</param>
         /// <typeparam name="T">Тип компонента, производный от класса Component с типом IFormFile.</typeparam>
         /// <returns>Результат операции фильтрации компонентов в базе данных.</returns>
-        protected async Task<IActionResult> FilterComponents<T>(string viewName, Filter[] filters, string[] characteristics) where T: Component<string>
+        protected async Task<IActionResult> FilterComponents<T>(string viewName, Filter[] filters, string[] characteristics) where T: Product<string>
         {
             string[] characteristicsBase =
             [
@@ -355,7 +355,7 @@ namespace backend.Controllers
         /// </summary>
         /// <typeparam name="T">Тип компонента, производный от класса Component с типом IFormFile.</typeparam>
         /// <returns>Результат операции получения фильтров компонентов из базы данных.</returns>
-        protected async Task<IActionResult> GetComponentFilters<T>() where T: Component<string>
+        protected async Task<IActionResult> GetComponentFilters<T>() where T: Product<string>
         {
             string[] filterCharacteristics = ["id", "filter_name AS filterName", "component_type AS componentType", "filter_value AS filterValue"];
             try

@@ -1,14 +1,14 @@
-import EOrderStatuses from 'enums/EOrderStatuses.ts';
+import orderStatuses from 'enums/orderStatuses.ts';
 
-function createOrderStatusColor(status: EOrderStatuses) {
+function createOrderStatusColor(status: keyof typeof orderStatuses) {
   switch (status) {
-    case EOrderStatuses.accepted:
+    case 'accepted':
       return '#CD0000';
-    case EOrderStatuses.inProcessing:
+    case 'inProcessing':
       return '#F7A400';
-    case EOrderStatuses.onTheWay:
+    case 'onTheWay':
       return '#F3CE85';
-    case EOrderStatuses.delivered:
+    case 'delivered':
       return '#42FF00';
   }
 }

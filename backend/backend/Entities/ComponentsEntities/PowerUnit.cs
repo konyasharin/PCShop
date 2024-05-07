@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Entities
 {
-    public class PowerUnit<T> : Component<T>
+    public class PowerUnit<T> : Product<T>
     {
       
         public string Battery { get; set; }

@@ -19,7 +19,7 @@ namespace backend.Controllers
         {
             this.logger = logger;
             DotNetEnv.Env.Load();
-            Environment.GetEnvironmentVariable("ConnectionString");
+            connectionString = Environment.GetEnvironmentVariable("ConnectionString");
             _jwtProvider = new JwtProvider();
         }
         
@@ -89,15 +89,15 @@ namespace backend.Controllers
             {
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
-                    logger.LogInformation(requestData.Email);
-
                     if (!requestData.Email.Contains("@"))
                     {
                         return BadRequest(new { error = "Invalid email" });
                     }
-
+                    
+                    logger.LogInformation("123");
                     var userData = await connection.QueryFirstOrDefaultAsync<User>("SELECT * FROM public.users WHERE email = @email",
                         new { requestData.Email });
+                    logger.LogInformation("1234");
 
                     if (userData == null)
                     {

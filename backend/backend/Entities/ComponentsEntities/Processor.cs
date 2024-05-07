@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Entities
 {
-    public class Processor<T> : Component<T>
+    public class Processor<T> : Product<T>
     {
         public string Cores { get; set; }
         public string ClockFrequency { get; set; }
