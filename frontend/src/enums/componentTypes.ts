@@ -1,3 +1,6 @@
+/**
+ * Содержит все типы компонентов
+ */
 const componentTypes = {
   videoCard: 'Видеокарта',
   processor: 'Процессор',

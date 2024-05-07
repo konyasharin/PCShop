@@ -26,6 +26,7 @@ type EditProductInfoProps = {
     nameBlock: keyof TComponentFilterKeys,
     index: number,
   ) => void;
+  imgIsUpdated?: React.MutableRefObject<boolean>;
 };
 
 const EditProductInfo: React.FC<EditProductInfoProps> = props => {
@@ -66,6 +67,9 @@ const EditProductInfo: React.FC<EditProductInfoProps> = props => {
         setImg={imgFile => {
           props.setImg(URL.createObjectURL(imgFile));
           props.imgFileRef.current = imgFile;
+          if (props.imgIsUpdated) {
+            props.imgIsUpdated.current = true;
+          }
         }}
         className={styles.img}
       />

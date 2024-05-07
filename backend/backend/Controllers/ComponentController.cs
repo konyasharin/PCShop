@@ -24,8 +24,16 @@ namespace backend.Controllers
             DotNetEnv.Env.Load();
             _connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         }
-
-        protected async Task<IActionResult> CreateComponent<T>(T component, string[] characteristics, string databaseName) where T: Component<IFormFile>
+        
+        /// <summary>
+        /// Создает новый компонент и сохраняет его в базе данных.
+        /// </summary>
+        /// <param name="component">Компонент, который необходимо создать.</param>
+        /// <param name="characteristics">Характеристики компонента, которые будут сохранены в базе данных.</param>
+        /// <param name="databaseName">Название таблицы в базе данных, в которой будет храниться информация о компоненте.</param>
+        /// <typeparam name="T">Тип компонента, производный от класса Component с типом IFormFile.</typeparam>
+        /// <returns>Результат операции создания компонента в базе данных.</returns>
+        protected async Task<IActionResult> CreateComponent<T>(T component, string[] characteristics, string databaseName) where T: Product<IFormFile>
         {
             try
             {
@@ -82,7 +90,7 @@ namespace backend.Controllers
         }
 
         protected async Task<IActionResult> GetAllComponents<T>(int limit, int offset, string viewName,
-            string[] characteristics) where T: Component<string>
+            string[] characteristics) where T: Product<string>
         {
             string[] characteristicsBase = ["product_id AS productId", "brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type AS productType"];
             try
@@ -104,7 +112,15 @@ namespace backend.Controllers
             }
         }
         
-        protected async Task<IActionResult> GetComponent<T>(int componentId, string viewName, string[] characteristics) where T: Component<string>
+        /// <summary>
+        /// Метод для получения компонента из базы данных.
+        /// </summary>
+        /// <param name="componentId">Идентификатор компонента, который необходимо получить.</param>
+        /// <param name="viewName">Название представления в базе данных, из которого будет извлечен компонент.</param>
+        /// <param name="characteristics">Характеристики компонента, которые также необходимо получить из базы данных.</param>
+        /// <typeparam name="T">Тип компонента, производный от класса Component с типом IFormFile.</typeparam>
+        /// <returns>Результат операции получения компонента из базы данных.</returns>
+        protected async Task<IActionResult> GetComponent<T>(int componentId, string viewName, string[] characteristics) where T: Product<string>
         {
             string[] characteristicsBase = ["product_id AS productId", "brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type AS productType"];
             
@@ -135,9 +151,18 @@ namespace backend.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-
+        
+        /// <summary>
+        /// Метод для обновления данных компонента в базе данных.
+        /// </summary>
+        /// <param name="component">Обновленный компонент.</param>
+        /// <param name="isUpdated">Флаг, указывающий, были ли обновлены данные компонента.</param>
+        /// <param name="databaseName">Название таблицы в базе данных, в которой хранятся данные компонента.</param>
+        /// <param name="characteristics">Характеристики компонента, которые требуется обновить.</param>
+        /// <typeparam name="T">Тип компонента, производный от класса Component с типом IFormFile.</typeparam>
+        /// <returns>Результат операции обновления данных компонента в базе данных.</returns>
         protected async Task<IActionResult> UpdateComponent<T>(T component, bool isUpdated, string databaseName,
-            string[] characteristics) where T: Component<IFormFile>
+            string[] characteristics) where T: Product<IFormFile>
         {
             string[] characteristicsBase = ["brand", "model", "country", "price", "description", "image", "amount", "power", "likes", "product_type"];
             try
@@ -225,7 +250,12 @@ namespace backend.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-
+        
+        /// <summary>
+        /// Метод для удаления компонента из базы данных.
+        /// </summary>
+        /// <param name="id">Идентификатор компонента, который необходимо удалить.</param>
+        /// <returns>Результат операции удаления компонента из базы данных.</returns>
         protected async Task<IActionResult> DeleteComponent(int id)
         {
             try
@@ -252,7 +282,12 @@ namespace backend.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
-
+        
+        /// <summary>
+        /// Метод для добавления нового фильтра в базу данных.
+        /// </summary>
+        /// <param name="newFilter">Новый фильтр, который необходимо добавить.</param>
+        /// <returns>Результат операции добавления нового фильтра в базу данных.</returns>
         protected async Task<IActionResult> AddFilter(Filter newFilter)
         {
             string[] filterCharacteristics = ["filter_name", "component_type", "filter_value"];
@@ -275,8 +310,16 @@ namespace backend.Controllers
                 return BadRequest(new { error = err });
             }
         }
-
-        protected async Task<IActionResult> FilterComponents<T>(string viewName, Filter[] filters, string[] characteristics) where T: Component<string>
+        
+        /// <summary>
+        /// Метод для фильтрации компонентов в базе данных.
+        /// </summary>
+        /// <param name="viewName">Название представления в базе данных, из которого будут извлечены компоненты.</param>
+        /// <param name="filters">Массив фильтров, по которым будет производиться фильтрация компонентов.</param>
+        /// <param name="characteristics">Характеристики компонентов, которые также будут извлечены из базы данных.</param>
+        /// <typeparam name="T">Тип компонента, производный от класса Component с типом IFormFile.</typeparam>
+        /// <returns>Результат операции фильтрации компонентов в базе данных.</returns>
+        protected async Task<IActionResult> FilterComponents<T>(string viewName, Filter[] filters, string[] characteristics) where T: Product<string>
         {
             string[] characteristicsBase =
             [
@@ -306,8 +349,13 @@ namespace backend.Controllers
                 return BadRequest(new { error = err });
             }
         }
-
-        protected async Task<IActionResult> GetComponentFilters<T>() where T: Component<string>
+        
+        /// <summary>
+        /// Метод для получения фильтров компонентов из базы данных.
+        /// </summary>
+        /// <typeparam name="T">Тип компонента, производный от класса Component с типом IFormFile.</typeparam>
+        /// <returns>Результат операции получения фильтров компонентов из базы данных.</returns>
+        protected async Task<IActionResult> GetComponentFilters<T>() where T: Product<string>
         {
             string[] filterCharacteristics = ["id", "filter_name AS filterName", "component_type AS componentType", "filter_value AS filterValue"];
             try
@@ -352,6 +400,11 @@ namespace backend.Controllers
             }
         }
         
+        /// <summary>
+        /// Метод для преобразования массива фильтров в строку условия SQL запроса.
+        /// </summary>
+        /// <param name="filters">Массив фильтров, который требуется преобразовать.</param>
+        /// <returns>Строка условия SQL запроса на основе фильтров.</returns>
         private string TransformFiltersToString(Filter[] filters)
         {
             string filtersString = "";
@@ -369,7 +422,15 @@ namespace backend.Controllers
 
             return filtersString;
         }
-
+        
+        
+        /// <summary>
+        /// Метод для поиска компонентов по ключевому слову в базе данных.
+        /// </summary>
+        /// <param name="keyword">Ключевое слово для поиска компонентов.</param>
+        /// <param name="limit">Максимальное количество компонентов, которое требуется вернуть (по умолчанию 1).</param>
+        /// <param name="offset">Смещение для запроса компонентов (по умолчанию 0).</param>
+        /// <returns>Результат операции поиска компонентов в базе данных.</returns>
         protected async Task<IActionResult> SearchComponent(string keyword, int limit = 1, int offset = 0)
         {
             try

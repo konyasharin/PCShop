@@ -19,6 +19,7 @@ function BuildsPage() {
     getBuilds(3, offset).then(response => {
       setBuilds(response.data.assemblies);
       setOffset(offset + 3);
+      dispatch(setIsLoading(false));
     });
   }, []);
   const buildsBlocks = builds.map(build => {

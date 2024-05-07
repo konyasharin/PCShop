@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Entities
 {
-    public class ComputerCase<T> : Component<T>
+    public class ComputerCase<T> : Product<T>
     {
         public string Material { get; set; }
         public string Width { get; set; }

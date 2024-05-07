@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Entities
 {
-    public class MotherBoard<T> : Component<T>
+    public class MotherBoard<T> : Product<T>
     {
         public string Socket { get; set; }
         public string Chipset { get; set; }

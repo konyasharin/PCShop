@@ -5,6 +5,11 @@ namespace backend.Password
 {
     public static class PasswordHelper
     {
+        /// <summary>
+        /// Хэширует пароль с использованием алгоритма SHA-256.
+        /// </summary>
+        /// <param name="password">Пароль для хэширования.</param>
+        /// <returns>Хэшированная строка пароля в формате Base64.</returns>
         public static string HashPassword(string password)
         {
             using (var sha256 = SHA256.Create())
@@ -13,7 +18,14 @@ namespace backend.Password
                 return Convert.ToBase64String(hashedBytes);
             }
         }
-
+        
+        
+        /// <summary>
+        /// Проверяет, соответствует ли предоставленный пароль хэшированному паролю.
+        /// </summary>
+        /// <param name="hashedPassword">Хэшированный пароль.</param>
+        /// <param name="providedPassword">Предоставленный пароль для проверки.</param>
+        /// <returns>True, если предоставленный пароль соответствует хэшированному паролю, иначе false.</returns>
         public static bool VerifyPassword(string hashedPassword, string providedPassword)
         {
             using (var sha256 = SHA256.Create())

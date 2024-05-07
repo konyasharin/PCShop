@@ -14,6 +14,9 @@ export type TFilters = {
   [key in keyof typeof componentTypes]: TComponentFilterKeys;
 };
 
+/**
+ * Хук для хранения всех фильтров для всех компонентов
+ */
 function useAllFilters() {
   const [allFilters, setAllFilters] = useState<TFilters | null>(null);
   const dispatch = useDispatch();

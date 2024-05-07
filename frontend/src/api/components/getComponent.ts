@@ -4,6 +4,11 @@ import { AxiosResponse } from 'axios';
 import componentTypes from 'enums/componentTypes.ts';
 import TOneOfComponents from 'types/components/TOneOfComponents.ts';
 
+/**
+ * Получает компонент
+ * @param componentType тип компонента
+ * @param id id компонента в списке продуктов
+ */
 async function getComponent(
   componentType: keyof typeof componentTypes,
   id: number,

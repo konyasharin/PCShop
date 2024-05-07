@@ -1,5 +1,11 @@
 import { useRef, useState } from 'react';
 
+/**
+ * Хук для ограничения хранения чисел в useState в определенном диапазоне
+ * @param initialValue начальное значение числа
+ * @param from минимально возможное значение (если не установлено, то минимального значения не будет)
+ * @param to максимально возможное значение (если не установлено, то максимального значения не будет)
+ */
 function useBorderValues(
   initialValue: number,
   from?: number,

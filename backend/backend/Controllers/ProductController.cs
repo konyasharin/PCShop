@@ -19,7 +19,12 @@ namespace backend.Controllers
             DotNetEnv.Env.Load();
             connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         }
-
+        
+        /// <summary>
+        /// Метод для добавления комментария.
+        /// </summary>
+        /// <param name="comment">Данные комментария.</param>
+        /// <returns>Результат операции добавления комментария.</returns>
         protected async Task<IActionResult> AddComment(Comment comment)
         {
             try
@@ -63,6 +68,12 @@ namespace backend.Controllers
                 return BadRequest(new { error = "An error occurred while adding comment" });
             }
         }
+        
+        /// <summary>
+        /// Метод для обновления комментария.
+        /// </summary>
+        /// <param name="comment">Данные комментария.</param>
+        /// <returns>Результат операции обновления комментария.</returns>
         protected async Task<IActionResult> UpdateComment(Comment comment)
         {
             try
@@ -110,7 +121,14 @@ namespace backend.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
-
+        
+        /// <summary>
+        /// Метод для удаления комментария.
+        /// </summary>
+        /// <param name="productId">Идентификатор продукта.</param>
+        /// <param name="commentId">Идентификатор комментария.</param>
+        /// <param name="component">Компонент коментария.</param>
+        /// <returns>Результат операции удаления комментария.</returns>
         protected async Task<IActionResult> DeleteComment(int productId, int commentId, string component)
         {
             try
@@ -140,7 +158,16 @@ namespace backend.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
-
+        
+        
+        /// <summary>
+        /// Получает все комментарии для определенного продукта и компонента с учетом ограничения и смещения.
+        /// </summary>
+        /// <param name="limit">Ограничение количества комментариев.</param>
+        /// <param name="offset">Смещение комментариев.</param>
+        /// <param name="component">Компонент коментария.</param>
+        /// <param name="productId">Идентификатор продукта.</param>
+        /// <returns>Все комментарии для определенного продукта и компонента.</returns>
         protected async Task<IActionResult> GetAllComments(int limit, int offset, string component, int productId)
         {
             try
@@ -166,7 +193,15 @@ namespace backend.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
-
+        
+        
+        /// <summary>
+        /// Получает комментарий по его идентификатору для определенного продукта и компонента.
+        /// </summary>
+        /// <param name="productId">Идентификатор продукта.</param>
+        /// <param name="commentId">Идентификатор комментария.</param>
+        /// <param name="component">Компонент коментария.</param>
+        /// <returns>Комментарий для определенного продукта и компонента.</returns>
         protected async Task<IActionResult> GetComment(int productId, int commentId, string component)
         {
             try
@@ -196,7 +231,15 @@ namespace backend.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
-
+        
+        
+        /// <summary>
+        /// Лайкает компонент с указанным идентификатором для пользователя и компонента.
+        /// </summary>
+        /// <param name="id">Идентификатор компонента.</param>
+        /// <param name="user">Пользователь, который ставит лайк.</param>
+        /// <param name="component">Компонент, для которого ставится лайк.</param>
+        /// <returns>Идентификатор компонента, для которого был поставлен лайк.</returns>
         protected async Task<IActionResult> LikeComponent(int id, User user, string component)
         {
             try

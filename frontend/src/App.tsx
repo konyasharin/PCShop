@@ -34,16 +34,7 @@ function App() {
           <Route path={'/registration'} element={<RegistrationPage />} />
           <Route path={'/admin/*'} element={<AdminPage />} />
           <Route path={'/profile/*'} element={<ProfilePage />} />
-          <Route
-            path={'/components'}
-            element={
-              <PCComponents
-                type={'videoCard'}
-                searchTitle={'Выберите видеокарту'}
-                products={[]}
-              />
-            }
-          />
+          <Route path={'/components'} element={<PCComponents />} />
           <Route path={'/builds'} element={<BuildsPage />} />
           <Route
             path={'/product/:productCategory/:productId'}

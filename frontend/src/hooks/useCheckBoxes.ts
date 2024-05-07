@@ -1,6 +1,10 @@
 import TCheckBox from 'types/TCheckBox.ts';
 import { useState } from 'react';
 
+/**
+ * Хук для управления чекбоксами
+ * @param checkBoxesState Начальные чекбоксы
+ */
 function useCheckBoxes(checkBoxesState: TCheckBox[]) {
   const [checkBoxes, setCheckBoxes] = useState(checkBoxesState);
   function setCheckBoxIsActive(index: number, newIsActive: boolean) {

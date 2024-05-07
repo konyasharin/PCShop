@@ -104,10 +104,32 @@ namespace backend.Controllers
             }
         }
         
+        [HttpGet("getOrderInfo/{orderId}")]
+        public async Task<IActionResult> GetOrderInfo(int orderId)
+        {
+            try
+            {
+                await using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    var order = connection.Query<OrdersInfo>(
+                        $"SELECT order_id AS OrderId, product_type AS ProductType, product_id AS productId FROM public.orders_info" +
+                        $" WHERE order_id = {orderId}" );
+
+                    return Ok(new { orderInfo = order });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving order by ID");
+                return BadRequest(new { error = "Error occurred while retrieving order by ID" });
+            }
+        }
+        
         [HttpGet("getOrder/{orderId}")]
         public async Task<IActionResult> GetOrder(int orderId)
         {
-            logger.LogInformation(orderId.ToString());
             try
             {
                 await using (var connection = new NpgsqlConnection(connectionString))
@@ -115,16 +137,32 @@ namespace backend.Controllers
                     await connection.OpenAsync();
 
                     var order = connection.QueryFirstOrDefault<Orders>(
-                        $"SELECT order_id AS OrderId, order_status AS OrderStatus, user_id AS UserId FROM public.orders" +
+                        $"SELECT order_id AS OrderId, order_status AS orderStatus, user_id AS userId FROM public.orders" +
                         $" WHERE order_id = {orderId}" );
-                    logger.LogInformation(order.OrderStatus);
 
-                    if (order == null)
-                    {
-                        return NotFound(new { error = "Order not found" });
-                    }
+                    return Ok(new { order });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error occurred while retrieving order by ID");
+                return BadRequest(new { error = "Error occurred while retrieving order by ID" });
+            }
+        }
+        
+        [HttpGet("getOrders")]
+        public async Task<IActionResult> GetOrders(int limit, int offset)
+        {
+            try
+            {
+                await using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+                    var orders = connection.Query<Orders>(
+                        $"SELECT order_id AS OrderId, order_status AS OrderStatus, user_id AS UserId FROM public.orders" +
+                        $" LIMIT {limit} OFFSET {offset}" );
 
-                    return Ok(new {order});
+                    return Ok(new {orders});
                 }
             }
             catch (Exception ex)
@@ -135,25 +173,20 @@ namespace backend.Controllers
         }
         
         [HttpPut("updateOrderStatus/{orderId}")]
-        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] string newStatus)
+        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromQuery] string newStatus)
         {
             try
             {
                 await using (var connection = new NpgsqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    logger.LogInformation("Connection opened");
-
                     int affectedRows = await connection.ExecuteAsync(
-                        "UPDATE orders SET order_status = @NewStatus WHERE order_id = @OrderId",
-                        new { NewStatus = newStatus, OrderId = orderId });
+                        $"UPDATE orders SET order_status = '{newStatus}' WHERE order_id = {orderId}");
 
                     if (affectedRows == 0)
                     {
                         return NotFound(new { error = "Order not found" });
                     }
-
-                    logger.LogInformation($"Order {orderId} status updated successfully");
                     return Ok(new { orderId, newStatus });
                 }
             }
