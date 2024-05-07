@@ -20,7 +20,6 @@ namespace backend.Controllers
             connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         }
         
-        
         /// <summary>
         /// Метод для добавления комментария.
         /// </summary>

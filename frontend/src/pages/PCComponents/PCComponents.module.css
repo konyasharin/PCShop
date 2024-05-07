@@ -6,3 +6,8 @@
     margin-bottom: 50px;
     text-align: center;
 }
+
+.categories{
+    display: flex;
+    flex-wrap: wrap;
+}

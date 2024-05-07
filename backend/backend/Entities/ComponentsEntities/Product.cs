@@ -2,7 +2,7 @@
 
 namespace backend.Entities
 {
-    public class Component<T>
+    public class Product<T>
     {
         public int? ProductId { get; set; }
         public string Brand { get; set; }
