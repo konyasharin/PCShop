@@ -3,6 +3,7 @@ using backend.Password;
 using backend.Utils;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 
 namespace backend.Controllers
@@ -21,6 +22,7 @@ namespace backend.Controllers
             DotNetEnv.Env.Load();
             connectionString = Environment.GetEnvironmentVariable("ConnectionString");
             _jwtProvider = new JwtProvider();
+
         }
         
         /// <summary>
@@ -66,7 +68,8 @@ namespace backend.Controllers
                         balance = data.balance,
                     };
 
-                    return Ok(new { id = id, data = returnData });
+
+                    return Ok(new { id = id, data = returnData  });
                 }
             }
 
@@ -110,7 +113,6 @@ namespace backend.Controllers
                     }
 
                     var token = _jwtProvider.GenerateToken(userData);
-
 
                     logger.LogInformation($"User with email {requestData.Email} signed in successfully");
                     return Ok(new { data = token });
@@ -202,6 +204,50 @@ namespace backend.Controllers
                 logger.LogError("Error with delete profile");
                 return StatusCode(500, new { error = ex.Message });
             }
+        }
+
+
+        [HttpGet("getUser")]
+        public async Task<IActionResult> GetUser(string token)
+        {
+
+            
+            try
+            {
+                var claims = _jwtProvider.DecodeToken(token);
+
+                if (claims.Count == 0)
+                {
+                    return BadRequest(new { error = "Empty token claims" });
+                }
+
+                string email = claims[0].Value.ToString();
+
+
+                await using var connection = new NpgsqlConnection(connectionString);
+                {
+                   
+                    logger.LogInformation(connectionString);
+
+
+                    var userData = await connection.QueryFirstOrDefaultAsync<User>("SELECT * FROM public.users WHERE email = @email",
+                        new { email });
+
+                    if (userData == null)
+                    {
+                        return BadRequest(new { error = "User with this email not found" });
+                    }
+
+                    logger.LogInformation($"User with email {email} was found successfully");
+                    return Ok(new { data = userData });
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error with get user data in user");
+                return BadRequest(new { error = ex.Message });
+            }
+
         }
 
      
