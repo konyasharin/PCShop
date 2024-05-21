@@ -1,12 +1,23 @@
 import ProfileNavigationPanel from 'components/ProfileNavigationPanel/ProfileNavigationPanel.tsx';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import Favorites from './Favorites/Favorites.tsx';
 import Container from 'components/Container/Container.tsx';
 import styles from './ProfilePage.module.css';
 import TrashBin from './TrashBin/TrashBin.tsx';
 import Balance from './Balance/Balance.tsx';
+import { useSelector } from 'react-redux';
+import { RootState } from 'store/store.ts';
+import { useEffect } from 'react';
 
 function ProfilePage() {
+  const navigate = useNavigate();
+  const userInfo = useSelector((state: RootState) => state.profile.userInfo);
+  useEffect(() => {
+    if (!userInfo) {
+      navigate('/');
+    }
+  }, [userInfo]);
+
   return (
     <>
       <h2 className={styles.profile}>Профиль</h2>

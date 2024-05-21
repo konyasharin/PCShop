@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Input from 'components/inputs/Input/Input.tsx';
 import Btn from 'components/btns/Btn/Btn.tsx';
 import { useDispatch } from 'react-redux';
-import auth from 'api/auth.ts';
+import auth from 'api/user/auth.ts';
 import TRegistrationData from 'types/auth/TRegistrationData.ts';
 
 function RegistrationPage() {
