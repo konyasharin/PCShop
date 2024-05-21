@@ -8,6 +8,8 @@ type ChooseBinCard = {
   text: string;
   price: number;
   img: string;
+  onDelete: () => void;
+  url: string;
   className?: string;
 };
 
@@ -19,8 +21,14 @@ const ChooseBinCard: React.FC<ChooseBinCard> = props => {
       name={props.name}
       text={props.text}
       bottomBlock={<h2 className={styles.price}>{props.price}$</h2>}
+      url={props.url}
       rightBlock={
-        <img src={TrashBin} alt={'TrashBin'} className={styles.bin} />
+        <img
+          onClick={props.onDelete}
+          src={TrashBin}
+          alt={'TrashBin'}
+          className={styles.bin}
+        />
       }
     />
   );

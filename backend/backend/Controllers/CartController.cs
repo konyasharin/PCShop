@@ -42,7 +42,7 @@ namespace backend.Controllers
 
                     logger.LogInformation($"Product with {cart.ProductId} and user with {cart.UserId} were added in cart");
 
-                    return Ok(new {id = id, data = data});
+                    return Ok(new {data});
 
                 }
             }
@@ -53,8 +53,8 @@ namespace backend.Controllers
             }
         }
 
-        [HttpDelete("deleteProduct/{productId}")]
-        public async Task<IActionResult> DeleteProductFromCart(int productId)
+        [HttpDelete("deleteProduct/{userId}/{productId}")]
+        public async Task<IActionResult> DeleteProductFromCart(int userId, int productId)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace backend.Controllers
                     
 
                     connection.Open();
-                    connection.Execute($"DELETE FROM public.cart WHERE product_id = @product_id", new {product_id = productId});
+                    connection.Execute($"DELETE FROM public.cart WHERE product_id = {productId} AND user_id = {userId}");
 
                     logger.LogInformation($"Product with Id {productId} wer deleted from cart");
 
@@ -79,14 +79,14 @@ namespace backend.Controllers
         }
 
         [HttpGet("getProducts")]
-        public async Task<IActionResult> GetAllProductsFromCart()
+        public async Task<IActionResult> GetAllProductsFromCart(int userId)
         {
             try
             {
                 await using var connection = new NpgsqlConnection(connectionString);
                 {
                     connection.Open();
-                    var products = await connection.QueryAsync<Cart>("SELECT cart_id AS CartId, user_id AS UserId, product_id AS ProductId FROM public.cart");
+                    var products = await connection.QueryAsync<Cart>($"SELECT cart_id AS CartId, user_id AS UserId, product_id AS ProductId FROM public.cart WHERE user_id = {userId}");
 
                     var productsArray = products.ToArray();
 

@@ -9,8 +9,12 @@ import getComponents from 'api/components/getComponents.ts';
 import TOneOfComponents from 'types/components/TOneOfComponents.ts';
 import ChooseComponentCard from 'components/cards/ChooseComponentCard/ChooseComponentCard.tsx';
 import config from '../../../config.ts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from 'store/slices/loadingSlice.ts';
+import addToCart from 'api/cart/addToCart.ts';
+import { RootState } from 'store/store.ts';
+import { useNavigate } from 'react-router-dom';
+import { setCart } from 'store/slices/profileSlice.ts';
 
 function PCComponents() {
   const { radios: categories, setRadioIsActive: setCategoryIsActive } =
@@ -19,6 +23,9 @@ function PCComponents() {
     useState<keyof typeof componentTypes>('videoCard');
   const [components, setComponents] = useState<TOneOfComponents<string>[]>([]);
   const dispatch = useDispatch();
+  const userInfo = useSelector((state: RootState) => state.profile.userInfo);
+  const cart = useSelector((state: RootState) => state.profile.cart);
+  const navigate = useNavigate();
   useEffect(() => {
     dispatch(setIsLoading(true));
     getComponents(activeCategory, 3, 0).then(response => {
@@ -26,6 +33,13 @@ function PCComponents() {
       dispatch(setIsLoading(false));
     });
   }, [activeCategory]);
+
+  useEffect(() => {
+    if (!userInfo) {
+      navigate('/');
+    }
+  }, [userInfo]);
+
   const componentsBlocks = components.map(component => {
     return (
       <ChooseComponentCard
@@ -34,6 +48,16 @@ function PCComponents() {
         price={component.price}
         name={`${component.brand} ${component.model}`}
         img={`${config.backupUrl}/${component.image}`}
+        onClick={() => {
+          if (userInfo) {
+            addToCart({
+              productId: component.productId,
+              userId: userInfo.id,
+            }).then(response => {
+              dispatch(setCart([...cart, response.data.data]));
+            });
+          }
+        }}
       />
     );
   });

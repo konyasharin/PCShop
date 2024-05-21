@@ -13,11 +13,28 @@ import PCComponents from './pages/PCComponents/PCComponents.tsx';
 import BuildsPage from './pages/BuildsPage/BuildsPage.tsx';
 import ProductPage from './pages/ProductPage/ProductPage.tsx';
 import useAllFilters, { TFilters } from 'hooks/useAllFilters.ts';
-import { createContext } from 'react';
+import { createContext, useEffect } from 'react';
+import getUser from 'api/user/getUser.ts';
+import { setIsAuth, setUserData } from 'store/slices/profileSlice.ts';
+import { setIsLoading } from 'store/slices/loadingSlice.ts';
+import { useDispatch } from 'react-redux';
 
 export const FiltersContext = createContext<TFilters | null>(null);
 function App() {
   const { allFilters } = useAllFilters();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (localStorage.getItem('token') != null) {
+      setIsLoading(true);
+      getUser().then(response => {
+        dispatch(setUserData(response.data));
+        dispatch(setIsAuth(true));
+        dispatch(setIsLoading(false));
+      });
+    }
+  }, []);
+
   return (
     <>
       <div className={'ellipses'}>

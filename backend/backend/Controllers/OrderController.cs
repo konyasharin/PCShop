@@ -19,14 +19,8 @@ namespace backend.Controllers
             connectionString = Environment.GetEnvironmentVariable("ConnectionString");
         }
         
-        public class OrderCreationModel
-        {
-            public Orders Order { get; set; }
-            public List<OrdersInfo> OrderInfoList { get; set; }
-        }
-        
         [HttpPost("createOrder")]
-        public async Task<IActionResult> CreateOrder([FromBody] OrderCreationModel orderModel)
+        public async Task<IActionResult> CreateOrder([FromBody] OrderAdd order)
         {
             try
             {
@@ -34,37 +28,21 @@ namespace backend.Controllers
                 {
                     await connection.OpenAsync();
                     logger.LogInformation("Connection opened");
-                    
-                    using (var transaction = connection.BeginTransaction())
-                    {
-                        try
-                        {
-                            var orderId = await connection.ExecuteScalarAsync<int>(
-                                @"INSERT INTO Orders (order_status, user_id) 
+                    var orderId = await connection.ExecuteScalarAsync<int>(
+                        @"INSERT INTO Orders (order_status, user_id) 
                                 VALUES (@OrderStatus, @UserId) RETURNING order_id",
-                                new { orderModel.Order.OrderStatus, orderModel.Order.UserId }, transaction);
-                            
-                            foreach (var orderInfo in orderModel.OrderInfoList)
-                            {
-                                orderInfo.OrderId = orderId;
-                                await connection.ExecuteAsync(
-                                    @"INSERT INTO orders_info (order_id, product_type, product_id) 
+                        new { order.Order.OrderStatus, order.Order.UserId });
+                    
+                    foreach (var orderInfo in order.OrderInfo)
+                    {
+                        orderInfo.OrderId = orderId;
+                        await connection.ExecuteAsync(
+                            @"INSERT INTO orders_info (order_id, product_type, product_id) 
                                     VALUES (@OrderId, @ProductType, @ProductId)",
-                                    orderInfo, transaction);
-                            }
-                            
-                            transaction.Commit();
-
-                            logger.LogInformation("Order created successfully");
-                            
-                            return Ok(new { OrderId = orderId, OrderInfo = orderModel.OrderInfoList });
-                        }
-                        catch (Exception)
-                        {
-                            transaction.Rollback();
-                            throw;
-                        }
+                            orderInfo);
                     }
+                    
+                    return Ok(new { orderInfo = order.OrderInfo });
                 }
             }
             catch (Exception ex)
@@ -113,7 +91,7 @@ namespace backend.Controllers
                 {
                     await connection.OpenAsync();
 
-                    var order = connection.Query<OrdersInfo>(
+                    var order = connection.Query<OrderInfo>(
                         $"SELECT order_id AS OrderId, product_type AS ProductType, product_id AS productId FROM public.orders_info" +
                         $" WHERE order_id = {orderId}" );
 
@@ -136,7 +114,7 @@ namespace backend.Controllers
                 {
                     await connection.OpenAsync();
 
-                    var order = connection.QueryFirstOrDefault<Orders>(
+                    var order = connection.QueryFirstOrDefault<Order>(
                         $"SELECT order_id AS OrderId, order_status AS orderStatus, user_id AS userId FROM public.orders" +
                         $" WHERE order_id = {orderId}" );
 
@@ -158,7 +136,7 @@ namespace backend.Controllers
                 await using (var connection = new NpgsqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    var orders = connection.Query<Orders>(
+                    var orders = connection.Query<Order>(
                         $"SELECT order_id AS OrderId, order_status AS OrderStatus, user_id AS UserId FROM public.orders" +
                         $" LIMIT {limit} OFFSET {offset}" );
 

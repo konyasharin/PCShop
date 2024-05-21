@@ -4,7 +4,7 @@ import Input from 'components/inputs/Input/Input.tsx';
 import Btn from 'components/btns/Btn/Btn.tsx';
 import { NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import auth from 'api/auth.ts';
+import auth from 'api/user/auth.ts';
 import TLoginData from 'types/auth/TLoginData.ts';
 
 function LoginPage() {
